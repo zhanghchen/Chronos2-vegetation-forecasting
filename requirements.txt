@@ -1,0 +1,14 @@
+# Chronos-2 vegetation forecasting project.
+# Note: this is a separate, PyTorch-based environment from the AELSTM
+# project's TensorFlow-based one - the two are intentionally independent.
+
+numpy>=1.21,<3
+pandas>=2.3
+scikit-learn>=1.6
+matplotlib>=3.10
+
+torch>=2.2,<3
+transformers>=4.41,<5
+accelerate>=0.34,<2
+peft>=0.17
+chronos-forecasting[extras]>=2.2
