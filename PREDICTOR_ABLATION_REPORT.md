@@ -80,28 +80,43 @@ inductive bias interacts with a smaller, more collinear feature set.
 
 ## Does removing redundant predictors maintain or improve performance? (Phase 2)
 
-**Yes — the data-driven reduced set does, consistently.** `predictor_reduced_sets.png` and
-`reduced_sets_summary.csv`:
+**Only one of the four Phase 2 configurations shows this — the other three do not, and should not
+be read as supporting evidence.** `predictor_reduced_sets.png` and `reduced_sets_summary.csv`:
 
-| Configuration | `low_amplitude` | `high_amplitude_deciduous` | `evergreen` |
-|---|---|---|---|
-| **Drop least-important pair** (`vs`, `pr` removed; 5 predictors kept) | **+0.066** | **+0.004** | **+0.020** |
-| Top-3 essential only (`tmmx`, `tmmn`, `srad`) | +0.072 | −0.012 | +0.027 |
-| Drop temperature pair (`tmmx`, `tmmn` removed) | −0.076 | −0.007 | +0.003 |
-| Drop moisture pair (`vpd`, `sph` removed) | −0.013 | −0.003 | +0.003 |
+| Configuration | `low_amplitude` | `high_amplitude_deciduous` | `evergreen` | Helps at all 3 pixels? |
+|---|---|---|---|---|
+| **Drop least-important pair** (`vs`, `pr` removed; 5 predictors kept) | **+0.066** | **+0.004** | **+0.020** | **Yes** |
+| Top-3 essential only (`tmmx`, `tmmn`, `srad`) | +0.072 | −0.012 | +0.027 | No (loses at `high_amplitude_deciduous`) |
+| Drop temperature pair (`tmmx`, `tmmn` removed) | −0.076 | −0.007 | +0.003 | No (loses at 2 of 3) |
+| Drop moisture pair (`vpd`, `sph` removed) | **−0.013** | **−0.003** | +0.003 | **No (loses at 2 of 3)** |
 
-"Drop least-important pair" — informed directly by the Phase-1 ranking rather than a priori
-guessing — **improves average R² on all three pixels simultaneously** while using 2 fewer
-predictors than the current 7-predictor setup. This is a genuine, actionable finding: `vs` and `pr`
-add more noise than signal on average across this project's model set and pixels, and a leaner
-5-predictor input (`tmmx, tmmn, srad, vpd, sph`) is a defensible default going forward.
+Only **"drop least-important pair"** (`vs`, `pr` removed) improves R² at all three pixels
+simultaneously — informed directly by the Phase-1 ranking rather than a priori guessing, this is
+the one genuine, actionable finding: `vs` and `pr` add more noise than signal on average, and a
+leaner 5-predictor input (`tmmx, tmmn, srad, vpd, sph`) is a defensible default going forward.
 
-The "top-3 essential" set performs nearly as well (and best of all at `low_amplitude`), but loses a
-small amount at `high_amplitude_deciduous` — plausibly because that pixel's near-ceiling baseline
-(R² > 0.93 for every method) leaves the model reliant on marginal contributions from `pr`/`vpd`/
-`sph`/`vs` that a 3-predictor set can no longer supply. Dropping temperature is clearly the worst
-choice tested, confirming temperature's importance is real (just concentrated at specific pixels)
-rather than an artifact of the ranking.
+**The moisture pair (`vpd`, `sph`) does *not* show the same pattern and should not be read as
+another redundant pair — it actively hurts at `low_amplitude` (−0.013) and `high_amplitude_deciduous`
+(−0.003), with only a negligible, likely-noise +0.003 at `evergreen`.** Per-model results confirm
+this isn't a coincidence of averaging: at `low_amplitude`, 5 of the 9 methods get worse when `vpd`
+and `sph` are dropped together (RNN −0.056, zero-shot −0.046, RF −0.013, LSTM −0.005, CNN −0.005),
+against only small gains elsewhere. This is worth being explicit about because it's a real trap in
+interpreting Phase 1: `vpd` and `sph` each looked individually near-neutral in the LOPO ranking
+(mean ΔR² of +0.0001 and +0.0012 respectively — see the earlier ranking table), which might suggest
+removing *both together* would be similarly harmless. It isn't. Individual near-neutrality does not
+compose additively into joint removability — `vpd` and `sph` apparently provide complementary,
+partially non-redundant information to each other (or to the remaining predictors) that neither
+one supplies alone, so losing both at once costs more than losing either individually would predict.
+This is exactly why the recommended leaner predictor set keeps `vpd` and `sph` and only drops `vs`
+and `pr` — the two grouped ablations are not interchangeable, and the data draws a clear line
+between them.
+
+The "top-3 essential" set performs nearly as well as the recommended set (and best of all at
+`low_amplitude`), but loses a small amount at `high_amplitude_deciduous` — plausibly because that
+pixel's near-ceiling baseline (R² > 0.93 for every method) leaves the model reliant on marginal
+contributions from `pr`/`vpd`/`sph`/`vs` that a 3-predictor set can no longer supply. Dropping
+temperature is clearly the worst choice tested, confirming temperature's importance is real (just
+concentrated at specific pixels) rather than an artifact of the ranking.
 
 ## Key Findings
 
@@ -115,10 +130,13 @@ rather than an artifact of the ranking.
 3. **Predictor importance is strongly vegetation-type-dependent, especially for temperature.**
    `tmmx`/`tmmn` are the most important predictors at `low_amplitude` and among the least important
    (or even counterproductive) at the other two pixels.
-4. **Two predictors (`vs`, `vs` paired with `pr`) are measurably redundant.** Removing them
-   together improves mean R² at all 3 pixels — the current 7-predictor setup is not the leanest
-   effective choice, and a 5-predictor set (`tmmx, tmmn, srad, vpd, sph`) is a validated, better
-   default.
+4. **`vs` and `pr`, specifically as a pair, are measurably redundant — this does not generalize to
+   other "individually weak" predictors.** Removing `vs` and `pr` together improves mean R² at all
+   3 pixels, so the current 7-predictor setup is not the leanest effective choice. But dropping
+   `vpd`/`sph` together (also individually near-neutral in the Phase 1 ranking) *hurts* at 2 of 3
+   pixels — individual near-neutrality does not imply safe joint removal. The validated leaner
+   default is specifically `tmmx, tmmn, srad, vpd, sph` (5 predictors, `vs`/`pr` dropped, `vpd`/`sph`
+   kept), not any reduced set in general.
 5. **`low_amplitude` is the most predictor-sensitive pixel by far** (largest deltas in both
    directions), consistent with it having the weakest underlying climate-LAI signal of the three
    pixels tested — `high_amplitude_deciduous` is comparatively insensitive to any single predictor
