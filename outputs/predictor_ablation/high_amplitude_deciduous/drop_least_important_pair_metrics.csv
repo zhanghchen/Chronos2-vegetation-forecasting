@@ -1,0 +1,2 @@
+RMSE,MAE,MAPE,R2,Pearson_r,site,model,predictor_set,n_predictors,predictors
+0.3974823904822193,0.262453826268514,15.627929684862218,0.9604943332003057,0.9815147031592781,high_amplitude_deciduous,zero_shot,drop_least_important_pair,5,"tmmx,tmmn,srad,vpd,sph"

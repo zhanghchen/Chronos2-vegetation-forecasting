@@ -1,0 +1,13 @@
+predictor_set,site,delta_RMSE,delta_R2
+drop_least_important_pair,evergreen,-0.0254,0.0202
+drop_least_important_pair,high_amplitude_deciduous,-0.0168,0.0037
+drop_least_important_pair,low_amplitude,-0.0037,0.0663
+no_moisture,evergreen,-0.0026,0.003
+no_moisture,high_amplitude_deciduous,0.0167,-0.0035
+no_moisture,low_amplitude,0.0008,-0.0133
+no_temperature,evergreen,0.009,-0.0067
+no_temperature,high_amplitude_deciduous,-0.0073,0.0016
+no_temperature,low_amplitude,0.004,-0.0755
+top3_essential,evergreen,-0.0322,0.0274
+top3_essential,high_amplitude_deciduous,0.0467,-0.0115
+top3_essential,low_amplitude,-0.004,0.0715

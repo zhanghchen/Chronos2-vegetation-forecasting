@@ -37,6 +37,7 @@ Chronos2-vegetation-forecasting/
 ├── README.md
 ├── LOYO_CV_FINDINGS.md         <- LOYO-CV scientific analysis + Key Findings
 ├── FINETUNE_IMPROVEMENT_REPORT.md  <- validation-based LoRA fine-tuning: design + results
+├── PREDICTOR_ABLATION_REPORT.md   <- predictor sensitivity study: design + results
 ├── requirements.txt
 ├── .gitignore
 ├── data/processed/sites/          <- copies of the 3 pixels' CSVs from the AELSTM project
@@ -54,7 +55,9 @@ Chronos2-vegetation-forecasting/
 │   ├── loyo_scientific_analysis.py <- distribution stats, difficulty/outlier analysis, Key Findings figures
 │   ├── finetune_lora_improved.py  <- validation-selected LoRA fine-tuning: chronological val split,
 │   │                                  small HP search, early stopping, two-stage final refit
-│   └── build_finetune_improvement_comparison.py  <- zero-shot vs original vs improved LoRA + loss curves
+│   ├── build_finetune_improvement_comparison.py  <- zero-shot vs original vs improved LoRA + loss curves
+│   ├── predictor_ablation_chronos2.py  <- predictor sensitivity: leave-one-predictor-out + grouped ablations
+│   └── build_predictor_ablation_comparison.py  <- consolidates this project's + AELSTM's ablation results
 └── outputs/
     ├── zero_shot/<pixel>/         <- predictions.csv, metrics.txt, prediction_plot.{png,pdf}
     ├── finetuned_lora/<pixel>/    <- same, for the original (unvalidated) LoRA fine-tuned model
@@ -77,11 +80,15 @@ Chronos2-vegetation-forecasting/
     │                                  models + Chronos-2 zero-shot + Chronos-2 LoRA fine-tuned, all
     │                                  overlaid; plus final_comparison/all_methods_vs_raw_obs.csv
     │                                  (every method's predictions + raw observations, all pixels)
-    └── loyo_cv/<pixel>/           <- fold_<year>_metrics.csv (11 per pixel, 2012-2022, zero-shot +
-        │                             LoRA) + all_folds_metrics.csv, all scored vs. raw observed LAI
-        └── comparison/            <- loyo_all_folds.csv (all 10 methods), loyo_summary_mean_std.csv,
-                                       loyo_rank_consistency_<pixel>.csv, and per-pixel R²-by-year /
-                                       heatmap / mean+median bar chart figures (see LOYO-CV section)
+    ├── loyo_cv/<pixel>/           <- fold_<year>_metrics.csv (11 per pixel, 2012-2022, zero-shot +
+    │   │                             LoRA) + all_folds_metrics.csv, all scored vs. raw observed LAI
+    │   └── comparison/            <- loyo_all_folds.csv (all 10 methods), loyo_summary_mean_std.csv,
+    │                                  loyo_rank_consistency_<pixel>.csv, and per-pixel R²-by-year /
+    │                                  heatmap / mean+median bar chart figures (see LOYO-CV section)
+    └── predictor_ablation/<pixel>/  <- <config>_metrics.csv (7 LOPO + 4 grouped configs, zero-shot only)
+        └── comparison/            <- predictor_ablation_all_results.csv (9 methods), importance
+                                       ranking, model x pixel heatmap, and reduced-set figures
+                                       (see Predictor Sensitivity section)
 ```
 
 ## Why this data format, not `predict_df`
@@ -213,6 +220,25 @@ but it recovers most of the gap on the two pixels where the original fine-tune w
 most of that damage is avoidable"** — see the report for the per-pixel selected hyperparameters,
 the train/validation loss curves showing exactly where each pixel starts overfitting (immediately,
 for `low_amplitude`), and the full three-way comparison against raw observations.
+
+## Predictor Sensitivity / Ablation Study
+
+**See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and
+results.** Studies how sensitive all 9 methods (8 AELSTM-family + Chronos-2 zero-shot) are to the
+choice of the 7 climate predictors, on the current train-2000-2021/test-2022 setup. Rather than the
+intractable 2⁷=128 subsets: **Phase 1** leaves out one predictor at a time (7 configs); **Phase 2**
+adds 4 grouped ablations chosen only after analyzing Phase 1's importance ranking, per a selection
+rule fixed in advance (top-3 essential only, drop the least-important pair, plus two a priori
+pairs: `{tmmx,tmmn}` and `{vpd,sph}`). Chronos-2 uses zero-shot only — fine-tuning would need its
+own hyperparameter re-search per predictor subset to stay computationally manageable — and
+`common_pipeline.build_chronos_inputs(feature_cols=...)` already applies a dropped predictor to
+both `past_covariates` and `future_covariates` consistently, no extra code needed.
+
+Headline results: `srad` is the only predictor that matters at every pixel; different models
+depend on different predictors even at the same pixel; temperature's importance is almost entirely
+pixel-specific (critical at `low_amplitude`, unimportant elsewhere); and dropping the two
+least-important predictors (`vs`, `pr`) **improves** mean R² at all 3 pixels simultaneously — a
+validated, leaner 5-predictor default going forward.
 
 ## Results at a glance
 
