@@ -147,6 +147,11 @@ years, cross-fold rank consistency, and a Key Findings summary. Built by
 `Code/loyo_scientific_analysis.py` from `outputs/loyo_cv/comparison/loyo_all_folds.csv` — run it
 after `build_loyo_comparison.py` to regenerate.
 
+**[`outputs/loyo_cv/comparison/loyo_report.html`](./outputs/loyo_cv/comparison/loyo_report.html)**
+is a self-contained (figures embedded, no external requests), print-ready Results-and-Discussion
+writeup that pairs each of the four analysis figures with academic-style interpretation — open it
+directly in a browser, or use the browser's Print → Save as PDF for a PDF copy.
+
 `loyo_cv_chronos2.py` extends the single-2022-split evaluation above to **11 held-out years**
 (2012-2022), using the same rolling-origin design as
 [`AELSTM/Code/loyo_cv_experiment.py`](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/Code/loyo_cv_experiment.py): a
