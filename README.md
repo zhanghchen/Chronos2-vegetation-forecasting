@@ -35,6 +35,7 @@ own pipeline reports internally, not for cross-model ranking.
 ```
 Chronos2-vegetation-forecasting/
 ├── README.md
+├── LOYO_CV_FINDINGS.md         <- LOYO-CV scientific analysis + Key Findings
 ├── requirements.txt
 ├── .gitignore
 ├── data/processed/sites/          <- copies of the 3 pixels' CSVs from the AELSTM project
@@ -48,7 +49,8 @@ Chronos2-vegetation-forecasting/
 │   ├── build_comparison.py        <- combined zero-shot/fine-tuned plots + naive comparison vs AELSTM
 │   ├── build_fair_comparison.py   <- corrected comparison vs. raw obs. + the all-methods summary figure
 │   ├── loyo_cv_chronos2.py        <- Leave-One-Year-Out CV: fixed 12y rolling window, 11 folds x 2 modes
-│   └── build_loyo_comparison.py   <- consolidates this project's + AELSTM's LOYO-CV results, all 10 methods
+│   ├── build_loyo_comparison.py   <- consolidates this project's + AELSTM's LOYO-CV results, all 10 methods
+│   └── loyo_scientific_analysis.py <- distribution stats, difficulty/outlier analysis, Key Findings figures
 └── outputs/
     ├── zero_shot/<pixel>/         <- predictions.csv, metrics.txt, prediction_plot.{png,pdf}
     ├── finetuned_lora/<pixel>/    <- same, for the LoRA fine-tuned model
@@ -125,6 +127,8 @@ python loyo_cv_chronos2.py --sites low_amplitude high_amplitude_deciduous evergr
 python build_loyo_comparison.py
 # -> outputs/loyo_cv/comparison/ (also reads AELSTM's outputs/loyo_cv/<pixel>/all_folds_metrics.csv,
 #    read-only, same as build_fair_comparison.py)
+python loyo_scientific_analysis.py
+# -> distribution/ranking/outlier-investigation figures + LOYO_CV_FINDINGS.md's underlying analysis
 ```
 
 ## Evaluation
@@ -135,6 +139,13 @@ MAPE, R², Pearson correlation. LOYO-CV additionally reports an anomaly correlat
 (ACC) against a per-fold day-of-year climatology built only from that fold's training years.
 
 ## Leave-One-Year-Out Cross-Validation (LOYO-CV)
+
+**See [`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md) for the full scientific analysis** — per-model
+distribution statistics (mean/median/std/min/max), which held-out years are consistently difficult
+and why (checked against the raw LAI/climate data), whether Chronos-2 holds up better on difficult
+years, cross-fold rank consistency, and a Key Findings summary. Built by
+`Code/loyo_scientific_analysis.py` from `outputs/loyo_cv/comparison/loyo_all_folds.csv` — run it
+after `build_loyo_comparison.py` to regenerate.
 
 `loyo_cv_chronos2.py` extends the single-2022-split evaluation above to **11 held-out years**
 (2012-2022), using the same rolling-origin design as
@@ -154,25 +165,17 @@ earlier fold years, that would silently evaluate against every subsequent year c
 just the target year. `loyo_cv_chronos2.py` has its own `build_chronos_inputs_loyo()` that restricts
 `future` to exactly `test_year` and `context` to exactly the 12-year window before it.
 
-Both zero-shot and LoRA fine-tuned are run per fold, so this is the first result in the project with
-genuine multi-year evidence on whether fine-tuning helps: it doesn't, consistently — LoRA scores
-lower than zero-shot in most folds — with one interesting nuance at `evergreen`, where LoRA's
-*median* fold performance edges out zero-shot even though its single worst fold (2012, see below) is
-also the worst of any method. See `outputs/loyo_cv/comparison/loyo_summary_mean_std.csv` (mean, std,
-*and* median per model/pixel — the median matters here) and
-[AELSTM's README, LOYO-CV section](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/README.md#leave-one-year-out-cross-validation-loyo-cv)
-for the full writeup, including the `evergreen`/2012 finding below.
+Both zero-shot and LoRA fine-tuned are run per fold, giving the first multi-year evidence in this
+project on whether fine-tuning helps overall: it doesn't, on average — but see
+[`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md) §4 for the more precise finding (fine-tuning is the
+single *most volatile* method across all 33 folds, not uniformly worse).
 
 **A finding this setup was specifically designed to catch**: at `evergreen`, every one of the 10
-methods (both variants here plus all 8 AELSTM-family models) collapses to strongly negative R² on
-the 2012 fold specifically, while every other held-out year looks normal. Checking the raw
-observations confirms a real cause, not a bug: 2012's actual LAI never reaches the seasonal peak
-the 2000-2011 training climatology expects (annual mean drops from 4.19 in 2011 to 2.69 in 2012,
-consistent with the 2011-2012 US Southeast drought) - every model, never having seen a comparable
-stress year, confidently predicts a normal season and gets it badly wrong. This is exactly the kind
-of year-specific failure a single fixed test year (2022, not anomalous for this pixel) could never
-reveal - report median alongside mean±std when citing LOYO-CV results, since one extreme fold
-dominates the mean (`loyo_mean_r2_bars.png` vs. `loyo_median_r2_bars.png` show this directly).
+methods collapses to strongly negative R² on the 2012 fold specifically (a real, raw-data-confirmed
+drought year), while `low_amplitude`'s 2018 fold fails for an entirely different reason (an erratic,
+non-seasonal LAI trajectory, not a climate-driver anomaly) — exactly the kind of year-specific
+failure a single fixed 2022 test year could never reveal. Full investigation, figures, and the
+complete Key Findings writeup: [`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md).
 
 ## Results at a glance
 
