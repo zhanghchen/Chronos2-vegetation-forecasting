@@ -1,0 +1,11 @@
+RMSE: 0.060578362122815324
+MAE: 0.04522162162595325
+MAPE: 20.420023674173006
+R2: 0.49982287862351615
+Pearson_r: 0.7429335688535939
+site: low_amplitude
+mode: finetuned_lora_improved
+learning_rate: 1e-05
+lora_rank: 8
+lora_alpha: 16
+num_steps: 100

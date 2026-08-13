@@ -1,0 +1,11 @@
+RMSE: 0.4889972694453181
+MAE: 0.4257852077484131
+MAPE: 13.857148343737022
+R2: 0.8294231257215209
+Pearson_r: 0.9320059959983032
+site: evergreen
+mode: finetuned_lora_improved
+learning_rate: 0.0001
+lora_rank: 16
+lora_alpha: 32
+num_steps: 400

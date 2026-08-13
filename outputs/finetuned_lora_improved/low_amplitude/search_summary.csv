@@ -1,0 +1,7 @@
+site,learning_rate,lora_rank,lora_alpha,best_step,best_eval_loss,steps_run,elapsed_sec
+low_amplitude,1e-05,8,16,100,0.6519970297813416,400,46.2
+low_amplitude,1e-05,4,8,200,0.6528176069259644,500,59.1
+low_amplitude,1e-05,16,32,100,0.6543865203857422,400,46.4
+low_amplitude,0.0001,4,8,100,0.6823705434799194,400,47.2
+low_amplitude,0.0001,8,16,100,0.699678897857666,400,46.5
+low_amplitude,0.0001,16,32,100,0.7032188177108765,400,46.6
