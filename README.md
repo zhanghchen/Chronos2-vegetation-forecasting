@@ -46,7 +46,9 @@ Chronos2-vegetation-forecasting/
 │   ├── plotting_utils.py          <- shared figure style (independent copy of AELSTM's conventions)
 │   ├── run_chronos2.py            <- zero-shot + LoRA fine-tuning + evaluation + per-run plots
 │   ├── build_comparison.py        <- combined zero-shot/fine-tuned plots + naive comparison vs AELSTM
-│   └── build_fair_comparison.py   <- corrected comparison vs. raw obs. + the all-methods summary figure
+│   ├── build_fair_comparison.py   <- corrected comparison vs. raw obs. + the all-methods summary figure
+│   ├── loyo_cv_chronos2.py        <- Leave-One-Year-Out CV: fixed 12y rolling window, 11 folds x 2 modes
+│   └── build_loyo_comparison.py   <- consolidates this project's + AELSTM's LOYO-CV results, all 10 methods
 └── outputs/
     ├── zero_shot/<pixel>/         <- predictions.csv, metrics.txt, prediction_plot.{png,pdf}
     ├── finetuned_lora/<pixel>/    <- same, for the LoRA fine-tuned model
@@ -58,11 +60,16 @@ Chronos2-vegetation-forecasting/
     ├── chronos2_vs_aelstm.csv     <- ⚠️ naive merge, AELSTM side uses its own smoothed-target metrics
     ├── fair_comparison_vs_raw_observations.csv   <- ✅ authoritative: everyone vs. the same raw obs.
     ├── fair_comparison_rank_consistency.csv      <- ✅ authoritative: rank per pixel + mean/std rank
-    └── final_comparison/<pixel>/all_methods_vs_raw_obs.{png,pdf}
-                                    <- ✅ one figure per pixel: raw observed LAI + all 8 AELSTM-family
-                                       models + Chronos-2 zero-shot + Chronos-2 LoRA fine-tuned, all
-                                       overlaid; plus final_comparison/all_methods_vs_raw_obs.csv
-                                       (every method's predictions + raw observations, all pixels)
+    ├── final_comparison/<pixel>/all_methods_vs_raw_obs.{png,pdf}
+    │                               <- ✅ one figure per pixel: raw observed LAI + all 8 AELSTM-family
+    │                                  models + Chronos-2 zero-shot + Chronos-2 LoRA fine-tuned, all
+    │                                  overlaid; plus final_comparison/all_methods_vs_raw_obs.csv
+    │                                  (every method's predictions + raw observations, all pixels)
+    └── loyo_cv/<pixel>/           <- fold_<year>_metrics.csv (11 per pixel, 2012-2022, zero-shot +
+        │                             LoRA) + all_folds_metrics.csv, all scored vs. raw observed LAI
+        └── comparison/            <- loyo_all_folds.csv (all 10 methods), loyo_summary_mean_std.csv,
+                                       loyo_rank_consistency_<pixel>.csv, and per-pixel R²-by-year /
+                                       heatmap / mean+median bar chart figures (see LOYO-CV section)
 ```
 
 ## Why this data format, not `predict_df`
@@ -109,11 +116,63 @@ history (hyperparameters taken directly from Amazon's own quickstart notebook: `
 input CSVs) to build the merged comparison tables — neither ever imports AELSTM code or writes
 into its directory.
 
+**LOYO-CV** (see the dedicated section below for the full design rationale):
+
+```bash
+python loyo_cv_chronos2.py --sites low_amplitude high_amplitude_deciduous evergreen
+# -> outputs/loyo_cv/<pixel>/fold_<year>_metrics.csv, ~2-2.5hr (LoRA fine-tuning dominates: ~11 folds x
+#    3 pixels x ~2-4 min/fine-tune; loads the pretrained model once and reuses it across every fold)
+python build_loyo_comparison.py
+# -> outputs/loyo_cv/comparison/ (also reads AELSTM's outputs/loyo_cv/<pixel>/all_folds_metrics.csv,
+#    read-only, same as build_fair_comparison.py)
+```
+
 ## Evaluation
 
 Same 5 metrics as AELSTM, computed with an identically-defined `MAPE` (percent error over rows
 where both true and predicted values are positive, matching AELSTM's `Cal_mape`): RMSE, MAE,
-MAPE, R², Pearson correlation.
+MAPE, R², Pearson correlation. LOYO-CV additionally reports an anomaly correlation coefficient
+(ACC) against a per-fold day-of-year climatology built only from that fold's training years.
+
+## Leave-One-Year-Out Cross-Validation (LOYO-CV)
+
+`loyo_cv_chronos2.py` extends the single-2022-split evaluation above to **11 held-out years**
+(2012-2022), using the same rolling-origin design as
+[`AELSTM/Code/loyo_cv_experiment.py`](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/Code/loyo_cv_experiment.py): a
+**fixed 12-year training window** immediately before each held-out year (not classic
+all-other-years LOYO, which would leak future years into a forecasting model, and not an expanding
+window, which would confound "hard year" with "how much training data this fold happened to get" -
+see
+[AELSTM's README, LOYO-CV section](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/README.md#leave-one-year-out-cross-validation-loyo-cv)
+for the full rationale). For held-out year *Y*, `target`/
+`past_covariates` = years *Y*-12..*Y*-1, `future_covariates`/evaluation target = year *Y* only.
+
+**One fix this required**: `common_pipeline.build_chronos_inputs()` computes
+`future = df.iloc[split_idx:]` - every row from the split point to the *end* of the dataframe, which
+is only correct because `test_year` is always 2022 there (the last year in the file). Looped over
+earlier fold years, that would silently evaluate against every subsequent year concatenated too, not
+just the target year. `loyo_cv_chronos2.py` has its own `build_chronos_inputs_loyo()` that restricts
+`future` to exactly `test_year` and `context` to exactly the 12-year window before it.
+
+Both zero-shot and LoRA fine-tuned are run per fold, so this is the first result in the project with
+genuine multi-year evidence on whether fine-tuning helps: it doesn't, consistently — LoRA scores
+lower than zero-shot in most folds — with one interesting nuance at `evergreen`, where LoRA's
+*median* fold performance edges out zero-shot even though its single worst fold (2012, see below) is
+also the worst of any method. See `outputs/loyo_cv/comparison/loyo_summary_mean_std.csv` (mean, std,
+*and* median per model/pixel — the median matters here) and
+[AELSTM's README, LOYO-CV section](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/README.md#leave-one-year-out-cross-validation-loyo-cv)
+for the full writeup, including the `evergreen`/2012 finding below.
+
+**A finding this setup was specifically designed to catch**: at `evergreen`, every one of the 10
+methods (both variants here plus all 8 AELSTM-family models) collapses to strongly negative R² on
+the 2012 fold specifically, while every other held-out year looks normal. Checking the raw
+observations confirms a real cause, not a bug: 2012's actual LAI never reaches the seasonal peak
+the 2000-2011 training climatology expects (annual mean drops from 4.19 in 2011 to 2.69 in 2012,
+consistent with the 2011-2012 US Southeast drought) - every model, never having seen a comparable
+stress year, confidently predicts a normal season and gets it badly wrong. This is exactly the kind
+of year-specific failure a single fixed test year (2022, not anomalous for this pixel) could never
+reveal - report median alongside mean±std when citing LOYO-CV results, since one extreme fold
+dominates the mean (`loyo_mean_r2_bars.png` vs. `loyo_median_r2_bars.png` show this directly).
 
 ## Results at a glance
 
@@ -127,3 +186,6 @@ raw observations, all 8 AELSTM-family models, and both Chronos-2 variants overla
 
 Headline result: Chronos-2 zero-shot is the best or tied-for-best model on all 3 pixels once
 graded fairly (mean rank 1.33/10) — but LoRA fine-tuning made it *worse* on all 3, consistently.
+**This is the single-2022-test-year result.** For evidence across 11 held-out years instead of one
+(including the `evergreen`/2012 drought-year finding a single test year could never reveal), see
+`outputs/loyo_cv/comparison/` and the **Leave-One-Year-Out Cross-Validation** section below.
