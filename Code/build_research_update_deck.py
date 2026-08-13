@@ -481,7 +481,112 @@ add_bullets(s, col2_left, top2 + Inches(0.5), col_w, Inches(5.0), [
     "Investigate why Chronos-2 (zero-shot and fine-tuned) underperforms specifically on sustained climate anomalies like the evergreen drought fold.",
 ], size=14.5, space_after=13, bullet_color=ACCENT)
 
+# ============================================================ SPEAKER NOTES
+# Conversational, oral delivery notes - not a restatement of the on-slide
+# bullets. One entry per slide, in slide order.
+SPEAKER_NOTES = [
+    # 1. Title
+    "Thanks everyone — today I want to walk through three follow-up studies I ran this week on top "
+    "of our AELSTM and Chronos-2 vegetation forecasting work. The short version: we now have a much "
+    "more robust evaluation, a clearer picture of which climate variables actually matter, and a fix "
+    "for something that was quietly hurting our fine-tuning results. Let's dive in.",
+    # 2. Recap
+    "Quick reminder before we get into the new stuff — we're still working with the same three "
+    "pixels representing very different vegetation types, from a sparse grassland to a dense "
+    "evergreen forest, and the same set of models: eight AELSTM-family baselines plus Chronos-2. "
+    "Everything I'm about to show builds directly on this same foundation, so nothing here changes "
+    "the setup, just how we evaluate it.",
+    # 3. Motivation
+    "So here's the problem I wanted to address first. Up to now, every result we've reported was "
+    "based on training through 2021 and testing on exactly one year, 2022. That's fine as far as it "
+    "goes, but it only tells us how the model did on one particular year — it doesn't tell us "
+    "whether that year was typical, lucky, or unlucky. And as it turns out, 2022 was actually a "
+    "pretty uneventful year at all three pixels, so we've never seen how these models handle a real "
+    "anomaly.",
+    # 4. LOYO-CV design
+    "So the fix is what I'm calling rolling-origin LOYO cross-validation. Instead of one fixed "
+    "split, we slide a 12-year training window forward one year at a time and test on whatever year "
+    "comes right after it — fold one trains on 2000 to 2011 and tests on 2012, fold two shifts "
+    "forward a year, and so on through 2022. That gives us 11 independent tests instead of one, and "
+    "keeping the window length fixed means we're isolating genuine year-to-year difficulty rather "
+    "than just seeing an effect of more or less training data.",
+    # 5. Main LOYO results
+    "Here's what that looks like in practice. Each box is one model's spread of R² across those 11 "
+    "years. At the deciduous forest pixel, every method is tightly clustered near the top — real "
+    "agreement across models. But look at the grassland and evergreen pixels — much wider spread, "
+    "and notice those isolated dots hanging way below every box. Those are single bad years, and "
+    "they're dragging the average down hard, which is exactly why we should be looking at the "
+    "median, not just the mean.",
+    # 6. Ranking consistency
+    "This chart answers a slightly different question — not how good is a model, but how "
+    "consistently good is it. Green is a top-three finish, red is bottom-three. Random Forest and "
+    "Chronos-2 zero-shot are the two bars on the left, and they're mostly green with very little "
+    "red — just reliably solid. The fine-tuned LoRA model is the interesting one — lots of green, "
+    "but also a lot of red. It's not consistently bad, it's just unpredictable, which matters later "
+    "in the talk.",
+    # 7. Outlier analysis
+    "I wanted to understand what was actually happening in those worst years, so I went back to the "
+    "raw satellite data. Turns out we have two completely different stories here. The evergreen "
+    "forest in 2012 was a real drought — the canopy never greened up the way it normally would, and "
+    "every model got fooled because none of them had seen a drought like that in training. The "
+    "grassland pixel in 2018 is different — climate was totally normal that year, but the "
+    "vegetation response was just erratic and noisy, which is easy to miss if you only look at one "
+    "test year.",
+    # 8. Part 1 takeaway
+    "So stepping back — the headline here is that a single test year can hide a lot. Performance "
+    "really depends on which pixel and which year you happen to look at, and the two models that "
+    "came out looking most dependable across the board were Random Forest and Chronos-2 zero-shot. "
+    "Worth noting though — Chronos-2's advantage shows up in normal years, not the drought year, so "
+    "it's not magic robustness to anomalies, it's just solid on average.",
+    # 9. Predictor ablation design
+    "Okay, switching gears — the second thing I looked at this week is which of our seven climate "
+    "variables actually matter. Testing every possible combination would be 128 different subsets, "
+    "which is neither practical nor interpretable, so I did this in two stages instead: first drop "
+    "one variable at a time and see what happens, then, based on what that showed us, test a "
+    "handful of specifically chosen combinations rather than a blind search.",
+    # 10. Predictor heatmap
+    "This heatmap is really the core result — each cell shows how much a model's R² changes when we "
+    "remove one predictor, broken out by pixel. The big takeaway is that this is messy in a good "
+    "way — removing the same variable can help one model and hurt another at the exact same pixel. "
+    "So there's no single universal ranking of what matters — it depends on both the model and the "
+    "location.",
+    # 11. Key findings Part 2
+    "If I had to boil it down to one number, solar radiation is the one variable that helps "
+    "everywhere, consistently — the closest thing we have to a universally important predictor. On "
+    "the other end, wind speed and precipitation turned out to be somewhat redundant — this chart "
+    "shows that dropping just those two actually improved average performance across all three "
+    "pixels. So there's a real case for simplifying our feature set.",
+    # 12. Why LoRA unsatisfactory
+    "Now, the third piece — and this one's a bit of a confession. When we first tried fine-tuning "
+    "Chronos-2 with LoRA, it consistently made things worse, and I wanted to understand why. Turns "
+    "out the way we originally set it up, the model just trained for a fixed number of steps with "
+    "no way to check whether it was still improving or already overfitting — it just used whatever "
+    "weights it happened to end up with.",
+    # 13. Improved design
+    "So I fixed that by holding out some of the pre-2022 data as a proper validation set, and "
+    "letting the model pick its own best checkpoint based on validation performance instead of "
+    "stopping at a fixed number. These curves tell a great story — at the grassland pixel, the "
+    "model overfits almost immediately, right at the first checkpoint, while at the other two "
+    "pixels you can actually see a clear sweet spot in the middle before it starts overfitting.",
+    # 14. Comparison
+    "So does this actually fix things? Mostly, yes. Look at the gap to zero-shot before and after — "
+    "at the grassland and evergreen pixels, the original fine-tuning was way behind zero-shot, and "
+    "the improved version closes almost all of that gap. It still doesn't quite beat zero-shot "
+    "outright on any pixel, but the takeaway is that most of what looked like a fundamental "
+    "weakness in fine-tuning was actually just a missing safety net in how we trained it.",
+    # 15. Overall conclusions
+    "So to wrap up — three things I'd want you to remember. One, don't trust a single test year, it "
+    "can hide real failure modes. Two, both model performance and predictor importance are very "
+    "pixel- and model-specific, so we should be cautious about one-size-fits-all conclusions. And "
+    "three, fine-tuning isn't hopeless, it just needs proper validation — though it's still not our "
+    "leading approach today. Happy to take questions, or we can dig into any of these in more detail.",
+]
+
+for slide, note in zip(prs.slides, SPEAKER_NOTES):
+    slide.notes_slide.notes_text_frame.text = note
+
 out_path = f"{ROOT}/Chronos2-vegetation-forecasting/Vegetation_Forecasting_Research_Update.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides.__iter__.__self__._sldIdLst))
+print("Speaker notes added:", len(SPEAKER_NOTES))
