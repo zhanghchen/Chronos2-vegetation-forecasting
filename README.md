@@ -199,6 +199,22 @@ non-seasonal LAI trajectory, not a climate-driver anomaly) — exactly the kind 
 failure a single fixed 2022 test year could never reveal. Full investigation, figures, and the
 complete Key Findings writeup: [`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md).
 
+## Leakage Diagnostic: is the evergreen/2012 LOYO-CV failure distribution shift or model limitation?
+
+**See [`LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md`](./LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md)** — the
+Chronos-2 counterpart to
+[AELSTM's leakage diagnostic](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/LEAKAGE_DIAGNOSTIC_REPORT.md),
+answering the same follow-up question (deliberate data leakage, **not** a valid evaluation protocol)
+specifically for Chronos-2: since zero-shot has no trainable weights, LoRA fine-tuning is the only
+way to let it "see" 2012 — `Code/leakage_diagnostic_2012_chronos2.py` fine-tunes on a window extended
+through 2012 (vs. the original 2000-2011-only window) using the exact same hyperparameters as
+`run_chronos2.finetune_pipeline()` (no new search), then evaluates both with the identical forecast
+call. **Finding**: RMSE drops 59.9% and R² improves from -8.29 to -0.50 once 2012 participates in
+LoRA fitting — the second-largest recovery of all 9 methods compared (behind only RF), landing
+Chronos-2 in the middle of the AELSTM-family pack rather than uniquely bad, which argues its original
+LOYO-CV failure is a generalization/distribution-shift problem rather than a Chronos-2-specific
+representational limitation. Results in `outputs/leakage_diagnostic_2012/`.
+
 ## Improved LoRA Fine-Tuning
 
 **See [`FINETUNE_IMPROVEMENT_REPORT.md`](./FINETUNE_IMPROVEMENT_REPORT.md) for the full design and
