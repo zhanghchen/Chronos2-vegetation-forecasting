@@ -1,0 +1,5 @@
+condition,R2,RMSE,Pearson_r
+"zero_shot (target-native, reference)",0.8883576305315872,0.2734507857563818,0.9481839723547428
+"LoRA, source-local (evergreen trained+tested there)",0.7121743574790728,,
+"LoRA, target-local (evergreen_west trained+tested there)",0.819436,,
+"LoRA, transfer (evergreen→evergreen_west, no retraining)",0.82281343378381,0.3444927202576779,0.9115677635907432

@@ -237,6 +237,20 @@ most of that damage is avoidable"** — see the report for the per-pixel selecte
 the train/validation loss curves showing exactly where each pixel starts overfitting (immediately,
 for `low_amplitude`), and the full three-way comparison against raw observations.
 
+## Spatial Transfer: Chronos-2 Trained on One Pixel, Deployed on Another
+
+**See [`SPATIAL_TRANSFER_REPORT_CHRONOS2.md`](./SPATIAL_TRANSFER_REPORT_CHRONOS2.md)** — the Chronos-2
+counterpart to
+[AELSTM's spatial-transfer diagnostic](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/SPATIAL_TRANSFER_REPORT.md),
+which found most AELSTM-family models (especially the flagship AELSTM model) lose substantial R² when
+trained on one evergreen-forest pixel and deployed on another, ~3,700km away
+(`evergreen_west`, extracted the same way as every other site). `Code/spatial_transfer_chronos2.py`
+LoRA-fine-tunes on `evergreen`'s full 2000-2022 series, then evaluates using `evergreen_west`'s own
+context and real 2022 climate — no new hyperparameter search. **Finding**: R² = 0.823, essentially
+identical to (fractionally *exceeding*) LoRA trained directly on the target pixel (R² = 0.819) — the
+best spatial generalization of any of the 9 methods compared, in sharp contrast to AELSTM's collapse
+to negative R² under the same test. Results in `outputs/spatial_transfer/`.
+
 ## Predictor Sensitivity / Ablation Study
 
 **See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and
