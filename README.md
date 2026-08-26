@@ -251,6 +251,25 @@ identical to (fractionally *exceeding*) LoRA trained directly on the target pixe
 best spatial generalization of any of the 9 methods compared, in sharp contrast to AELSTM's collapse
 to negative R² under the same test. Results in `outputs/spatial_transfer/`.
 
+## Advanced Fine-Tuning: Can Better PEFT Methods Beat Zero-Shot?
+
+**See [`CHRONOS2_ADVANCED_FINETUNING_REPORT.md`](./CHRONOS2_ADVANCED_FINETUNING_REPORT.md)** for the full
+literature review, design, and results. Follow-up to the LoRA/improved-LoRA fine-tuning work above:
+tests 6 additional PEFT methods (DoRA, VeRA, IA3, LN-Tuning, BitFit, partial-last-block fine-tuning),
+selected from a literature review of ICLR/ICML/NeurIPS 2022-2025 and cross-checked for actual Chronos-2
+compatibility by reading the pipeline source directly (`Code/advanced_finetuning_core.py` generalizes
+the public `fit()` API, which is hardcoded to LoRA, to any `peft.PeftConfig`). Same validated protocol
+as `finetune_lora_improved.py` (chronological validation folds, early stopping, test set never touches
+hyperparameter selection), equal-sized 4-config search budget per method.
+
+**Finding: no. Zero-shot remains the best method overall** (mean R²=0.780 across 9 methods x 3 pixels);
+only one method/pixel combination (DoRA on `evergreen`) beats zero-shot at all, and IA3 / last-block
+partial fine-tuning are the closest safe alternatives (~-0.01 to -0.02 mean R² vs. zero-shot). A
+concrete failure mode was found and documented: BitFit achieved the *best* validation loss of all 24
+evergreen configs tested, yet the *worst* test R² - a case of validation loss not predicting test
+performance without classic overfitting (train/val curves look normal). Results in
+`outputs/advanced_finetuning/`.
+
 ## Predictor Sensitivity / Ablation Study
 
 **See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and

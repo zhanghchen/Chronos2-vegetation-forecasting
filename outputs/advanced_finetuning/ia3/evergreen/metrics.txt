@@ -1,0 +1,14 @@
+RMSE: 0.4960530552714098
+MAE: 0.4311176988813612
+MAPE: 14.232989284580476
+R2: 0.8244650735542943
+Pearson_r: 0.9259882162943663
+site: evergreen
+method: ia3
+mode: advanced_ia3
+num_steps: 100
+n_trainable: 73728
+n_total: 119551392
+train_time_sec: 9.0
+peak_mem_mb: 2816.4
+learning_rate: 0.01

@@ -1,0 +1,14 @@
+RMSE: 0.058969365649107534
+MAE: 0.04289127273692025
+MAPE: 19.080113241919175
+R2: 0.5260400110061247
+Pearson_r: 0.7496631255153953
+site: low_amplitude
+method: partial_last_block
+mode: advanced_partial_last_block
+num_steps: 300
+n_trainable: 13093536
+n_total: 119477664
+train_time_sec: 15.1
+peak_mem_mb: 1961.6
+learning_rate: 1e-06

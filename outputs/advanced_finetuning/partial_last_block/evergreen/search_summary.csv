@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+evergreen,partial_last_block,0.0001,100,0.6472128629684448,400,24.2,13093536,119477664,1961.9
+evergreen,partial_last_block,1e-05,900,0.6618537902832031,1000,59.4,13093536,119477664,1795.8
+evergreen,partial_last_block,1e-06,100,0.6635357141494751,400,24.2,13093536,119477664,1482.1
+evergreen,partial_last_block,0.001,400,0.6964401006698608,700,42.0,13093536,119477664,1961.9

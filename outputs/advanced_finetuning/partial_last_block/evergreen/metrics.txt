@@ -1,0 +1,14 @@
+RMSE: 0.5173442078530629
+MAE: 0.4562326166364882
+MAPE: 14.658253843164628
+R2: 0.80907338796751
+Pearson_r: 0.9239836605515377
+site: evergreen
+method: partial_last_block
+mode: advanced_partial_last_block
+num_steps: 100
+n_trainable: 13093536
+n_total: 119477664
+train_time_sec: 5.2
+peak_mem_mb: 1961.9
+learning_rate: 0.0001

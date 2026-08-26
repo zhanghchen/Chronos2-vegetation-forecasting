@@ -1,0 +1,14 @@
+RMSE: 0.05880546409138642
+MAE: 0.04237424747811423
+MAPE: 18.95358268161248
+R2: 0.5286710321302133
+Pearson_r: 0.752809720744577
+site: low_amplitude
+method: ia3
+mode: advanced_ia3
+num_steps: 300
+n_trainable: 73728
+n_total: 119551392
+train_time_sec: 28.8
+peak_mem_mb: 2823.2
+learning_rate: 0.0001

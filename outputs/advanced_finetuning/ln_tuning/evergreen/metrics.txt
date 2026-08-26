@@ -1,0 +1,14 @@
+RMSE: 0.5179475119215988
+MAE: 0.44078122774759926
+MAPE: 14.505449353464856
+R2: 0.808627827882084
+Pearson_r: 0.9127418856679489
+site: evergreen
+method: ln_tuning
+mode: advanced_ln_tuning
+num_steps: 100
+n_trainable: 28416
+n_total: 119506080
+train_time_sec: 7.8
+peak_mem_mb: 2530.4
+learning_rate: 0.1

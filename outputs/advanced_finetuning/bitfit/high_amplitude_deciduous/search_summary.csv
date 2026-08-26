@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+high_amplitude_deciduous,bitfit,0.0001,100,0.17094774544239044,400,33.7,8352,119477664,2238.7
+high_amplitude_deciduous,bitfit,0.001,200,0.1803864985704422,500,42.0,8352,119477664,2725.0
+high_amplitude_deciduous,bitfit,0.01,300,0.19480526447296143,600,50.6,8352,119477664,2741.0
+high_amplitude_deciduous,bitfit,0.1,300,1.0737076997756958,600,50.1,8352,119477664,2734.5

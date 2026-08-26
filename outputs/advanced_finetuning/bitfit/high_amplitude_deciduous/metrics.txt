@@ -1,0 +1,14 @@
+RMSE: 0.38422519890128765
+MAE: 0.25885483423868816
+MAPE: 14.498748213808533
+R2: 0.9630856437980889
+Pearson_r: 0.9819385030516619
+site: high_amplitude_deciduous
+method: bitfit
+mode: advanced_bitfit
+num_steps: 100
+n_trainable: 8352
+n_total: 119477664
+train_time_sec: 7.5
+peak_mem_mb: 2328.9
+learning_rate: 0.0001

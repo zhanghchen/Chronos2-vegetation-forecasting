@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+evergreen,bitfit,0.01,300,0.5620794892311096,600,56.9,8352,119477664,2720.8
+evergreen,bitfit,0.001,200,0.6462398767471313,500,47.6,8352,119477664,2720.6
+evergreen,bitfit,0.0001,100,0.6553584337234497,400,39.0,8352,119477664,2224.3
+evergreen,bitfit,0.1,500,1.0344913005828857,800,75.9,8352,119477664,2721.0

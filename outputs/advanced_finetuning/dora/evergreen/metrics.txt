@@ -1,0 +1,15 @@
+RMSE: 0.4812793596196259
+MAE: 0.4181463188595242
+MAPE: 13.658346440351195
+R2: 0.8347651093739755
+Pearson_r: 0.9333409699513532
+site: evergreen
+method: dora
+mode: advanced_dora
+num_steps: 400
+n_trainable: 2487888
+n_total: 121965552
+train_time_sec: 63.4
+peak_mem_mb: 3292.6
+learning_rate: 0.0001
+rank: 16

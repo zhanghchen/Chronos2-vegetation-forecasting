@@ -1,0 +1,14 @@
+RMSE: 0.39310097180528697
+MAE: 0.2688356770409478
+MAPE: 14.125792201330034
+R2: 0.9613604690928251
+Pearson_r: 0.9807424486331405
+site: high_amplitude_deciduous
+method: ln_tuning
+mode: advanced_ln_tuning
+num_steps: 200
+n_trainable: 28416
+n_total: 119506080
+train_time_sec: 15.2
+peak_mem_mb: 2523.1
+learning_rate: 0.01

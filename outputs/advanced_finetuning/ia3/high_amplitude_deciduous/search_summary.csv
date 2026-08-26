@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+high_amplitude_deciduous,ia3,0.01,1000,0.1532200574874878,1000,87.0,73728,119551392,3200.2
+high_amplitude_deciduous,ia3,0.001,100,0.16630390286445618,400,35.2,73728,119551392,3191.5
+high_amplitude_deciduous,ia3,0.0001,900,0.1698838174343109,1000,87.0,73728,119551392,2707.3
+high_amplitude_deciduous,ia3,0.1,200,0.1756952404975891,500,43.6,73728,119551392,3196.9

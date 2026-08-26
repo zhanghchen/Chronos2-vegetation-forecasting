@@ -1,0 +1,5 @@
+site,method,learning_rate,rank,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+high_amplitude_deciduous,dora,0.0001,8,800,0.1629786342382431,1000,162.1,1280976,120758640,3622.2
+high_amplitude_deciduous,dora,0.0001,16,200,0.16299086809158325,500,81.5,2487888,121965552,3632.5
+high_amplitude_deciduous,dora,1e-05,16,100,0.1700020730495453,400,65.5,2487888,121965552,3640.8
+high_amplitude_deciduous,dora,1e-05,8,200,0.1707840859889984,500,81.3,1280976,120758640,3117.7

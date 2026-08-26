@@ -1,0 +1,5 @@
+site,method,learning_rate,rank,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+high_amplitude_deciduous,vera,0.001,256,200,0.17026522755622864,500,63.1,98896,119576560,3178.2
+high_amplitude_deciduous,vera,0.001,1024,100,0.17029619216918945,400,54.5,173392,119651056,3725.1
+high_amplitude_deciduous,vera,0.0001,256,300,0.17157243192195892,600,67.8,98896,119576560,2663.9
+high_amplitude_deciduous,vera,0.0001,1024,100,0.171747088432312,400,54.8,173392,119651056,3707.2

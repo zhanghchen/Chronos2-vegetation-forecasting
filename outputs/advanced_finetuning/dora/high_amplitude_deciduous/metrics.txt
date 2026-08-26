@@ -1,0 +1,15 @@
+RMSE: 0.4615311253278303
+MAE: 0.3004182736078898
+MAPE: 16.032059276838794
+R2: 0.9467370029416811
+Pearson_r: 0.9737653653771677
+site: high_amplitude_deciduous
+method: dora
+mode: advanced_dora
+num_steps: 800
+n_trainable: 1280976
+n_total: 120758640
+train_time_sec: 127.1
+peak_mem_mb: 3275.6
+learning_rate: 0.0001
+rank: 8

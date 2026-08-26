@@ -1,0 +1,14 @@
+RMSE: 0.760722438422594
+MAE: 0.6233779854244657
+MAPE: 19.04795799431852
+R2: 0.5871809435767543
+Pearson_r: 0.8604697670414971
+site: evergreen
+method: bitfit
+mode: advanced_bitfit
+num_steps: 300
+n_trainable: 8352
+n_total: 119477664
+train_time_sec: 24.8
+peak_mem_mb: 2316.9
+learning_rate: 0.01

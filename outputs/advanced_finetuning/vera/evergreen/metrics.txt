@@ -1,0 +1,15 @@
+RMSE: 0.5405901549572223
+MAE: 0.47622022098965117
+MAPE: 15.211475128314877
+R2: 0.791530008683923
+Pearson_r: 0.9225584747584011
+site: evergreen
+method: vera
+mode: advanced_vera
+num_steps: 100
+n_trainable: 173392
+n_total: 119651056
+train_time_sec: 14.3
+peak_mem_mb: 3365.0
+learning_rate: 0.001
+rank: 1024

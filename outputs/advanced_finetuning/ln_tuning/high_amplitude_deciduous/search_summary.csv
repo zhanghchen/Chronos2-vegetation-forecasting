@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+high_amplitude_deciduous,ln_tuning,0.01,200,0.16769644618034363,500,37.9,28416,119506080,2929.4
+high_amplitude_deciduous,ln_tuning,0.001,200,0.1685367226600647,500,37.9,28416,119506080,2917.6
+high_amplitude_deciduous,ln_tuning,0.0001,200,0.16946858167648315,500,37.8,28416,119506080,2424.3
+high_amplitude_deciduous,ln_tuning,0.1,300,0.2132428139448166,600,45.3,28416,119506080,2926.9

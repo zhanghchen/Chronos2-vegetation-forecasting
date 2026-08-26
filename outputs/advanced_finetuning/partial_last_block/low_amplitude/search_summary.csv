@@ -1,0 +1,5 @@
+site,method,learning_rate,best_step,best_eval_loss,steps_run,elapsed_sec,n_trainable,n_total,peak_mem_mb
+low_amplitude,partial_last_block,1e-06,300,0.6494042277336121,600,35.9,13093536,119477664,1481.3
+low_amplitude,partial_last_block,1e-05,100,0.6614384055137634,400,23.9,13093536,119477664,1795.4
+low_amplitude,partial_last_block,0.0001,100,0.6805120706558228,400,24.0,13093536,119477664,1961.6
+low_amplitude,partial_last_block,0.001,200,0.6966984272003174,500,29.9,13093536,119477664,1961.6

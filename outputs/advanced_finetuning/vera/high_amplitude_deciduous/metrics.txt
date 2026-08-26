@@ -1,0 +1,15 @@
+RMSE: 0.37752549951841885
+MAE: 0.26583102809058295
+MAPE: 15.193165897056382
+R2: 0.964361764598884
+Pearson_r: 0.9830129820316772
+site: high_amplitude_deciduous
+method: vera
+mode: advanced_vera
+num_steps: 200
+n_trainable: 98896
+n_total: 119576560
+train_time_sec: 25.2
+peak_mem_mb: 2773.3
+learning_rate: 0.001
+rank: 256
