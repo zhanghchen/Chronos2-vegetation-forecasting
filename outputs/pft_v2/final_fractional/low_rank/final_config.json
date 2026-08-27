@@ -1,0 +1,11 @@
+{
+  "arch": "low_rank",
+  "val_loss": 0.3465285698572795,
+  "val_r2": 0.832139273484548,
+  "step": 20,
+  "lr": 0.001,
+  "n_params": 12600,
+  "screen_time_sec": 579.6,
+  "n_final_steps": 21,
+  "train_time_sec": 28.8
+}

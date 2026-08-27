@@ -1,0 +1,9 @@
+method,phase,rmse
+fractional,dormant,0.1321296891528622
+fractional,green_up,0.1729363144628214
+fractional,peak,0.24358177577202028
+fractional,senescence,0.2002311032858747
+shuffled,dormant,0.13215989660935532
+shuffled,green_up,0.17283483830193844
+shuffled,peak,0.24360245912413342
+shuffled,senescence,0.20048451032600034

@@ -1,0 +1,2 @@
+mean_delta_real_minus_shuffled,std_delta,paired_ttest_p,wilcoxon_p,n_pixels_real_better,n_pixels_shuffled_better,n_pixels_tied,n_total
+-0.00016566677646988285,0.0011744326239183595,0.24533096118347747,0.6628457224199104,31,39,0,70

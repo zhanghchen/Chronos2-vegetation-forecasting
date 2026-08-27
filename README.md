@@ -315,6 +315,29 @@ notably erratic (not smooth), flagging that even where PFT can be learned, this 
 constrain the joint climate-vegetation interaction well. Recommended next step: more rolling training-year
 windows per pixel, not more pixels or architecture changes. Results in `outputs/pft_multipixel/`.
 
+## PFT-v2: An Open Search for a Working PFT Method, and a Decisive Negative Control
+
+**See [`CHRONOS2_PFT_V2_REPORT.md`](./CHRONOS2_PFT_V2_REPORT.md)** for the full research log and results.
+Direct, open-ended follow-up to the multi-pixel study above: rather than assume more training windows would
+fix the overfitting, this screens 4 architecturally distinct PFT-conditioning mechanisms (the original deep
+MLP FiLM, a regularized/smaller version, a biologically-structured "linear mixture of per-class response
+vectors" implementing `Response = Σ p_c · response_c(climate)`, and a rank-8-bottleneck FiLM) on 4x more
+temporal supervision (8 pre-2022 rolling training windows, 3 held-out validation windows), then adds the
+critical missing control: a model trained on **randomly shuffled PFT-to-pixel assignments**.
+
+**Finding: 3 of 4 architectures still overfit within the first training step even with 4x more windows,
+ruling out "too little data" as a sufficient explanation on its own.** The 4th (rank-8 bottleneck) trained
+for 20-21 real steps and improved 2022 R² by +0.0022 over zero-shot - but the shuffled-PFT control, trained
+identically on scientifically meaningless input, improved by +0.0024, statistically indistinguishable from
+the real result (paired t-test p=0.245, n=70 pixels; 31/70 pixels favored real PFT, 39/70 favored shuffled -
+a coin flip). Fractional vs. dominant PFT, mixed-vs-pure entropy correlation, and a seasonal-phase RMSE
+breakdown all showed no shuffle-surviving signal either. Combined with this project's own prior finding that
+no PEFT method beats zero-shot Chronos-2 on this dataset (`CHRONOS2_ADVANCED_FINETUNING_REPORT.md`), the
+most parsimonious explanation is that pretrained zero-shot Chronos-2 is already near this dataset's
+achievable ceiling, and any small amount of gradient-trained conditioning capacity nudges predictions by a
+similar, generic amount regardless of what information drives it - not a PFT-specific failure. Results in
+`outputs/pft_v2/`.
+
 ## Predictor Sensitivity / Ablation Study
 
 **See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and
