@@ -289,6 +289,32 @@ that a single-pixel, constant-covariate design cannot deliver the signal to this
 multi-pixel setup (where PFT genuinely varies across training rows) is recommended as the next test.
 Results in `outputs/pft_ablation/`.
 
+## Multi-Pixel PFT Conditioning: Architecture-Level Fix + Pooled Training
+
+**See [`CHRONOS2_PFT_MULTIPIXEL_REPORT.md`](./CHRONOS2_PFT_MULTIPIXEL_REPORT.md)** for the full design and
+results. Direct follow-up to the PFT ablation above: since a single-pixel constant PFT covariate is
+architecturally erased, this redesigns the experiment so PFT genuinely varies *across* 70 diverse pooled
+pixels, and adds a minimal architecture modification - a small FiLM-conditioning MLP (100K new params,
+0.084% of the model) injected into the target row's forecast hidden states, base model (119.5M params)
+completely frozen - so PFT can reach the model at all. Verified this is necessary (pooling alone does not
+fix InstanceNorm's per-row erasure) and verified the fix works (a 16-pixel smoke test showed a large,
+structured perturbation response after just 30 steps) before running the full experiment: temporal holdout
+(train+test on all 70 pixels) and spatial holdout (train on 55, test on 15 entirely unseen pixels), each
+for dominant and fractional PFT representations, with a genuinely held-out validation year selecting the
+training budget via early stopping.
+
+**Finding: validation consistently selected ~1 training step for all 4 conditions** - search curves show
+validation loss rising monotonically from step 0 at every learning rate tested, meaning the properly
+validated model is statistically indistinguishable from an untrained one (all |ΔR²| vs. baseline ≤ 0.002
+in both experiments). This is not an architecture failure: a deliberately-overfit checkpoint (150 steps,
+bypassing validation) shows the same large, smooth PFT sensitivity as the smoke test (max Δprediction up
+to 0.63 LAI units), confirming the FiLM mechanism works - there simply isn't enough genuine training-year
+diversity (2 rolling year-transitions) for a validated model to learn a signal that survives held-out
+selection rather than overfitting to those 2 years. Climate x PFT response curves on the overfit model are
+notably erratic (not smooth), flagging that even where PFT can be learned, this protocol doesn't yet
+constrain the joint climate-vegetation interaction well. Recommended next step: more rolling training-year
+windows per pixel, not more pixels or architecture changes. Results in `outputs/pft_multipixel/`.
+
 ## Predictor Sensitivity / Ablation Study
 
 **See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and

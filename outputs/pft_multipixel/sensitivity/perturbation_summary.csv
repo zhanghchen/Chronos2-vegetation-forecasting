@@ -1,0 +1,7 @@
+pixel_id,model,max_abs_diff
+evergreen,validated_1step,0.011141300201416016
+evergreen,overfit_150step,0.546879768371582
+mixed_forest_grass,validated_1step,0.011153340339660645
+mixed_forest_grass,overfit_150step,0.6293416023254395
+low_amplitude,validated_1step,0.0008054673671722412
+low_amplitude,overfit_150step,0.04179978370666504

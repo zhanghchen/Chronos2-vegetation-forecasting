@@ -1,0 +1,7 @@
+{
+  "lr": 0.001,
+  "best_step": 0,
+  "n_final_steps": 1,
+  "val_loss": 0.36049768328666687,
+  "train_time_sec": 1.8
+}
