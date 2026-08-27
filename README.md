@@ -270,6 +270,25 @@ evergreen configs tested, yet the *worst* test R² - a case of validation loss n
 performance without classic overfitting (train/val curves look normal). Results in
 `outputs/advanced_finetuning/`.
 
+## PFT Ablation: Is Chronos-2 Sensitive to Vegetation Composition?
+
+**See [`CHRONOS2_PFT_ABLATION_REPORT.md`](./CHRONOS2_PFT_ABLATION_REPORT.md)** for the full design and
+results (companion to the AELSTM project's own PFT ablation across its 8 models). Tests whether feeding
+ESA CCI Plant Functional Type (PFT) fractional cover as a time-aligned zero-shot covariate (broadcast
+constant per year, per Chronos-2's verified lack of a native static-covariate slot) changes the 2022
+forecast, across 4 pixels (3 reused + 1 new genuinely-mixed pixel) and a direct perturbation/sensitivity
+diagnostic (5 synthetic forest/grass compositions, real climate/LAI context held fixed).
+
+**Finding: Chronos-2's zero-shot pathway is architecturally, provably insensitive to a per-pixel-constant
+covariate.** Direct inspection of `src/chronos/chronos2/model.py`'s InstanceNorm shows each covariate is
+normalized by its *own* per-series statistics; a constant covariate has std=0, which the implementation
+replaces with `scale=eps`, erasing the value to exactly 0 regardless of what it was. The perturbation
+diagnostic confirms this empirically: prediction differences across all 5 synthetic PFT compositions are
+**exactly 0.00000000** for both pixels tested. This is not evidence PFT is biologically irrelevant - only
+that a single-pixel, constant-covariate design cannot deliver the signal to this architecture. A pooled,
+multi-pixel setup (where PFT genuinely varies across training rows) is recommended as the next test.
+Results in `outputs/pft_ablation/`.
+
 ## Predictor Sensitivity / Ablation Study
 
 **See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and

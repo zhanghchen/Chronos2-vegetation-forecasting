@@ -1,0 +1,8 @@
+RMSE: 0.3258699738485807
+MAE: 0.1736695693598853
+MAPE: 23.00694535491063
+R2: 0.9332121515335493
+Pearson_r: 0.9705503978464686
+site: mixed_forest_grass
+condition: baseline
+n_pft_cols: 0

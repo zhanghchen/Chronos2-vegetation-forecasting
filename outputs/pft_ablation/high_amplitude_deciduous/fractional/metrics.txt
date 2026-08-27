@@ -1,0 +1,8 @@
+RMSE: 0.3667198280979518
+MAE: 0.24737301137712267
+MAPE: 14.027738143110183
+R2: 0.9663726692776377
+Pearson_r: 0.9838886458945717
+site: high_amplitude_deciduous
+condition: fractional
+n_pft_cols: 3

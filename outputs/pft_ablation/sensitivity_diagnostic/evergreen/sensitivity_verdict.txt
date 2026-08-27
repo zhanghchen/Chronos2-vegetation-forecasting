@@ -1,0 +1,5 @@
+site: evergreen
+swept_axis: TREES_NE vs GRASS_NAT (other tree class fixed at 0)
+max_abs_prediction_diff_across_5_compositions: 0.00000000
+as_pct_of_observed_LAI_range: 0.0000%
+verdict: NO SENSITIVITY (predictions identical/near-identical)
