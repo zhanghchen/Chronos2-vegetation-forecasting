@@ -1,0 +1,47 @@
+% Table 2: Zero-shot Chronos-2 vs. 8 supervised baselines, single 2022 held-out year
+% Source (verified against CSV during audit): outputs/fair_comparison_vs_raw_observations.csv
+\begin{table*}[t]
+\centering
+\caption{Zero-shot Chronos-2 vs.\ eight supervised baselines, single 2022 held-out year, all
+methods scored against raw (unsmoothed) observed LAI. Baselines are trained from scratch per
+pixel on past climate only; Chronos-2 additionally receives the actual future climate as a known
+covariate (see \S\ref{sec:results-comparison} for the resulting interpretive caveat). Only the
+top-2 and bottom-2-ranked methods per pixel are shown for space; the full 10-method table is
+provided in the project repository. Bold: best result per pixel.}
+\label{tab:main_comparison}
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Pixel & Model & RMSE & MAE & MAPE (\%) & R$^2$ & Pearson $r$ & Rank (of 10) \\
+\midrule
+\multirow{4}{*}{\texttt{low\_amplitude}}
+ & \textbf{Zero-shot Chronos-2} & \textbf{0.0580} & \textbf{0.0396} & 17.94 & \textbf{0.542} & 0.760 & \textbf{1} \\
+ & SVM & 0.0627 & 0.0464 & 21.11 & 0.465 & 0.719 & 2 \\
+ & LoRA fine-tuned Chronos-2 & 0.0675 & 0.0530 & 20.61 & 0.379 & 0.649 & 7 \\
+ & AELSTM & 0.0683 & 0.0487 & 23.15 & 0.365 & 0.749 & 8 \\
+\midrule
+\multirow{4}{*}{\texttt{high\_amplitude\_deciduous}}
+ & \textbf{Zero-shot Chronos-2} & \textbf{0.372} & \textbf{0.246} & 14.14 & \textbf{0.965} & 0.984 & \textbf{1} \\
+ & GRU & 0.393 & 0.286 & 14.44 & 0.961 & 0.982 & 2 \\
+ & LoRA fine-tuned Chronos-2 & 0.439 & 0.286 & 16.05 & 0.952 & 0.976 & 6 \\
+ & AELSTM & 0.513 & 0.333 & 17.81 & 0.934 & 0.967 & 10 \\
+\midrule
+\multirow{4}{*}{\texttt{evergreen}}
+ & SVM & \textbf{0.4849} & 0.361 & 12.14 & \textbf{0.832} & 0.915 & 1 \\
+ & Zero-shot Chronos-2 & 0.4850 & 0.426 & 14.02 & 0.832 & 0.930 & 2 \\
+ & LoRA fine-tuned Chronos-2 & 0.635 & 0.531 & 16.53 & 0.712 & 0.878 & 6 \\
+ & AELSTM & 0.668 & 0.526 & 18.12 & 0.681 & 0.846 & 9 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{tabular}{@{}lrr@{}}
+\multicolumn{3}{l}{\textit{Mean rank across all 3 pixels (of 10 methods), most consistent methods only}} \\
+\toprule
+Model & Mean rank & Std.\ dev.\ \\
+\midrule
+\textbf{Zero-shot Chronos-2} & \textbf{1.33} & \textbf{0.58} \\
+Random Forest & 3.00 & 0.00 \\
+AELSTM (published architecture) & 9.00 & 1.00 \\
+\bottomrule
+\end{tabular}
+\end{table*}

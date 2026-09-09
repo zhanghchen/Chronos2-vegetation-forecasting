@@ -1,0 +1,178 @@
+% ============================================================================
+% references.bib
+% Deliverable C (LaTeX-version request) -- BibTeX template.
+%
+% Entries are grouped into two tiers:
+%   TIER 1 -- verified: copied verbatim from an authoritative source found in
+%     this session (the amazon-science/chronos-forecasting repository's own
+%     README, or a project report's own literature review that quoted a real
+%     paper title + venue + arXiv ID). Author lists for the PEFT-method papers
+%     (LoRA, DoRA, VeRA, IA3, BitFit, FiLM) are supplied from general
+%     knowledge of these well-known, canonical papers, NOT independently
+%     re-fetched from arXiv in this session -- verify author order and exact
+%     title against the paper before submission (marked with a VERIFY comment).
+%   TIER 2 -- placeholder stubs: NO fabricated bibliographic fields. Only a
+%     cite key and a comment describing what needs to be found. Do not fill
+%     these in without checking the actual source.
+% ============================================================================
+
+% ---------------------------------------------------------------------------
+% TIER 1: verified in this session
+% ---------------------------------------------------------------------------
+
+% Verbatim from amazon-science/chronos-forecasting/README.md (this repository).
+@article{ansari2024chronos,
+  title   = {Chronos: Learning the Language of Time Series},
+  author  = {Ansari, Abdul Fatir and Stella, Lorenzo and Turkmen, Caner and Zhang, Xiyuan and Mercado, Pedro and Shen, Huibin and Shchur, Oleksandr and Rangapuram, Syama Sundar and Pineda Arango, Sebastian and Kapoor, Shubham and Zschiegner, Jasper and Maddix, Danielle C. and Mahoney, Michael W. and Torkkola, Kari and Gordon Wilson, Andrew and Bohlke-Schneider, Michael and Wang, Yuyang},
+  journal = {Transactions on Machine Learning Research},
+  issn    = {2835-8856},
+  year    = {2024},
+  url     = {https://openreview.net/forum?id=gerNCVqqtR}
+}
+
+% Verbatim from amazon-science/chronos-forecasting/README.md (this repository).
+@article{ansari2025chronos2,
+  title   = {Chronos-2: From Univariate to Universal Forecasting},
+  author  = {Ansari, Abdul Fatir and Shchur, Oleksandr and K{\"u}ken, Jaris and Auer, Andreas and Han, Boran and Mercado, Pedro and Rangapuram, Syama Sundar and Shen, Huibin and Stella, Lorenzo and Zhang, Xiyuan and Goswami, Mononito and Kapoor, Shubham and Maddix, Danielle C. and Guerron, Pablo and Hu, Tony and Yin, Junming and Erickson, Nick and Mutalik Desai, Prateek and Wang, Hao and Rangwala, Huzefa and Karypis, George and Wang, Yuyang and Bohlke-Schneider, Michael},
+  journal = {arXiv preprint arXiv:2510.15821},
+  year    = {2025},
+  url     = {https://arxiv.org/abs/2510.15821}
+}
+
+% VERIFY: author list from general knowledge of this well-known paper, not
+% re-fetched in this session. arXiv ID and venue are correct as cited in
+% CHRONOS2_ADVANCED_FINETUNING_REPORT.md's literature review.
+@inproceedings{hu2022lora,
+  title     = {LoRA: Low-Rank Adaptation of Large Language Models},
+  author    = {Hu, Edward J. and Shen, Yelong and Wallis, Phillip and Allen-Zhu, Zeyuan and Li, Yuanzhi and Wang, Shean and Wang, Lu and Chen, Weizhu},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2022},
+  note      = {VERIFY before submission}
+}
+
+% VERIFY: title/author list from general knowledge; arXiv ID and venue
+% (ICML 2024 Oral) confirmed in CHRONOS2_ADVANCED_FINETUNING_REPORT.md.
+@inproceedings{liu2024dora,
+  title     = {DoRA: Weight-Decomposed Low-Rank Adaptation},
+  author    = {Liu, Shih-Yang and Wang, Chien-Yi and Yin, Hongxu and Molchanov, Pavlo and Wang, Yu-Chiang Frank and Cheng, Kwang-Ting and Chen, Min-Hung},
+  booktitle = {International Conference on Machine Learning (ICML)},
+  year      = {2024},
+  note      = {Oral presentation. arXiv:2402.09353. VERIFY before submission}
+}
+
+% VERIFY: title/author list from general knowledge; arXiv ID and venue
+% confirmed in CHRONOS2_ADVANCED_FINETUNING_REPORT.md.
+@inproceedings{kopiczko2024vera,
+  title     = {VeRA: Vector-based Random Matrix Adaptation},
+  author    = {Kopiczko, Dawid Jan and Blankevoort, Tijmen and Asano, Yuki M.},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  note      = {arXiv:2310.11454. VERIFY before submission}
+}
+
+% VERIFY: title/author list from general knowledge (the IA3 method paper,
+% "Few-Shot Parameter-Efficient Fine-Tuning is Better and Cheaper than
+% In-Context Learning"); arXiv ID and venue confirmed in
+% CHRONOS2_ADVANCED_FINETUNING_REPORT.md.
+@inproceedings{liu2022ia3,
+  title     = {Few-Shot Parameter-Efficient Fine-Tuning is Better and Cheaper than In-Context Learning},
+  author    = {Liu, Haokun and Tam, Derek and Muqeeth, Mohammed and Mohta, Jay and Huang, Tenghao and Bansal, Mohit and Raffel, Colin},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2022},
+  note      = {arXiv:2205.05638. VERIFY before submission}
+}
+
+% VERIFY: title/author list from general knowledge; arXiv ID and venue
+% confirmed in CHRONOS2_ADVANCED_FINETUNING_REPORT.md.
+@inproceedings{zaken2022bitfit,
+  title     = {BitFit: Simple Parameter-efficient Fine-tuning for Transformer-based Masked Language-models},
+  author    = {Zaken, Elad Ben and Goldberg, Yoav and Ravfogel, Shai},
+  booktitle = {Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (ACL)},
+  year      = {2022},
+  note      = {arXiv:2106.10199. VERIFY before submission}
+}
+
+% VERIFY: title/author list from general knowledge; arXiv ID/venue confirmed
+% in CHRONOS2_PFT_V2_REPORT.md's literature review.
+@inproceedings{perez2018film,
+  title     = {FiLM: Visual Reasoning with a General Conditioning Layer},
+  author    = {Perez, Ethan and Strub, Florian and de Vries, Harm and Dumoulin, Vincent and Courville, Aaron},
+  booktitle = {AAAI Conference on Artificial Intelligence},
+  year      = {2018},
+  note      = {VERIFY before submission}
+}
+
+% Cited by this project's own literature review as directly relevant prior
+% evidence (CHRONOS2_ADVANCED_FINETUNING_REPORT.md \S1). Title/venue/authors
+% NOT independently confirmed in this session -- only the arXiv ID and the
+% short description ("Foundation Models and Fine-Tuning", finding zero-shot
+% Chronos-2 beats fine-tuning on small datasets) are established.
+@misc{arxiv2607.23146,
+  title = {Foundation Models and Fine-Tuning [title as cited by project literature review -- VERIFY exact title/authors]},
+  year  = {2025},
+  note  = {arXiv:2607.23146. Evaluates Chronos-2 zero-shot vs.\ fine-tuning on small datasets. AUTHOR LIST AND EXACT TITLE NOT VERIFIED -- confirm at arxiv.org/abs/2607.23146 before citing}
+}
+
+% Cited by this project's own literature review (CHRONOS2_ADVANCED_FINETUNING_REPORT.md
+% \S1, CHRONOS2_PFT_V2_REPORT.md \S6 as "LN-Tuning ... Beyond LoRA").
+@misc{arxiv2409.11302,
+  title = {Beyond LoRA [title as cited by project literature review -- VERIFY exact title/authors]},
+  year  = {2024},
+  note  = {arXiv:2409.11302. Evaluates BitFit/LN-Tuning/VeRA/FourierFT on Chronos for a small-data healthcare task. AUTHOR LIST AND EXACT TITLE NOT VERIFIED -- confirm at arxiv.org/html/2409.11302v1 before citing}
+}
+
+% Cited by CHRONOS2_PFT_V2_REPORT.md \S6 as background on contextual/static-
+% feature conditioning in modern TS forecasters.
+@misc{arxiv2410.12672,
+  title = {Context Matters: Leveraging Contextual Features for Time Series Forecasting [VERIFY exact title/authors]},
+  year  = {2024},
+  note  = {arXiv:2410.12672. AUTHOR LIST NOT VERIFIED -- confirm at arxiv.org/abs/2410.12672 before citing}
+}
+
+% Cited by CHRONOS2_PFT_V2_REPORT.md \S6 as a directly comparable
+% LAI-forecasting deep-learning precedent.
+@article{lai_lstm_2024,
+  title = {Attention-enhanced LSTM for continental-scale LAI forecasting [VERIFY exact title/authors]},
+  journal = {International Journal of Digital Earth},
+  year  = {2024},
+  doi   = {10.1080/17538947.2024.2372317},
+  note  = {AUTHOR LIST NOT VERIFIED -- confirm via the DOI before citing}
+}
+
+% Cited by CHRONOS2_PFT_V2_REPORT.md \S6 as grounding for the linear-mixture
+% PFT-conditioning architecture (soft-expert-decomposition framing).
+@misc{stf_moe_pmc12318938,
+  title = {Spatio-Temporal Fusion Mixture-of-Experts (STF-MoE) for heterogeneous agricultural remote sensing [VERIFY exact title/authors]},
+  year  = {2024},
+  note  = {PMC12318938. AUTHOR LIST NOT VERIFIED -- confirm before citing}
+}
+
+% ---------------------------------------------------------------------------
+% TIER 2: placeholder stubs -- NO bibliographic details invented.
+% Fill in only after a real literature search; do not guess authors/venues.
+% ---------------------------------------------------------------------------
+
+% \S2.1 Vegetation and LAI forecasting (statistical / remote-sensing methods)
+@misc{lai_forecasting_TODO,
+  note = {TODO: statistical/remote-sensing LAI estimation and forecasting literature. Not searched in this session.}
+}
+
+% \S2.1 AELSTM architecture (the sibling project's own published/preprint description, if one exists)
+@misc{aelstm_TODO,
+  note = {TODO: citation for the AELSTM architecture itself (github.com/zhanghchen/AELSTM-vegetation-forecasting) -- confirm whether a paper/preprint exists beyond the repository.}
+}
+
+% \S2.2 Classical and deep-learning time-series forecasting survey
+@misc{ts_forecasting_survey_TODO,
+  note = {TODO: general time-series forecasting survey (statistical methods, tree ensembles, RNN/LSTM/GRU/CNN/attention architectures). Not searched in this session.}
+}
+
+% \S2.3 Other time-series foundation models (TimesFM, Moirai, etc.)
+@misc{tsfm_review_TODO,
+  note = {TODO: TimesFM, Moirai, and other contemporary time-series foundation models, for related-work completeness. Not used in this project's own experiments -- verify before citing as directly comparable.}
+}
+
+% \S2.4 Foundation models for environmental / Earth-system applications
+@misc{earth_system_fm_TODO,
+  note = {TODO: this project performed no systematic literature search on Earth-system/environmental foundation models. The \S1.3 research-gap claim should be qualified accordingly, or this search performed before submission.}
+}

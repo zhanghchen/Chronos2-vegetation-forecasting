@@ -1,0 +1,25 @@
+% Table 1: Study pixels, dataset, and forecasting setup
+% Source (verified): AELSTM/outputs/pixel_selection/selected_pixels.csv;
+%   Chronos2-vegetation-forecasting/Code/common_pipeline.py
+\begin{table*}[t]
+\centering
+\caption{Study pixels, dominant vegetation type, and forecasting setup. LAI target: HiQ-LAI,
+8-day composite, $\sim$4.6\,km native grid, continental United States, 2000--2022. Meteorological
+covariates: gridMET, 7 daily variables ($\mathit{tmmx}$, $\mathit{tmmn}$, $\mathit{pr}$,
+$\mathit{srad}$, $\mathit{vpd}$, $\mathit{sph}$, $\mathit{vs}$), aligned to each 8-day LAI
+composite window by mean. Context window: 2000--2021 ($\sim$1{,}002 8-day steps); forecast
+horizon: 45 steps (all of 2022), issued as a single direct (non-autoregressive) forecast call.}
+\label{tab:dataset}
+\begin{tabularx}{\textwidth}{l l l r r X}
+\toprule
+Pixel & Coordinates & Dominant PFT (\% cover) & Mean LAI & Norm. amplitude & Role in this study \\
+\midrule
+\texttt{low\_amplitude} & 37.53\textdegree N, 117.56\textdegree W & Natural grassland (84\%) & 0.31 & 0.57 & Core pixel (1 of 3), smallest normalized seasonal amplitude among quality-filtered candidates \\
+\texttt{high\_amplitude\_deciduous} & 36.23\textdegree N, 84.48\textdegree W & Broadleaf deciduous forest (89\%) & 2.63 & 1.73 & Core pixel (1 of 3), largest amplitude among deciduous-tree/shrub candidates \\
+\texttt{evergreen} & 30.53\textdegree N, 82.43\textdegree W & Needleleaf evergreen forest (95\%) & 3.77 & 0.63 & Core pixel (1 of 3), flattest (most evergreen-like) seasonal cycle among evergreen candidates \\
+\texttt{evergreen\_west} & Klamath Mountains, N.\ CA / S.\ OR & Needleleaf evergreen forest & --- & --- & Spatial-transfer target, $\sim$3{,}700\,km from \texttt{evergreen}, same vegetation type \\
+\texttt{mixed\_forest\_grass} & Illinois & 50\% broadleaf-deciduous / 50\% natural grassland & --- & --- & PFT-ablation companion pixel (genuinely mixed composition) \\
+70-pixel pooled set & CONUS-wide, farthest-point sampled & 8 dominant classes, purity 0.46--1.00 & --- & --- & Training/evaluation pool for PFT-conditioning experiments (\S\ref{sec:results-adaptation}) \\
+\bottomrule
+\end{tabularx}
+\end{table*}

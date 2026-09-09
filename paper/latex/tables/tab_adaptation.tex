@@ -1,0 +1,42 @@
+% Table 4: Zero-shot vs. every parameter-adaptation method tested
+% Source (verified against CSV during audit): outputs/advanced_finetuning/final_ranking_table.csv,
+%   outputs/pft_v2/final_2022_summary.csv, outputs/pft_v2/real_vs_shuffled_ttest.csv
+\begin{table*}[t]
+\centering
+\caption{Zero-shot vs.\ every parameter-adaptation method tested, mean across the 3 core pixels,
+single 2022 held-out year, validated protocol (chronological pre-2022 validation split, early
+stopping, test set isolated from all selection decisions) for every method except the original
+(unvalidated) LoRA row. Panel (a) sorted by mean R$^2$. Panel (b): the decisive PFT-conditioning
+randomized control, 70 pooled pixels, \texttt{low\_rank} architecture (the only one of four tested
+that trained past initialization; see \S\ref{sec:results-adaptation}).}
+\label{tab:adaptation}
+\textbf{(a) Standard and advanced parameter-efficient fine-tuning (PEFT)}\\[0.3em]
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Method & Trainable params.\ & Mean R$^2$ & $\Delta$ vs.\ zero-shot & Pixels beating zero-shot \\
+\midrule
+\textbf{Zero-shot} & --- & \textbf{0.780} & --- & --- \\
+IA3 & 73{,}728 & 0.769 & $-$0.011 & 0/3 \\
+Partial (last block) & 13{,}093{,}536 & 0.766 & $-$0.014 & 0/3 \\
+DoRA & 1{,}280{,}976 & 0.761 & $-$0.019 & 1/3 \\
+LN-Tuning & 28{,}416 & 0.760 & $-$0.020 & 0/3 \\
+Improved LoRA (validated) & --- & 0.757 & $-$0.023 & 0/3 \\
+VeRA & 98{,}896 & 0.755 & $-$0.025 & 0/3 \\
+BitFit & 8{,}352 & 0.683 & $-$0.097 & 0/3 \\
+Original LoRA (unvalidated) & 1{,}280{,}976 & 0.681 & $-$0.099 & 0/3 \\
+\bottomrule
+\end{tabular}
+
+\vspace{1.2em}
+\textbf{(b) PFT-composition conditioning: real vs.\ shuffled-assignment control}\\[0.3em]
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+Condition & Mean 2022 R$^2$ & $\Delta$ vs.\ baseline & Statistical test (real vs.\ shuffled) \\
+\midrule
+Baseline (zero-shot, no PFT) & 0.7655 & --- & --- \\
++ Real fractional PFT & 0.7677 & +0.0022 & --- \\
++ Real dominant PFT & 0.7678 & +0.0023 & --- \\
++ \textbf{Shuffled PFT (control)} & \textbf{0.7679} & \textbf{+0.0024} & paired $t$-test $p=0.245$, Wilcoxon $p=0.663$ ($n=70$) \\
+\bottomrule
+\end{tabular}
+\end{table*}

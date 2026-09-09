@@ -1,0 +1,39 @@
+% Table 3: LOYO-CV performance summary (330 folds: 3 pixels x 11 years x 10 methods)
+% Source (verified against CSV during audit): outputs/loyo_cv/comparison/loyo_summary_mean_std.csv,
+%   LOYO_CV_FINDINGS.md Sec. 4
+\begin{table*}[t]
+\centering
+\caption{Leave-one-year-out cross-validation (2012--2022, fixed 12-year rolling training window
+immediately preceding each held-out year), 330 fold results (3 pixels $\times$ 11 years
+$\times$ 10 methods). Panel (a): zero-shot Chronos-2's R$^2$ distribution per pixel across its 11
+folds. Panel (b): cross-fold rank consistency across all 33 folds per method (top-2 and
+bottom-2-ranked of 10 methods shown; full ranking in the project repository).}
+\label{tab:loyo}
+\begin{minipage}{\textwidth}
+\centering
+\textbf{(a) Zero-shot Chronos-2 R$^2$ distribution, per pixel, 11 folds each}\\[0.3em]
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Pixel & Mean & Median & Std.\ dev.\ & Min & Max \\
+\midrule
+\texttt{low\_amplitude} & 0.317 & 0.387 & 0.388 & $-$0.717 & 0.645 \\
+\texttt{high\_amplitude\_deciduous} & 0.957 & 0.961 & 0.023 & 0.896 & 0.985 \\
+\texttt{evergreen} & $-$0.134 & 0.583 & 2.495 & $-$7.637 & 0.900 \\
+\bottomrule
+\end{tabular}
+
+\vspace{1em}
+\textbf{(b) Cross-fold rank consistency, all 33 folds (3 pixels $\times$ 11 years)}\\[0.3em]
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Model & Mean rank (of 10) & Std.\ rank & Top-3 finishes & Bottom-3 finishes \\
+\midrule
+Random Forest & 3.39 & 2.24 & 20/33 (61\%) & 3 \\
+\textbf{Zero-shot Chronos-2} & \textbf{3.70} & 2.96 & \textbf{21/33 (64\%)} & 6 \\
+LoRA fine-tuned Chronos-2 & 5.76 & \textbf{3.66 (highest)} & 13 & 15 \\
+AELSTM (published architecture) & 7.00 & 2.33 & 2 & 12 \\
+CNN & 7.48 & 2.37 & 2 & 19 \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\end{table*}
