@@ -7,8 +7,8 @@ consistent LaTeX conversion of `paper/02_manuscript.md`, ready to open in Overle
 
 The full manuscript: title, abstract, all 9 sections with subsections, equations (InstanceNorm
 mechanism, FiLM modulation, the linear-mixture PFT architecture, and all 5 evaluation metrics),
-4 tables (via `\input`), 9 figure placeholders (via `\includegraphics`, all currently missing —
-see part D below), captions, labels, and cross-references throughout (`\Cref`/`\ref` for
+4 tables (via `\input`), 10 figures (via `\includegraphics` — all now generated, see part D
+below), captions, labels, and cross-references throughout (`\Cref`/`\ref` for
 sections/tables/figures/equations, `\cite`/`\citep`/`\citet` for the bibliography). Verified
 before delivery (see "Verification" below).
 
@@ -19,7 +19,8 @@ paper/latex/
 ├── main.tex
 ├── references.bib
 ├── README.md                       <- this file
-├── figures/                        <- EMPTY: all 10 files below must be generated (see D)
+├── figures/                        <- all 10 files generated (see D); regenerate via
+│                                       Code/build_paper_latex_figures.py
 │   ├── study_overview.pdf
 │   ├── prediction_examples.pdf
 │   ├── baseline_comparison.pdf
@@ -56,27 +57,30 @@ Two tiers, clearly marked in the file itself:
   the literature review were never performed in this project and must be researched before
   submission, not filled in from memory.
 
-## D. Figures still needing generation or redesign
+## D. Figures — generation status
 
-None of the 10 figure files exist yet. Status and source, per the project's own figure plan
-(`paper/04_figures_missing_verification.md`, Deliverable G):
+All 10 figure files now exist under `figures/`, built by
+[`Code/build_paper_latex_figures.py`](../../Code/build_paper_latex_figures.py) (run from the
+repository's `Code/` directory; requires `matplotlib`, `pandas`, `scipy`, `Pillow`). Re-run that
+script any time an underlying result CSV changes, to regenerate every figure from scratch.
 
-| File | Status |
-|---|---|
-| `study_overview.pdf` | **New figure, does not exist anywhere in the project.** Schematic only — no new data needed. |
-| `prediction_examples.pdf` | Reuse + trim `outputs/final_comparison/<pixel>/all_methods_vs_raw_obs.png` (currently shows all 10 methods; trim to zero-shot + AELSTM + 1 baseline for a 3-panel main-text figure). |
-| `baseline_comparison.pdf` | **Redesign required.** The existing `outputs/all_models_r2_bars.png` uses the naive, smoothed-target comparison the project's own README explicitly warns against — must be rebuilt from `outputs/fair_comparison_vs_raw_observations.csv`. |
-| `loyo_r2_distributions.pdf` | Reuse `outputs/loyo_cv/comparison/loyo_r2_distributions.png` (convert/export to PDF). |
-| `loyo_year_difficulty.pdf` | Reuse `outputs/loyo_cv/comparison/loyo_year_difficulty_heatmap.png`. |
-| `spatial_transfer.pdf` | Reuse `outputs/spatial_transfer/evergreen_to_evergreen_west/spatial_transfer_r2_drop_combined.png`. |
-| `predictor_importance.pdf` | Reuse `outputs/predictor_ablation/comparison/predictor_importance_by_pixel.png`. |
-| `adaptation_results.pdf` | Reuse `outputs/advanced_finetuning/r2_by_pixel_all_methods.png`. |
-| `pft_shuffle_control.pdf` | **New figure, does not exist as a standalone plot.** Build from `outputs/pft_v2/mixed_vs_pure_final.png`'s underlying data (`per_pixel_final_comparison.csv`) as a real-vs-shuffled per-pixel ΔR² scatter. |
-| `leakage_diagnostic.pdf` | Reuse `outputs/leakage_diagnostic_2012/evergreen/leakage_cross_project_r2_comparison.png`. |
+| File | How it was built | New plotting, or reused? |
+|---|---|---|
+| `study_overview.pdf` | New schematic (task formulation, illustrative pixel map, experiment tree) — no data plotted, diagram only. | **New** |
+| `prediction_examples.pdf` | 3-panel figure (one per core pixel), trimmed to Observed / Zero-shot Chronos-2 / AELSTM / RF, from `outputs/final_comparison/all_methods_vs_raw_obs.csv`. | **New** (built from existing CSV) |
+| `baseline_comparison.pdf` | Rebuilt from the authoritative `outputs/fair_comparison_vs_raw_observations.csv` and `fair_comparison_rank_consistency.csv` — **not** the naive, smoothed-target `outputs/all_models_r2_bars.png` the project's own README warns against. | **New** (redesigned, per Deliverable G) |
+| `loyo_r2_distributions.pdf` | Direct PNG→PDF repackage of `outputs/loyo_cv/comparison/loyo_r2_distributions.png`. | Reused |
+| `loyo_year_difficulty.pdf` | Direct PNG→PDF repackage of `outputs/loyo_cv/comparison/loyo_year_difficulty_heatmap.png`. | Reused |
+| `spatial_transfer.pdf` | Direct PNG→PDF repackage of `outputs/spatial_transfer/evergreen_to_evergreen_west/spatial_transfer_r2_drop_combined.png`. | Reused |
+| `predictor_importance.pdf` | Direct PNG→PDF repackage of `outputs/predictor_ablation/comparison/predictor_importance_by_pixel.png`. | Reused |
+| `adaptation_results.pdf` | Direct PNG→PDF repackage of `outputs/advanced_finetuning/r2_by_pixel_all_methods.png`. | Reused |
+| `pft_shuffle_control.pdf` | New 2-panel figure (per-pixel ΔR² scatter vs. PFT entropy, and a 4-condition mean-R² bar chart) built from `outputs/pft_v2/per_pixel_final_comparison.csv` and `real_vs_shuffled_ttest.csv` — did not exist as a standalone plot anywhere in the project before. | **New** (built from existing CSVs) |
+| `leakage_diagnostic.pdf` | Direct PNG→PDF repackage of `outputs/leakage_diagnostic_2012/evergreen/leakage_cross_project_r2_comparison.png`. | Reused |
 
-All "reuse" entries need only a format conversion (PNG → vector PDF ideally, or at minimum a
-high-resolution PNG renamed/placed under `figures/`) — no new experiments. The two flagged
-**bold** entries need new plotting work from already-existing CSVs, not new experiments either.
+"Reused" figures are exact repackages of already-existing, already-verified project figures (no
+new data, no new claims) — the PNG raster is embedded in a PDF container so `\includegraphics`
+resolves cleanly; they are not redrawn as vector graphics. "New" figures are built entirely from
+already-saved, already-verified result CSVs — no new experiments were run to produce any of them.
 
 ## Verification performed before delivery
 
@@ -99,8 +103,11 @@ high-resolution PNG renamed/placed under `figures/`) — no new experiments. The
 
 ## What will NOT compile cleanly yet
 
-By design, per the request: `main.tex` will fail to find the 10 files under `figures/` until they
-are generated (part D) and will show a "?" for every citation and an empty bibliography until
-`references.bib`'s placeholder entries are filled in with a real literature search (part C). Every
-other aspect of the document (structure, tables, equations, cross-references) is complete and
-self-consistent now.
+All 10 figures now exist, so `main.tex` should compile end-to-end in Overleaf as-is. The one
+remaining gap is bibliographic: `references.bib`'s five placeholder stubs (`lai_forecasting_TODO`,
+`aelstm_TODO`, `ts_forecasting_survey_TODO`, `tsfm_review_TODO`, `earth_system_fm_TODO`) have no
+real entry yet and will render as a "?" citation until a genuine literature search fills them in —
+by design, since this project never performed that search and the request explicitly prohibits
+inventing bibliographic details. The PEFT-method entries marked `VERIFY before submission` will
+compile and render correctly as-is; that flag means "confirm the author list/title before
+submitting," not "this will fail to compile."
