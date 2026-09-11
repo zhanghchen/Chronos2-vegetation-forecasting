@@ -61,12 +61,14 @@ Two tiers, clearly marked in the file itself:
 
 All 10 figure files now exist under `figures/`, built by
 [`Code/build_paper_latex_figures.py`](../../Code/build_paper_latex_figures.py) (run from the
-repository's `Code/` directory; requires `matplotlib`, `pandas`, `scipy`, `Pillow`). Re-run that
+repository's `Code/` directory; requires `matplotlib`, `pandas`, `scipy`, `Pillow`, `geopandas`
+(for `study_overview.pdf`'s real CONUS state-boundary basemap, drawn from the Natural Earth
+shapefiles already bundled with `cartopy` — no network access needed). Re-run that
 script any time an underlying result CSV changes, to regenerate every figure from scratch.
 
 | File | How it was built | New plotting, or reused? |
 |---|---|---|
-| `study_overview.pdf` | New schematic (task formulation, illustrative pixel map, experiment tree) — no data plotted, diagram only. | **New** |
+| `study_overview.pdf` | New schematic, redesigned from an earlier abstract draft (v1: a dashed-rectangle "illustrative" map, plain labeled boxes, flat grey list). v2 uses a real CONUS basemap (state polygons from the Natural Earth shapefiles bundled with `cartopy`, via `geopandas` — an actual map, not a placeholder), an illustrative seasonal-LAI curve driving the task-formulation panel, and a pill/numbered-badge pipeline for the experiment tree. No data plotted beyond the 5 study-pixel coordinates already in Table 1 — diagram only. | **New** |
 | `prediction_examples.pdf` | 3-panel figure (one per core pixel), trimmed to Observed / Zero-shot Chronos-2 / AELSTM / RF, from `outputs/final_comparison/all_methods_vs_raw_obs.csv`. | **New** (built from existing CSV) |
 | `baseline_comparison.pdf` | Rebuilt from the authoritative `outputs/fair_comparison_vs_raw_observations.csv` and `fair_comparison_rank_consistency.csv` — **not** the naive, smoothed-target `outputs/all_models_r2_bars.png` the project's own README warns against. | **New** (redesigned, per Deliverable G) |
 | `loyo_r2_distributions.pdf` | Direct PNG→PDF repackage of `outputs/loyo_cv/comparison/loyo_r2_distributions.png`. | Reused |

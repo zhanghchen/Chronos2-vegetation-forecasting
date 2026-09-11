@@ -125,80 +125,199 @@ def build_baseline_comparison():
 
 
 # ============================================================ (4) study_overview.pdf
+# Full redesign (v2): a real CONUS basemap (via geopandas/Natural Earth
+# state polygons already bundled with cartopy -- no network access, no
+# hand-drawn placeholder rectangle), an illustrative seasonal-LAI curve
+# driving the task-formulation panel instead of plain labeled boxes, and
+# a pill/badge-style pipeline instead of flat grey rectangles.
 def build_study_overview():
-    fig = plt.figure(figsize=(13, 5.5), constrained_layout=True)
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.1, 1.0, 1.3])
+    import geopandas as gpd
+    import matplotlib.patheffects as pe
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 
-    # (a) task formulation schematic
+    INK = "#1C2119"
+    MUTED = "#5C6355"
+    ACCENT = ZERO_SHOT_COLOR          # #0072B2, already the paper's primary accent
+    ACCENT_TINT = "#E4EEF5"
+    WARN = RF_COLOR                   # #D55E00, already the paper's secondary accent
+    WARN_TINT = "#FBEFE6"
+    MAP_FILL = "#EEF0EA"
+    MAP_EDGE = "#FFFFFF"
+    PANEL_BG = "#FAFAF7"
+
+    fig = plt.figure(figsize=(15.5, 6.0), constrained_layout=True)
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.35, 1.15, 1.0])
+
+    # ---------------------------------------------------------------- (a) real CONUS map
     ax0 = fig.add_subplot(gs[0])
-    ax0.axis("off")
-    ax0.set_title("(a) Forecasting task", loc="left", fontsize=11)
-    boxes = [
-        (0.5, 0.85, "Historical LAI\n(2000–2021)\ntarget"),
-        (0.5, 0.60, "Historical climate\n(7 gridMET vars)\npast_covariates"),
-        (0.5, 0.35, "Actual future climate\n(2022)\nfuture_covariates"),
-    ]
-    for x, y, text in boxes:
-        ax0.add_patch(plt.Rectangle((x - 0.42, y - 0.08), 0.84, 0.14, fill=True,
-                                     facecolor="#EAF2F8", edgecolor=ZERO_SHOT_COLOR, lw=1.2))
-        ax0.text(x, y, text, ha="center", va="center", fontsize=8)
-        ax0.annotate("", xy=(1.0, y), xytext=(0.92, y),
-                     arrowprops=dict(arrowstyle="-", color="none"))
-    ax0.add_patch(plt.Rectangle((0.55, 0.05), 0.35, 0.16, fill=True, facecolor=ZERO_SHOT_COLOR,
-                                 edgecolor="black", lw=1.2))
-    ax0.text(0.72, 0.13, "Chronos-2\n(zero-shot)", ha="center", va="center", fontsize=8, color="white")
-    for x, y, _ in boxes:
-        ax0.plot([x, 0.72], [y - 0.08, 0.21], color="#888888", lw=0.8)
-    ax0.annotate("", xy=(0.72, -0.05), xytext=(0.72, 0.05), arrowprops=dict(arrowstyle="->", color="black"))
-    ax0.text(0.72, -0.12, "Forecast:\nLAI, all 45 steps of 2022", ha="center", va="center", fontsize=8, fontweight="bold")
-    ax0.set_xlim(0, 1.1)
-    ax0.set_ylim(-0.2, 1.0)
+    ax0.set_title("(a) Study Pixels Across the Continental U.S.", loc="left", fontsize=12, fontweight="bold", color=INK)
 
-    # (b) study pixels, approximate CONUS positions (illustrative, not a projection)
+    shp = "/home/deh25003/.local/share/cartopy/shapefiles/natural_earth/cultural/ne_50m_admin_1_states_provinces_lakes.shp"
+    states = gpd.read_file(shp)
+    exclude = {"Alaska", "Hawaii", "Puerto Rico"}
+    conus = states[(states["admin"] == "United States of America") & (~states["name"].isin(exclude))]
+    conus.plot(ax=ax0, facecolor=MAP_FILL, edgecolor=MAP_EDGE, linewidth=1.1, zorder=1)
+    ax0.set_facecolor(PANEL_BG)
+    for spine in ax0.spines.values():
+        spine.set_visible(False)
+    ax0.set_xticks([]); ax0.set_yticks([])
+    ax0.set_xlim(-127, -65)
+    ax0.set_ylim(23, 50)
+    ax0.set_aspect(1.35)
+
+    core = [
+        ("low_amplitude", -117.56, 37.53, "grassland"),
+        ("high_amplitude_deciduous", -84.48, 36.23, "deciduous forest"),
+        ("evergreen", -82.43, 30.53, "evergreen forest"),
+    ]
+    label_offsets = {
+        "low_amplitude": (-14, 14),
+        "high_amplitude_deciduous": (10, 14),
+        "evergreen": (12, -20),
+    }
+    for name, lon, lat, veg in core:
+        ax0.scatter(lon, lat, s=170, color=ACCENT, edgecolor="white", linewidth=1.6, zorder=5)
+        dx, dy = label_offsets[name]
+        ax0.annotate(f"{name}\n({veg})", (lon, lat), xytext=(dx, dy), textcoords="offset points",
+                     fontsize=7.6, color=INK, ha="left" if dx >= 0 else "right", zorder=6,
+                     bbox=dict(boxstyle="round,pad=0.28", facecolor="white", edgecolor="#D8DCD3", linewidth=0.7))
+
+    # spatial-transfer target: evergreen -> evergreen_west
+    ew_lon, ew_lat = -122.5, 42.0
+    ax0.scatter(ew_lon, ew_lat, s=170, facecolor="white", edgecolor=ACCENT, linewidth=2.0, zorder=5)
+    ax0.annotate("evergreen_west\n(transfer target)", (ew_lon, ew_lat), xytext=(-10, 14),
+                 textcoords="offset points", fontsize=7.6, color=INK, ha="right", zorder=6,
+                 bbox=dict(boxstyle="round,pad=0.28", facecolor="white", edgecolor="#D8DCD3", linewidth=0.7))
+    arrow = FancyArrowPatch((-82.43, 30.53), (ew_lon, ew_lat), connectionstyle="arc3,rad=0.22",
+                             arrowstyle="-|>", mutation_scale=14, color=MUTED, linewidth=1.3,
+                             linestyle=(0, (4, 2)), zorder=4)
+    ax0.add_patch(arrow)
+    ax0.text(-104, 40.5, "spatial transfer\n$\\sim$3,700 km", fontsize=7.6, color=MUTED, ha="center", style="italic")
+
+    # PFT-ablation companion pixel
+    mfg_lon, mfg_lat = -89.4, 40.1
+    ax0.scatter(mfg_lon, mfg_lat, s=150, marker="D", color=WARN, edgecolor="white", linewidth=1.4, zorder=5)
+    ax0.annotate("mixed_forest_grass\n(PFT companion)", (mfg_lon, mfg_lat), xytext=(10, -6),
+                 textcoords="offset points", fontsize=7.6, color=INK, ha="left", zorder=6,
+                 bbox=dict(boxstyle="round,pad=0.28", facecolor="white", edgecolor="#D8DCD3", linewidth=0.7))
+
+    legend_handles = [
+        Line2D([0], [0], marker="o", color="none", markerfacecolor=ACCENT, markeredgecolor="white",
+               markersize=10, label="Core pixel (3)"),
+        Line2D([0], [0], marker="o", color="none", markerfacecolor="white", markeredgecolor=ACCENT,
+               markersize=10, markeredgewidth=1.8, label="Spatial-transfer target"),
+        Line2D([0], [0], marker="D", color="none", markerfacecolor=WARN, markeredgecolor="white",
+               markersize=9, label="PFT-ablation companion"),
+    ]
+    ax0.legend(handles=legend_handles, loc="lower left", frameon=False, fontsize=7.6, handletextpad=0.6)
+
+    # ---------------------------------------------------------------- (b) forecasting task
     ax1 = fig.add_subplot(gs[1])
-    ax1.set_title("(b) Study pixels (illustrative)", loc="left", fontsize=11)
-    conus = plt.Rectangle((-125, 24), 59, 26, fill=False, edgecolor="#AAAAAA", lw=1.0, linestyle="--")
-    ax1.add_patch(conus)
-    pts = [
-        ("low_amplitude", -117.56, 37.53, "#8B4513"),
-        ("high_amplitude_deciduous", -84.48, 36.23, "#2E8B57"),
-        ("evergreen", -82.43, 30.53, "#006400"),
-        ("evergreen_west", -122.5, 42.0, "#006400"),
-        ("mixed_forest_grass", -89.0, 40.0, "#DAA520"),
-    ]
-    for name, lon, lat, c in pts:
-        ax1.scatter(lon, lat, color=c, s=70, edgecolor="black", zorder=3)
-        ax1.annotate(name, (lon, lat), textcoords="offset points", xytext=(4, 4), fontsize=7)
-    ax1.plot([-82.43, -122.5], [30.53, 42.0], color="#999999", lw=0.8, ls=":", zorder=1)
-    ax1.text(-102, 34.5, "spatial\ntransfer\n$\\sim$3,700 km", fontsize=6.5, color="#666666", ha="center")
-    ax1.set_xlim(-128, -64)
-    ax1.set_ylim(22, 52)
-    ax1.set_xlabel("Longitude")
-    ax1.set_ylabel("Latitude")
+    ax1.set_title("(b) The Forecasting Task", loc="left", fontsize=12, fontweight="bold", color=INK)
+    ax1.set_facecolor(PANEL_BG)
+    ax1.axis("off")
+    ax1.set_xlim(0, 1)
+    ax1.set_ylim(-0.36, 1.14)
 
-    # (c) experiment tree
-    ax2 = fig.add_subplot(gs[2])
-    ax2.axis("off")
-    ax2.set_title("(c) Experiment tree", loc="left", fontsize=11)
-    steps = [
-        "Zero-shot Chronos-2\n(§6.1)",
-        "vs. 8 supervised baselines\n(§6.2)",
-        "LOYO-CV, 11 years\n+ spatial transfer (§6.3)",
-        "Predictor sensitivity\n(§6.4)",
-        "Adaptation: 7 PEFT methods\n+ 4 PFT-conditioning\narchitectures (§6.5)",
-        "Failure-mode diagnostics\n(§6.6)",
+    # illustrative seasonal LAI curve: ~5 context cycles (observed) + 1
+    # highlighted forecast cycle -- a stylized, physically plausible
+    # green-up/senescence shape (not a real pixel's values).
+    t = np.linspace(0, 1, 900)
+    n_cycles = 5.6
+    phase = (t * n_cycles) % 1.0
+    season = np.clip(np.sin(np.pi * phase) ** 1.6, 0, None)
+    curve = 0.18 + 0.62 * season + 0.03 * np.sin(2 * np.pi * t * 1.3)
+    curve_top, curve_h = 0.66, 0.22
+    y = curve_top + (curve - curve.min()) / (curve.max() - curve.min()) * curve_h
+    split = 1.0 - 1.0 / n_cycles
+    ctx_mask = t <= split
+    fut_mask = t >= split
+    ax1.plot(t[ctx_mask], y[ctx_mask], color=MUTED, linewidth=1.8, zorder=3)
+    ax1.plot(t[fut_mask], y[fut_mask], color=ACCENT, linewidth=2.2, linestyle=(0, (3, 1.5)), zorder=4)
+    ax1.axvspan(split, 1.0, color=ACCENT_TINT, zorder=1, ymin=0.60)
+    ax1.text((0 + split) / 2, curve_top + curve_h + 0.06, "observed history, 2000–2021",
+              ha="center", fontsize=7.8, color=MUTED)
+    ax1.text((split + 1.0) / 2, curve_top + curve_h + 0.06, "to forecast\n(2022)",
+              ha="center", fontsize=7.8, color=ACCENT, fontweight="bold")
+    ax1.plot([split, split], [curve_top - 0.02, curve_top + curve_h + 0.03], color="#C7CBC0", lw=0.9, zorder=2)
+
+    # three input chips -> Chronos-2 pill -> forecast pill
+    chip_y = 0.42
+    chips = [
+        (0.145, "Historical LAI\n(target)"),
+        (0.5, "Historical climate\n(past_covariates)"),
+        (0.855, "Actual future climate\n(future_covariates)"),
     ]
-    n = len(steps)
-    ys = np.linspace(0.92, 0.08, n)
-    for y, text in zip(ys, steps):
-        ax2.add_patch(plt.Rectangle((0.05, y - 0.055), 0.9, 0.09, fill=True,
-                                     facecolor="#F5F5F5", edgecolor="#666666", lw=1.0))
-        ax2.text(0.5, y, text, ha="center", va="center", fontsize=8)
-    for y0, y1 in zip(ys[:-1], ys[1:]):
-        ax2.annotate("", xy=(0.5, y1 + 0.055), xytext=(0.5, y0 - 0.055),
-                     arrowprops=dict(arrowstyle="->", color="#666666"))
+    model_xy = (0.5, 0.10)
+    for cx, label in chips:
+        box = FancyBboxPatch((cx - 0.155, chip_y - 0.075), 0.31, 0.15,
+                              boxstyle="round,pad=0.012,rounding_size=0.03",
+                              facecolor=ACCENT_TINT, edgecolor=ACCENT, linewidth=1.1, zorder=3)
+        ax1.add_patch(box)
+        ax1.text(cx, chip_y, label, ha="center", va="center", fontsize=7.4, color=INK, zorder=4)
+        arr = FancyArrowPatch((cx, chip_y - 0.075), (model_xy[0], model_xy[1] + 0.085),
+                               arrowstyle="-|>", mutation_scale=11, color="#9AA294", linewidth=1.0, zorder=2)
+        ax1.add_patch(arr)
+
+    model_box = FancyBboxPatch((model_xy[0] - 0.22, model_xy[1] - 0.085), 0.44, 0.17,
+                                boxstyle="round,pad=0.014,rounding_size=0.04",
+                                facecolor=ACCENT, edgecolor=INK, linewidth=1.0, zorder=4,
+                                path_effects=[pe.withSimplePatchShadow(offset=(0.6, -0.6), alpha=0.18)])
+    ax1.add_patch(model_box)
+    ax1.text(*model_xy, "Chronos-2\n(zero-shot)", ha="center", va="center", fontsize=9, color="white",
+              fontweight="bold", zorder=5)
+
+    out_arr = FancyArrowPatch((model_xy[0], model_xy[1] - 0.085), (model_xy[0], -0.22),
+                               arrowstyle="-|>", mutation_scale=13, color=INK, linewidth=1.3, zorder=3)
+    ax1.add_patch(out_arr)
+    out_box = FancyBboxPatch((model_xy[0] - 0.27, -0.34), 0.54, 0.13,
+                              boxstyle="round,pad=0.012,rounding_size=0.03",
+                              facecolor=WARN_TINT, edgecolor=WARN, linewidth=1.1, zorder=4)
+    ax1.add_patch(out_box)
+    ax1.text(model_xy[0], -0.275, "LAI forecast — all 45 steps of 2022", ha="center", va="center",
+              fontsize=8, color=INK, fontweight="bold", zorder=5)
+
+    # ---------------------------------------------------------------- (c) experiment pipeline
+    ax2 = fig.add_subplot(gs[2])
+    ax2.set_title("(c) Experiment Pipeline", loc="left", fontsize=12, fontweight="bold", color=INK)
+    ax2.set_facecolor(PANEL_BG)
+    ax2.axis("off")
     ax2.set_xlim(0, 1)
     ax2.set_ylim(0, 1)
+
+    steps = [
+        "Zero-shot Chronos-2",
+        "vs. 8 supervised baselines",
+        "LOYO-CV (11 yrs) +\nspatial transfer",
+        "Predictor sensitivity",
+        "Adaptation: 7 PEFT methods +\n4 PFT-conditioning architectures",
+        "Failure-mode diagnostics",
+    ]
+    refs = ["§6.1", "§6.2", "§6.3", "§6.4", "§6.5", "§6.6"]
+    n = len(steps)
+    box_h, gap = 0.125, 0.043
+    total_h = n * box_h + (n - 1) * gap
+    y_top = 0.5 + total_h / 2
+    ys = [y_top - box_h / 2 - i * (box_h + gap) for i in range(n)]
+
+    for i, (y, text, ref) in enumerate(zip(ys, steps, refs)):
+        fill = ACCENT_TINT if i % 2 == 0 else "white"
+        box = FancyBboxPatch((0.16, y - box_h / 2), 0.80, box_h,
+                              boxstyle="round,pad=0.010,rounding_size=0.035",
+                              facecolor=fill, edgecolor="#C7CBC0", linewidth=1.0, zorder=3)
+        ax2.add_patch(box)
+        ax2.text(0.565, y + 0.015, text, ha="center", va="center", fontsize=7.9, color=INK, zorder=4)
+        ax2.text(0.565, y - box_h / 2 + 0.022, ref, ha="center", va="center", fontsize=6.6,
+                  color=MUTED, style="italic", zorder=4)
+        badge = plt.Circle((0.10, y), 0.045, facecolor=ACCENT, edgecolor="white", linewidth=1.2, zorder=5)
+        ax2.add_patch(badge)
+        ax2.text(0.10, y, str(i + 1), ha="center", va="center", fontsize=8.5, color="white",
+                  fontweight="bold", zorder=6)
+        if i < n - 1:
+            ax2.add_patch(FancyArrowPatch((0.565, y - box_h / 2), (0.565, ys[i + 1] + box_h / 2),
+                                           arrowstyle="-|>", mutation_scale=10, color="#9AA294",
+                                           linewidth=1.0, zorder=2))
 
     fig.savefig(FIG_DIR / "study_overview.pdf", bbox_inches="tight")
     plt.close(fig)
