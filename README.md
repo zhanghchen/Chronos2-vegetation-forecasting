@@ -47,7 +47,7 @@ Chronos2-vegetation-forecasting/
 │   ├── CHRONOS2_PFT_V2_REPORT.md
 │   ├── PREDICTOR_ABLATION_REPORT.md      <- predictor sensitivity study: design + results
 │   ├── COMPARISON_REPORT.md
-│   └── CHRONOS2_PURITY32_REPORT.md
+│   └── CHRONOS2_CONUS70_REPORT.md
 ├── requirements.txt
 ├── .gitignore
 ├── data/processed/sites/          <- copies of the 3 pixels' CSVs from the AELSTM project
@@ -383,20 +383,22 @@ graded fairly (mean rank 1.33/10) — but LoRA fine-tuning made it *worse* on al
 (including the `evergreen`/2012 drought-year finding a single test year could never reveal), see
 `outputs/loyo_cv/comparison/` and the **Leave-One-Year-Out Cross-Validation** section below.
 
-## Zero-Shot Generalization Across 32 Diverse, Purity-Filtered Pixels
+## Zero-Shot Generalization Across All 70 Diverse CONUS Pixels
 
-**See [`CHRONOS2_PURITY32_REPORT.md`](./reports/CHRONOS2_PURITY32_REPORT.md)** for the full design
-and results. Extends the zero-shot generalization question to 32 pixels (all 8 dominant vegetation
-classes, 8 U.S. regions, PFT purity ≥ 0.75), reusing the already-selected, already-quality-filtered
-70-pixel pool from the PFT-multipixel/PFT-v2 studies — no new downloads, since gridMET/HiQ-LAI data
-for this pool already existed locally.
+**See [`CHRONOS2_CONUS70_REPORT.md`](./reports/CHRONOS2_CONUS70_REPORT.md)** for the full design
+and results. Extends the zero-shot generalization question to the entire 70-pixel pool already
+selected and quality-filtered for the PFT-multipixel/PFT-v2 studies (all 8 dominant vegetation
+classes, 9 U.S. regions, PFT purity 0.46–1.00) — no new downloads, since gridMET/HiQ-LAI data for
+this pool already existed locally. Started as a 32-pixel purity≥0.75 "pure" subset, then extended
+to the remaining 38 pixels to cover the full pool.
 
-**Finding**: median R² = 0.865 across all 32 pixels (69% at R² ≥ 0.8), confirming the original
-3-pixel result generalizes to a much larger, independently-selected set rather than being an
-artifact of favorable pixel choice. Tree- and shrub-evergreen classes are the most consistently
-strong (std ≤ 0.06); grassland/shrub classes show more variance, traced to the same
-low-signal-amplitude failure mode already identified in the LOYO-CV study, not a new problem.
-Results in `outputs/purity32_pixel_study/`.
+**Finding**: median R² = 0.904 across all 70 pixels (69% at R² ≥ 0.8), confirming the original
+3-pixel result generalizes to a much larger, independently-selected, and compositionally diverse
+set rather than being an artifact of favorable pixel choice. Tree- and shrub-evergreen classes are
+the most consistently strong (std ≤ 0.065); grassland/shrub classes show more variance, traced to
+the same low-signal-amplitude failure mode already identified in the LOYO-CV study (only 2 of 70
+pixels score below zero, both low-signal natural grassland), not a new problem. Results in
+`outputs/purity32_pixel_study/`.
 
 ## Slide decks
 
