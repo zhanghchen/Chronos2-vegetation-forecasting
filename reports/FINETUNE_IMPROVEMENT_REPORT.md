@@ -1,5 +1,7 @@
 # Improved LoRA Fine-Tuning: Design and Results
 
+*Generated: 2026-08-13*
+
 **What changed vs. the original fine-tuning run** (`Code/run_chronos2.py`'s `finetune_pipeline()`,
 results in `outputs/finetuned_lora/`): the original called `pipeline.fit()` without
 `validation_inputs`, so `eval_strategy="no"`/`load_best_model_at_end=False` — it trained for a

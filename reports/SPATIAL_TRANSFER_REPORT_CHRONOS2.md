@@ -1,5 +1,7 @@
 # Spatial Transfer: Chronos-2 Trained on One Evergreen Pixel, Deployed on Another
 
+*Generated: 2026-08-17*
+
 Chronos-2 counterpart to
 [`AELSTM/SPATIAL_TRANSFER_REPORT.md`](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/SPATIAL_TRANSFER_REPORT.md),
 which found that most of the 8 AELSTM-family models lose substantial R² —

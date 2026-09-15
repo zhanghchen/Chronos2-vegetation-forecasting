@@ -1,5 +1,7 @@
 # Multi-Pixel PFT Conditioning: Can Chronos-2 Learn Climate × Vegetation-Composition Interactions?
 
+*Generated: 2026-08-27*
+
 **Central hypothesis tested:** `LAI response = f(historical LAI, climate, PFT composition)`, where PFT must vary *across* training pixels (not be a constant within one pixel's own record) for the model to have any chance of learning a genuine vegetation-dependent climate response. This is the direct architectural follow-up to `CHRONOS2_PFT_ABLATION_REPORT.md`, which showed a single-pixel constant PFT covariate is provably erased by Chronos-2's InstanceNorm.
 
 All outputs in `outputs/pft_multipixel/` (new; `outputs/pft_ablation/`, `outputs/zero_shot/`, etc. untouched). Code: `Code/pft_multipixel_{dataset,model,train,sensitivity}.py`, `preprocessing/{select,plot,bulk_extract}_pft_diverse_pixels.py` (AELSTM repo), `Code/build_pft_multipixel_comparison.py`.

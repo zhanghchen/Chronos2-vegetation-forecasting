@@ -35,9 +35,19 @@ own pipeline reports internally, not for cross-model ranking.
 ```
 Chronos2-vegetation-forecasting/
 ├── README.md
-├── LOYO_CV_FINDINGS.md         <- LOYO-CV scientific analysis + Key Findings
-├── FINETUNE_IMPROVEMENT_REPORT.md  <- validation-based LoRA fine-tuning: design + results
-├── PREDICTOR_ABLATION_REPORT.md   <- predictor sensitivity study: design + results
+├── reports/                    <- every experiment report, each annotated with its generation
+│   │                              date (see "Generated: YYYY-MM-DD" under each report's title)
+│   ├── LOYO_CV_FINDINGS.md               <- LOYO-CV scientific analysis + Key Findings
+│   ├── LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md
+│   ├── FINETUNE_IMPROVEMENT_REPORT.md    <- validation-based LoRA fine-tuning: design + results
+│   ├── SPATIAL_TRANSFER_REPORT_CHRONOS2.md
+│   ├── CHRONOS2_ADVANCED_FINETUNING_REPORT.md
+│   ├── CHRONOS2_PFT_ABLATION_REPORT.md
+│   ├── CHRONOS2_PFT_MULTIPIXEL_REPORT.md
+│   ├── CHRONOS2_PFT_V2_REPORT.md
+│   ├── PREDICTOR_ABLATION_REPORT.md      <- predictor sensitivity study: design + results
+│   ├── COMPARISON_REPORT.md
+│   └── CHRONOS2_PURITY32_REPORT.md
 ├── requirements.txt
 ├── .gitignore
 ├── data/processed/sites/          <- copies of the 3 pixels' CSVs from the AELSTM project
@@ -157,7 +167,7 @@ MAPE, R², Pearson correlation. LOYO-CV additionally reports an anomaly correlat
 
 ## Leave-One-Year-Out Cross-Validation (LOYO-CV)
 
-**See [`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md) for the full scientific analysis** — per-model
+**See [`LOYO_CV_FINDINGS.md`](./reports/LOYO_CV_FINDINGS.md) for the full scientific analysis** — per-model
 distribution statistics (mean/median/std/min/max), which held-out years are consistently difficult
 and why (checked against the raw LAI/climate data), whether Chronos-2 holds up better on difficult
 years, cross-fold rank consistency, and a Key Findings summary. Built by
@@ -189,7 +199,7 @@ just the target year. `loyo_cv_chronos2.py` has its own `build_chronos_inputs_lo
 
 Both zero-shot and LoRA fine-tuned are run per fold, giving the first multi-year evidence in this
 project on whether fine-tuning helps overall: it doesn't, on average — but see
-[`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md) §4 for the more precise finding (fine-tuning is the
+[`LOYO_CV_FINDINGS.md`](./reports/LOYO_CV_FINDINGS.md) §4 for the more precise finding (fine-tuning is the
 single *most volatile* method across all 33 folds, not uniformly worse).
 
 **A finding this setup was specifically designed to catch**: at `evergreen`, every one of the 10
@@ -197,11 +207,11 @@ methods collapses to strongly negative R² on the 2012 fold specifically (a real
 drought year), while `low_amplitude`'s 2018 fold fails for an entirely different reason (an erratic,
 non-seasonal LAI trajectory, not a climate-driver anomaly) — exactly the kind of year-specific
 failure a single fixed 2022 test year could never reveal. Full investigation, figures, and the
-complete Key Findings writeup: [`LOYO_CV_FINDINGS.md`](./LOYO_CV_FINDINGS.md).
+complete Key Findings writeup: [`LOYO_CV_FINDINGS.md`](./reports/LOYO_CV_FINDINGS.md).
 
 ## Leakage Diagnostic: is the evergreen/2012 LOYO-CV failure distribution shift or model limitation?
 
-**See [`LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md`](./LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md)** — the
+**See [`LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md`](./reports/LEAKAGE_DIAGNOSTIC_REPORT_CHRONOS2.md)** — the
 Chronos-2 counterpart to
 [AELSTM's leakage diagnostic](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/LEAKAGE_DIAGNOSTIC_REPORT.md),
 answering the same follow-up question (deliberate data leakage, **not** a valid evaluation protocol)
@@ -217,7 +227,7 @@ representational limitation. Results in `outputs/leakage_diagnostic_2012/`.
 
 ## Improved LoRA Fine-Tuning
 
-**See [`FINETUNE_IMPROVEMENT_REPORT.md`](./FINETUNE_IMPROVEMENT_REPORT.md) for the full design and
+**See [`FINETUNE_IMPROVEMENT_REPORT.md`](./reports/FINETUNE_IMPROVEMENT_REPORT.md) for the full design and
 results.** The original fine-tuning run (`run_chronos2.py`) called `fit()` without
 `validation_inputs`, so it trained a fixed 1000 steps with no validation-based checkpoint selection,
 using LoRA hyperparameters taken verbatim from Amazon's notebook. `finetune_lora_improved.py` fixes
@@ -239,7 +249,7 @@ for `low_amplitude`), and the full three-way comparison against raw observations
 
 ## Spatial Transfer: Chronos-2 Trained on One Pixel, Deployed on Another
 
-**See [`SPATIAL_TRANSFER_REPORT_CHRONOS2.md`](./SPATIAL_TRANSFER_REPORT_CHRONOS2.md)** — the Chronos-2
+**See [`SPATIAL_TRANSFER_REPORT_CHRONOS2.md`](./reports/SPATIAL_TRANSFER_REPORT_CHRONOS2.md)** — the Chronos-2
 counterpart to
 [AELSTM's spatial-transfer diagnostic](https://github.com/zhanghchen/AELSTM-vegetation-forecasting/blob/main/SPATIAL_TRANSFER_REPORT.md),
 which found most AELSTM-family models (especially the flagship AELSTM model) lose substantial R² when
@@ -253,7 +263,7 @@ to negative R² under the same test. Results in `outputs/spatial_transfer/`.
 
 ## Advanced Fine-Tuning: Can Better PEFT Methods Beat Zero-Shot?
 
-**See [`CHRONOS2_ADVANCED_FINETUNING_REPORT.md`](./CHRONOS2_ADVANCED_FINETUNING_REPORT.md)** for the full
+**See [`CHRONOS2_ADVANCED_FINETUNING_REPORT.md`](./reports/CHRONOS2_ADVANCED_FINETUNING_REPORT.md)** for the full
 literature review, design, and results. Follow-up to the LoRA/improved-LoRA fine-tuning work above:
 tests 6 additional PEFT methods (DoRA, VeRA, IA3, LN-Tuning, BitFit, partial-last-block fine-tuning),
 selected from a literature review of ICLR/ICML/NeurIPS 2022-2025 and cross-checked for actual Chronos-2
@@ -272,7 +282,7 @@ performance without classic overfitting (train/val curves look normal). Results 
 
 ## PFT Ablation: Is Chronos-2 Sensitive to Vegetation Composition?
 
-**See [`CHRONOS2_PFT_ABLATION_REPORT.md`](./CHRONOS2_PFT_ABLATION_REPORT.md)** for the full design and
+**See [`CHRONOS2_PFT_ABLATION_REPORT.md`](./reports/CHRONOS2_PFT_ABLATION_REPORT.md)** for the full design and
 results (companion to the AELSTM project's own PFT ablation across its 8 models). Tests whether feeding
 ESA CCI Plant Functional Type (PFT) fractional cover as a time-aligned zero-shot covariate (broadcast
 constant per year, per Chronos-2's verified lack of a native static-covariate slot) changes the 2022
@@ -291,7 +301,7 @@ Results in `outputs/pft_ablation/`.
 
 ## Multi-Pixel PFT Conditioning: Architecture-Level Fix + Pooled Training
 
-**See [`CHRONOS2_PFT_MULTIPIXEL_REPORT.md`](./CHRONOS2_PFT_MULTIPIXEL_REPORT.md)** for the full design and
+**See [`CHRONOS2_PFT_MULTIPIXEL_REPORT.md`](./reports/CHRONOS2_PFT_MULTIPIXEL_REPORT.md)** for the full design and
 results. Direct follow-up to the PFT ablation above: since a single-pixel constant PFT covariate is
 architecturally erased, this redesigns the experiment so PFT genuinely varies *across* 70 diverse pooled
 pixels, and adds a minimal architecture modification - a small FiLM-conditioning MLP (100K new params,
@@ -317,7 +327,7 @@ windows per pixel, not more pixels or architecture changes. Results in `outputs/
 
 ## PFT-v2: An Open Search for a Working PFT Method, and a Decisive Negative Control
 
-**See [`CHRONOS2_PFT_V2_REPORT.md`](./CHRONOS2_PFT_V2_REPORT.md)** for the full research log and results.
+**See [`CHRONOS2_PFT_V2_REPORT.md`](./reports/CHRONOS2_PFT_V2_REPORT.md)** for the full research log and results.
 Direct, open-ended follow-up to the multi-pixel study above: rather than assume more training windows would
 fix the overfitting, this screens 4 architecturally distinct PFT-conditioning mechanisms (the original deep
 MLP FiLM, a regularized/smaller version, a biologically-structured "linear mixture of per-class response
@@ -340,7 +350,7 @@ similar, generic amount regardless of what information drives it - not a PFT-spe
 
 ## Predictor Sensitivity / Ablation Study
 
-**See [`PREDICTOR_ABLATION_REPORT.md`](./PREDICTOR_ABLATION_REPORT.md) for the full design and
+**See [`PREDICTOR_ABLATION_REPORT.md`](./reports/PREDICTOR_ABLATION_REPORT.md) for the full design and
 results.** Studies how sensitive all 9 methods (8 AELSTM-family + Chronos-2 zero-shot) are to the
 choice of the 7 climate predictors, on the current train-2000-2021/test-2022 setup. Rather than the
 intractable 2⁷=128 subsets: **Phase 1** leaves out one predictor at a time (7 configs); **Phase 2**
@@ -359,7 +369,7 @@ validated, leaner 5-predictor default going forward.
 
 ## Results at a glance
 
-**See [`COMPARISON_REPORT.md`](./COMPARISON_REPORT.md) for the full writeup** — comprehensive
+**See [`COMPARISON_REPORT.md`](./reports/COMPARISON_REPORT.md) for the full writeup** — comprehensive
 per-pixel tables (all 10 methods x 5 metrics), the rank-consistency analysis, and direct answers
 to "does Chronos-2 actually help," "did fine-tuning help," and what the results do/don't prove.
 The underlying data is `outputs/fair_comparison_vs_raw_observations.csv` and
@@ -372,3 +382,18 @@ graded fairly (mean rank 1.33/10) — but LoRA fine-tuning made it *worse* on al
 **This is the single-2022-test-year result.** For evidence across 11 held-out years instead of one
 (including the `evergreen`/2012 drought-year finding a single test year could never reveal), see
 `outputs/loyo_cv/comparison/` and the **Leave-One-Year-Out Cross-Validation** section below.
+
+## Zero-Shot Generalization Across 32 Diverse, Purity-Filtered Pixels
+
+**See [`CHRONOS2_PURITY32_REPORT.md`](./reports/CHRONOS2_PURITY32_REPORT.md)** for the full design
+and results. Extends the zero-shot generalization question to 32 pixels (all 8 dominant vegetation
+classes, 8 U.S. regions, PFT purity ≥ 0.75), reusing the already-selected, already-quality-filtered
+70-pixel pool from the PFT-multipixel/PFT-v2 studies — no new downloads, since gridMET/HiQ-LAI data
+for this pool already existed locally.
+
+**Finding**: median R² = 0.865 across all 32 pixels (69% at R² ≥ 0.8), confirming the original
+3-pixel result generalizes to a much larger, independently-selected set rather than being an
+artifact of favorable pixel choice. Tree- and shrub-evergreen classes are the most consistently
+strong (std ≤ 0.06); grassland/shrub classes show more variance, traced to the same
+low-signal-amplitude failure mode already identified in the LOYO-CV study, not a new problem.
+Results in `outputs/purity32_pixel_study/`.

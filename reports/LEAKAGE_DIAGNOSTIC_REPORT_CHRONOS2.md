@@ -1,5 +1,7 @@
 # Leakage Diagnostic: Chronos-2 on Evergreen/2012 (Prof. Wang's follow-up, part 2)
 
+*Generated: 2026-08-13*
+
 > **⚠️ This is NOT a valid evaluation protocol.** The "leakage" condition
 > below deliberately fine-tunes Chronos-2 on data that includes the year it
 > is then evaluated on. This is textbook data leakage and the resulting

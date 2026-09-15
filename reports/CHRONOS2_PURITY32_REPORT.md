@@ -1,5 +1,7 @@
 # Zero-Shot Chronos-2 Across 32 Diverse, Purity-Filtered CONUS Pixels
 
+*Generated: 2026-09-15*
+
 **Motivation**: the global ERA5 generalization study (`experiments/global_era5_chronos/`) is
 answering the same underlying question — does zero-shot Chronos-2 generalize across diverse
 vegetation types? — but is severely bottlenecked by the Copernicus CDS download queue (one

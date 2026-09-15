@@ -1,5 +1,7 @@
 # Chronos-2 PFT Ablation: Zero-Shot Sensitivity to Vegetation Composition
 
+*Generated: 2026-08-26*
+
 **Question:** does feeding Plant Functional Type (PFT) fractional-cover information as a time-aligned covariate improve — or even change — Chronos-2's zero-shot LAI forecast? Companion to `AELSTM/PFT_ABLATION_REPORT.md` (the other 8 models); read that report for the full pixel-selection and PFT-dataset background, not repeated here.
 
 All outputs in `outputs/pft_ablation/` — new, separate from `outputs/zero_shot/`, `outputs/finetuned_lora/`, `outputs/finetuned_lora_improved/`, `outputs/advanced_finetuning/`.

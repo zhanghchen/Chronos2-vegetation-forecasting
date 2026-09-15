@@ -1,5 +1,7 @@
 # PFT-v2: An Open Search for a Scientifically Defensible PFT Improvement to Chronos-2
 
+*Generated: 2026-08-27*
+
 **Goal restated by the user**: not to defend a specific PFT-integration design, but to find *any* effective, reproducible way to use PFT information to improve Chronos-2 LAI forecasting — or to accumulate strong evidence that none exists under the available data, and to identify precisely why.
 
 **Bottom line up front: the evidence supports conclusion B.** Across 4 architecturally distinct conditioning mechanisms, both PFT representations, and a rigorous pre-2022 validation protocol, no method produced an improvement that survives the real-vs-shuffled-PFT control. The one architecture that beat the others on pre-2022 validation (`low_rank`) also improved 2022 R² by +0.0022 over zero-shot — but a model trained identically on **randomly shuffled PFT-to-pixel assignments** improved by +0.0024, statistically indistinguishable from the real-PFT result (paired t-test p=0.245, Wilcoxon p=0.663, 70 pixels). The bottleneck is not PFT representation, injection location, or regularization — it is that **any small amount of gradient-based conditioning capacity added to a near-optimal pretrained model, on this amount of data, produces a small generic effect independent of what information feeds it.**

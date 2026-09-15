@@ -1,5 +1,7 @@
 # LOYO-CV: Scientific Findings
 
+*Generated: 2026-08-13*
+
 **Scope**: all 10 methods (AELSTM, BiLSTM, LSTM, GRU, RNN, CNN, RF, SVM, Chronos-2 zero-shot,
 Chronos-2 LoRA fine-tuned), 3 pixels (`low_amplitude`, `high_amplitude_deciduous`, `evergreen`),
 11 held-out years (2012-2022), each trained on a fixed 12-year rolling window immediately before

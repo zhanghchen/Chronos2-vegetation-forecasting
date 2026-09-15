@@ -1,5 +1,7 @@
 # Chronos-2 vs. AELSTM — Comprehensive Comparison Report
 
+*Generated: 2026-07-29*
+
 **Scope**: 3 pixels run with both frameworks (`low_amplitude`, `high_amplitude_deciduous`,
 `evergreen`) + 1 pixel run with AELSTM only (`western_kansas_eastern_colorado`, the original
 project pixel, predating this comparison). All numbers below are **every model scored against

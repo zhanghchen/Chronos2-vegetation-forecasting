@@ -1,5 +1,7 @@
 # Predictor Sensitivity / Ablation Study
 
+*Generated: 2026-08-13*
+
 **Scope**: 9 methods (8 AELSTM-family + Chronos-2 zero-shot — LoRA fine-tuning excluded, see
 "Design" below), 3 pixels, same train-2000-2021/test-2022 protocol as the current setup. The
 full-7-predictor baseline is not rerun — read from each method's already-computed, raw-obs-scored

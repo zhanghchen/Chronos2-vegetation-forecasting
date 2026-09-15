@@ -1,5 +1,7 @@
 # Advanced Chronos-2 Fine-Tuning: Can Better PEFT Methods Beat Zero-Shot?
 
+*Generated: 2026-08-25*
+
 **Question**: our earlier work showed standard LoRA fine-tuning (with and without validation-based
 checkpoint selection) did not consistently beat Chronos-2 zero-shot. Does a broader, more recent set
 of parameter-efficient fine-tuning (PEFT) methods change that conclusion, under our small
