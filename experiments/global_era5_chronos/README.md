@@ -1,8 +1,8 @@
 # Global ERA5 + Chronos-2 LAI Evaluation
 
-**Status: infrastructure built and verified; ERA5 download in progress, rate-limited by
-Copernicus CDS (see "Known constraints" below). This is an honest snapshot of a
-partially-complete, actively-running experiment, not a finished result.**
+**Status: Part 7 (pipeline validation on one existing CONUS pixel) complete — first real
+result obtained 2026-09-14. Full 45-pixel global evaluation not yet started (see "Next
+steps").**
 
 **Goal**: evaluate zero-shot Chronos-2's LAI-forecasting generalization outside the United
 States, using ERA5 as a common, global meteorological input in place of the existing
@@ -38,6 +38,43 @@ project's gridMET (CONUS-only).
    `AELSTM/preprocessing/nc_csv.py`'s exact windowed-mean convention, not a naive calendar
    aggregation), then calls the existing `build_chronos_inputs()`/zero-shot prediction path.
 
+## Part 7 validation result (evergreen pixel, ERA5 vs. gridMET, both zero-shot)
+
+`results/evergreen/{predictions_era5.csv,metrics_era5.txt}`, produced by
+`run_era5_chronos.py --lat 30.525 --lon -82.4333 --site evergreen --era5-years 2021 2022 --test-year 2022`:
+
+| Source | Context | RMSE | MAE | MAPE | R² | Pearson r |
+|---|---|---|---|---|---|---|
+| gridMET (existing, `outputs/zero_shot/evergreen/metrics.txt`) | 2000–2021 (~1,002 steps) | 0.485 | 0.426 | 14.02 | 0.832 | 0.930 |
+| **ERA5 (this experiment)** | 2021 only (46 steps) | 0.534 | 0.446 | 14.60 | 0.797 | 0.902 |
+
+**Read this as a diagnostic, not a horse race (Part 22's own framing):** the ERA5 run used a
+**much shorter context** (1 year vs. gridMET's 22 years) because only 2021–2022 ERA5 data was
+fetched for this validation — the two rows are not an apples-to-apples comparison of the met
+source itself. The finding that matters here is that ERA5-forced Chronos-2 produces sane,
+physically reasonable predictions in the same ballpark as the established gridMET baseline
+(no wildly wrong units, no sign errors, no order-of-magnitude mismatch) despite 22× less
+context — a real, positive validation signal that the ERA5 variable mapping, unit
+conversions, and temporal alignment (§ below) are correct.
+
+**Three real bugs were found and fixed while producing this first result** (not data issues):
+1. `run_era5_chronos.py`'s `CODE_DIR` used `parents[2]` instead of `parents[3]`, resolving to
+   a nonexistent `experiments/Code` instead of the project's actual `Code/` directory.
+2. The `chronos2` conda environment (required for `run_chronos2`'s `BaseChronosPipeline` —
+   confirmed the *base* env's `chronos` package is a different, incompatible package) did not
+   have `cdsapi` installed, even though `era5_source.py` imports it unconditionally at
+   call-time regardless of whether any network fetch is actually needed. Fixed by installing
+   `cdsapi` into the `chronos2` env (lightweight, no dependency conflicts).
+3. **A same-process HDF5 library conflict**: importing `run_chronos2` (which pulls in
+   `transformers`/`tensorflow`, bundling its own `libhdf5`) before actually *opening* a real
+   netCDF4 file corrupts every subsequent `netCDF4`/`xarray` file read in that process
+   (`OSError: [Errno -101] NetCDF: HDF error`), even though the cached files themselves are
+   completely fine (verified: both the base conda env and an isolated `chronos2`-env
+   subprocess open them without issue). Root cause: HDF5 only locks in its correct library
+   bindings on the *first real file-open call*, not merely on module import. Fixed in
+   `run_era5_chronos.py` by forcing one real netCDF4 open/close (any cached file) immediately
+   after `import era5_source`, before `import run_chronos2`.
+
 ## Known constraints (found only by running real requests - not documented anywhere)
 
 - **This CDS account allows exactly ONE request in flight at a time.** Submitting several
@@ -61,8 +98,10 @@ project's gridMET (CONUS-only).
 cd scripts
 python -u era5_source.py  # see build_gridmet_equivalent(lat, lon, years) for direct use
 
-# Run the existing Chronos-2 zero-shot pipeline with ERA5 covariates for one pixel:
-python run_era5_chronos.py --lat 30.525 --lon -82.4333 --site evergreen --era5-years 2020 2021 2022 --test-year 2022
+# Run the existing Chronos-2 zero-shot pipeline with ERA5 covariates for one pixel
+# (MUST use the chronos2 conda env -- base env's `chronos` package lacks BaseChronosPipeline):
+/home/deh25003/miniconda3/envs/chronos2/bin/python3 run_era5_chronos.py \
+    --lat 30.525 --lon -82.4333 --site evergreen --era5-years 2021 2022 --test-year 2022
 
 # Re-run/expand the global pixel selection (independent of ERA5, fast - ~5-10 min):
 python select_global_pixels.py
@@ -91,11 +130,10 @@ experiments/global_era5_chronos/
 
 ## Next steps (not yet done)
 
-- Let the ERA5 fetch for the CONUS validation pixels (Part 7) finish; compare against the
-  existing gridMET zero-shot results for the same pixels (Part 22 diagnostic).
-- Once validated, decide on a practical years-of-history budget per pixel (shorter history
-  = fewer sequential CDS requests = faster) and launch the 45-pixel global fetch as a long
-  background job.
+- Extend Part 7 validation to 1-2 more existing CONUS pixels (`low_amplitude`,
+  `high_amplitude_deciduous`) for a less single-pixel-dependent sanity check.
+- Decide on a practical years-of-history budget per pixel (shorter history = fewer sequential
+  CDS requests = faster) and launch the 45-pixel global fetch as a long background job.
 - Run zero-shot Chronos-2 across the 45 pixels once ERA5 + a global LAI source (MODIS
   MOD15A2H via NASA Earthdata, credentials already confirmed working, or GIMMS LAI4g) are
   both available; build the regional/vegetation-group/U.S.-vs-non-U.S. analysis and figures

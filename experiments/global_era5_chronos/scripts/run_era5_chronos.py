@@ -15,11 +15,26 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-CODE_DIR = Path(__file__).resolve().parents[2] / "Code"
+CODE_DIR = Path(__file__).resolve().parents[3] / "Code"
 sys.path.insert(0, str(CODE_DIR))
+# era5_source (netCDF4/xarray/HDF5) MUST be imported -- and MUST actually
+# open a real file -- before run_chronos2 (torch/transformers, which pulls
+# in tensorflow's own bundled libhdf5). Confirmed empirically: merely
+# importing the netCDF4/xarray *module* first is not enough -- the HDF5
+# library only locks in its (correct) bindings once a real file-open call
+# happens; without a prior real open, importing tensorflow afterward still
+# corrupts every subsequent netCDF4 read in the same process
+# ("OSError: NetCDF: HDF error"), even though the files themselves are
+# completely fine (verified: base env and an isolated chronos2-env
+# subprocess both open them without issue).
+import era5_source as es  # noqa: E402
+import xarray as _xr  # noqa: E402
+_warm_up_candidates = sorted(es.CACHE_DIR.glob("*.nc"))
+if _warm_up_candidates:
+    with _xr.open_dataset(_warm_up_candidates[0]):
+        pass
 import common_pipeline as cp  # noqa: E402
 import run_chronos2 as rc2  # noqa: E402
-import era5_source as es  # noqa: E402
 
 AELSTM_SITES_DIR = Path("/home/deh25003/chronos-forecasting/AELSTM/data/processed/sites")
 OUT_DIR = Path(__file__).resolve().parents[1] / "results"
