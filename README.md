@@ -397,3 +397,11 @@ artifact of favorable pixel choice. Tree- and shrub-evergreen classes are the mo
 strong (std ≤ 0.06); grassland/shrub classes show more variance, traced to the same
 low-signal-amplitude failure mode already identified in the LOYO-CV study, not a new problem.
 Results in `outputs/purity32_pixel_study/`.
+
+## Slide decks
+
+All presentation decks live in [`slides/`](./slides/), each with a small "Generated: YYYY-MM-DD"
+annotation on its title slide (sourced from git history, not filesystem timestamps):
+`Vegetation_Forecasting_Research_Update.pptx`, `Leakage_Diagnostic_2012_Summary.pptx`,
+`Chronos2_Advanced_Finetuning_Summary.pptx`, `Chronos2_PFT_Investigation_Summary.pptx`,
+`Vegetation_Forecasting_Comprehensive_Summary.pptx`, `ERA5_Global_Chronos2_Progress_Update.pptx`.

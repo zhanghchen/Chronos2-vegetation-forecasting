@@ -355,7 +355,7 @@ add_bullets(s, MARGIN, top2 + Inches(0.45), Inches(12.2), Inches(1.8), [
 ], size=15.5, space_after=10, bullet_color=ACCENT)
 add_takeaway(s, "Method diversity ruled out LoRA's mechanism as the cause — the ceiling appears to be the data, not the method.")
 
-out_path = f"{ROOT}/Chronos2_Advanced_Finetuning_Summary.pptx"
+out_path = f"{ROOT}/slides/Chronos2_Advanced_Finetuning_Summary.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides._sldIdLst))

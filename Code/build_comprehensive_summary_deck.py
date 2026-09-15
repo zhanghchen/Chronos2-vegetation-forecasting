@@ -508,7 +508,7 @@ add_bullets(s, MARGIN, top2 + Inches(0.45), Inches(12.2), Inches(2.0), [
 ], size=15.5, space_after=9, bullet_color=ACCENT)
 add_takeaway(s, "Full detail for every study lives in its own report/deck — this deck is the cross-study summary.")
 
-out_path = f"{ROOT}/Vegetation_Forecasting_Comprehensive_Summary.pptx"
+out_path = f"{ROOT}/slides/Vegetation_Forecasting_Comprehensive_Summary.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides._sldIdLst))

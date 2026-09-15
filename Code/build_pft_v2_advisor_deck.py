@@ -449,7 +449,7 @@ add_bullets(s, MARGIN, top2 + Inches(0.45), Inches(12.2), Inches(2.6), [
 ], size=15, space_after=10, bullet_color=ACCENT)
 add_takeaway(s, "Full details: CHRONOS2_PFT_V2_REPORT.md — every number in this deck traces to a saved CSV in outputs/pft_v2/.")
 
-out_path = f"{ROOT}/Chronos2_PFT_Investigation_Summary.pptx"
+out_path = f"{ROOT}/slides/Chronos2_PFT_Investigation_Summary.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides._sldIdLst))

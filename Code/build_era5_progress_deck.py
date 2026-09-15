@@ -330,7 +330,7 @@ add_bullets(s, MARGIN, top, Inches(11.8), h, [
 ], size=17, space_after=16)
 add_takeaway(s, "Next week's goal: move from data preparation into running and analyzing the global Chronos-2 experiment itself.")
 
-out_path = f"{ROOT}/ERA5_Global_Chronos2_Progress_Update.pptx"
+out_path = f"{ROOT}/slides/ERA5_Global_Chronos2_Progress_Update.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides._sldIdLst))

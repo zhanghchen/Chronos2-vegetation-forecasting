@@ -585,7 +585,7 @@ SPEAKER_NOTES = [
 for slide, note in zip(prs.slides, SPEAKER_NOTES):
     slide.notes_slide.notes_text_frame.text = note
 
-out_path = f"{ROOT}/Chronos2-vegetation-forecasting/Vegetation_Forecasting_Research_Update.pptx"
+out_path = f"{ROOT}/Chronos2-vegetation-forecasting/slides/Vegetation_Forecasting_Research_Update.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides.__iter__.__self__._sldIdLst))

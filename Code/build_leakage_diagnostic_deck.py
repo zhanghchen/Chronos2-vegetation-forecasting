@@ -311,7 +311,7 @@ for i, (num, headline, sub) in enumerate(items):
     add_text(s, MARGIN + Inches(0.8), y + Inches(0.5), Inches(11.6), Inches(0.85),
               [(sub, 14.5, MUTED, False, False)], line_spacing=1.2)
 
-out_path = f"{ROOT}/Chronos2-vegetation-forecasting/Leakage_Diagnostic_2012_Summary.pptx"
+out_path = f"{ROOT}/Chronos2-vegetation-forecasting/slides/Leakage_Diagnostic_2012_Summary.pptx"
 prs.save(out_path)
 print("Saved:", out_path)
 print("Slides:", len(prs.slides._sldIdLst))
