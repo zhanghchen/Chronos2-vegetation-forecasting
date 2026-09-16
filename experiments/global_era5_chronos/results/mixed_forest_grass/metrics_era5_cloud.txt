@@ -1,0 +1,9 @@
+RMSE: 0.3202825274239832
+MAE: 0.16758429408073425
+MAPE: 22.082209707686758
+R2: 0.9354828379573266
+Pearson_r: 0.9729518923079729
+site: mixed_forest_grass
+source: ERA5-cloud
+test_year: 2022
+context_steps: 1002

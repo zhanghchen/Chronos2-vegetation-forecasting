@@ -1,0 +1,9 @@
+RMSE: 0.3879224077001274
+MAE: 0.2516190528869629
+MAPE: 14.599558132092818
+R2: 0.9623718086666805
+Pearson_r: 0.9824778762556312
+site: high_amplitude_deciduous
+source: ERA5-cloud
+test_year: 2022
+context_steps: 1002
