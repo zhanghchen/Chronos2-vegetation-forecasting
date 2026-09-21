@@ -23,11 +23,25 @@ GROUND_TRUTH_COLOR = "#555555"
 CONTEXT_COLOR = "#9AA294"
 PRED_COLOR = "#8C1D40"  # matches the deck's global-experiment accent
 
-# Curated selection spanning the full performance range, incl. the pixel
-# the user opened directly (g001_shrubs_nd) - see
-# ERA5_GLOBAL70_REPORT.md's "Failure cases" section for the reasoning
-# behind each one's inclusion.
+# Top-8 performers by R2, spanning diverse regions/classes - g032 and g065
+# were the two best; the other 6 are the next-best distinct-region/class
+# pixels (not just the raw top-6, to avoid e.g. 4 Siberia grasslands in a
+# row - see era5_global70_clean.csv for the full ranking).
 CURATED = [
+    ("g032_shrubs_bd", "Mediterranean shrubland"),
+    ("g065_shrubs_bd", "Central/Southern Africa shrubland"),
+    ("g005_grass_nat", "Siberia / Boreal Eurasia grassland"),
+    ("g009_grass_nat", "Canada grassland"),
+    ("g014_trees_ne", "Siberia / Boreal Eurasia evergreen forest"),
+    ("g024_trees_ne", "Western Europe evergreen forest"),
+    ("g035_grass_man", "East Asia managed grassland"),
+    ("g068_grass_nat", "Southern S. America grassland"),
+]
+
+# separate diagnostic selection (mixed strong + failure cases) used for the
+# report's failure-mode discussion - kept distinct from the "great
+# performers" showcase above per explicit request.
+CURATED_DIAGNOSTIC = [
     ("g032_shrubs_bd", "Best: Mediterranean shrubland"),
     ("g065_shrubs_bd", "Strong: Central/Southern Africa shrubland"),
     ("g009_grass_nat", "Solid: Canada grassland"),
@@ -79,30 +93,39 @@ def plot_test_year(ax, pixel_id, subtitle):
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b"))
 
 
-def main():
-    fig, axes = plt.subplots(3, 2, figsize=(15, 12), constrained_layout=True)
-    for ax, (pixel_id, subtitle) in zip(axes.flat, CURATED):
-        plot_one(ax, pixel_id, subtitle)
+def build_grid(pixels, stem, suptitle, nrows, ncols, plot_fn, figsize):
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize, constrained_layout=True)
+    for ax, (pixel_id, subtitle) in zip(axes.flat, pixels):
+        plot_fn(ax, pixel_id, subtitle)
+    for ax in axes.flat[len(pixels):]:
+        ax.axis("off")
     axes.flat[0].legend(frameon=False, fontsize=9, loc="upper left")
-    fig.suptitle("Zero-shot Chronos-2, global (non-CONUS) experiment: observed vs. predicted LAI\n"
-                 "(full 2000–2021 context shown faint, 2022 forecast scored against observed LAI)",
-                 fontsize=13, fontweight="bold")
-    fig.savefig(OUT_DIR / "global70_prediction_examples.png", dpi=220, bbox_inches="tight")
-    fig.savefig(OUT_DIR / "global70_prediction_examples.pdf", bbox_inches="tight")
+    fig.suptitle(suptitle, fontsize=13, fontweight="bold")
+    fig.savefig(OUT_DIR / f"{stem}.png", dpi=220, bbox_inches="tight")
+    fig.savefig(OUT_DIR / f"{stem}.pdf", bbox_inches="tight")
     plt.close(fig)
-    print("saved global70_prediction_examples.png")
+    print(f"saved {stem}.png")
 
-    # test-year-only (2022) version of the same curated grid
-    fig2, axes2 = plt.subplots(3, 2, figsize=(15, 12), constrained_layout=True)
-    for ax, (pixel_id, subtitle) in zip(axes2.flat, CURATED):
-        plot_test_year(ax, pixel_id, subtitle)
-    axes2.flat[0].legend(frameon=False, fontsize=9, loc="upper left")
-    fig2.suptitle("Zero-shot Chronos-2, global (non-CONUS) experiment: 2022 test year only",
-                  fontsize=13, fontweight="bold")
-    fig2.savefig(OUT_DIR / "global70_prediction_examples_testyear.png", dpi=220, bbox_inches="tight")
-    fig2.savefig(OUT_DIR / "global70_prediction_examples_testyear.pdf", bbox_inches="tight")
-    plt.close(fig2)
-    print("saved global70_prediction_examples_testyear.png")
+
+def main():
+    # "great performers" showcase (8 pixels: g032 + g065 kept, 6 more added, per request)
+    build_grid(CURATED, "global70_top_performers",
+               "Zero-shot Chronos-2, global (non-CONUS) experiment: top performers, diverse regions\n"
+               "(full 2000–2021 context shown faint, 2022 forecast scored against observed LAI)",
+               4, 2, plot_one, figsize=(15, 16))
+    build_grid(CURATED, "global70_top_performers_testyear",
+               "Zero-shot Chronos-2, global (non-CONUS) experiment: top performers, 2022 test year only",
+               4, 2, plot_test_year, figsize=(15, 16))
+
+    # original mixed diagnostic grid (3 strong + 3 failure-mode examples) -
+    # still referenced by ERA5_GLOBAL70_REPORT.md's failure-cases discussion
+    build_grid(CURATED_DIAGNOSTIC, "global70_prediction_examples",
+               "Zero-shot Chronos-2, global (non-CONUS) experiment: observed vs. predicted LAI\n"
+               "(full 2000–2021 context shown faint, 2022 forecast scored against observed LAI)",
+               3, 2, plot_one, figsize=(15, 12))
+    build_grid(CURATED_DIAGNOSTIC, "global70_prediction_examples_testyear",
+               "Zero-shot Chronos-2, global (non-CONUS) experiment: 2022 test year only",
+               3, 2, plot_test_year, figsize=(15, 12))
 
     # also save each one individually at full size (e.g. for the pixel the user opened)
     indiv_dir = OUT_DIR / "global70_prediction_plots"
