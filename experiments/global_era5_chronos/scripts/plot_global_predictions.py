@@ -10,6 +10,7 @@ from pathlib import Path
 
 import matplotlib
 matplotlib.use("AGG")
+import matplotlib.dates
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -62,6 +63,22 @@ def plot_one(ax, pixel_id, subtitle):
     ax.tick_params(labelsize=8)
 
 
+def plot_test_year(ax, pixel_id, subtitle):
+    """Zoomed to just the 2022 test year - no pre-2022 context line."""
+    _, pred, metrics = load_pixel(pixel_id)
+    ax.plot(pred["date"], pred["ground_truth"], color=GROUND_TRUTH_COLOR, linewidth=2.4, marker="o",
+             markersize=3.5, label="Observed (2022)")
+    ax.plot(pred["date"], pred["prediction"], color=PRED_COLOR, linewidth=2.2, ls="--", marker="o",
+             markersize=3.5, label="Zero-shot Chronos-2")
+    r2 = float(metrics["R2"])
+    pear = float(metrics["Pearson_r"])
+    ax.set_title(f"{pixel_id}  —  {subtitle}\nR²={r2:.3f}, Pearson r={pear:.3f}", loc="left", fontsize=10.5)
+    ax.set_ylabel("LAI")
+    ax.tick_params(labelsize=8)
+    ax.xaxis.set_major_locator(matplotlib.dates.MonthLocator())
+    ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b"))
+
+
 def main():
     fig, axes = plt.subplots(3, 2, figsize=(15, 12), constrained_layout=True)
     for ax, (pixel_id, subtitle) in zip(axes.flat, CURATED):
@@ -75,9 +92,23 @@ def main():
     plt.close(fig)
     print("saved global70_prediction_examples.png")
 
+    # test-year-only (2022) version of the same curated grid
+    fig2, axes2 = plt.subplots(3, 2, figsize=(15, 12), constrained_layout=True)
+    for ax, (pixel_id, subtitle) in zip(axes2.flat, CURATED):
+        plot_test_year(ax, pixel_id, subtitle)
+    axes2.flat[0].legend(frameon=False, fontsize=9, loc="upper left")
+    fig2.suptitle("Zero-shot Chronos-2, global (non-CONUS) experiment: 2022 test year only",
+                  fontsize=13, fontweight="bold")
+    fig2.savefig(OUT_DIR / "global70_prediction_examples_testyear.png", dpi=220, bbox_inches="tight")
+    fig2.savefig(OUT_DIR / "global70_prediction_examples_testyear.pdf", bbox_inches="tight")
+    plt.close(fig2)
+    print("saved global70_prediction_examples_testyear.png")
+
     # also save each one individually at full size (e.g. for the pixel the user opened)
     indiv_dir = OUT_DIR / "global70_prediction_plots"
     indiv_dir.mkdir(exist_ok=True)
+    testyear_dir = OUT_DIR / "global70_prediction_plots_testyear"
+    testyear_dir.mkdir(exist_ok=True)
     all_pixels = sorted(p.stem for p in LAI_DIR.glob("*.csv"))
     for pixel_id in all_pixels:
         if not (RESULTS_DIR / pixel_id / "predictions_era5_cloud.csv").exists():
@@ -87,7 +118,13 @@ def main():
         ax.legend(frameon=False, fontsize=9, loc="upper left")
         fig.savefig(indiv_dir / f"{pixel_id}.png", dpi=180, bbox_inches="tight")
         plt.close(fig)
-    print(f"saved {len(all_pixels)} individual prediction plots to {indiv_dir}")
+
+        fig, ax = plt.subplots(figsize=(8, 4.5), constrained_layout=True)
+        plot_test_year(ax, pixel_id, "")
+        ax.legend(frameon=False, fontsize=9, loc="best")
+        fig.savefig(testyear_dir / f"{pixel_id}.png", dpi=180, bbox_inches="tight")
+        plt.close(fig)
+    print(f"saved {len(all_pixels)} individual prediction plots to {indiv_dir} and {testyear_dir}")
 
 
 if __name__ == "__main__":
