@@ -107,6 +107,15 @@ high-latitude/remote, n=16) 0.065, the two weakest regions.
    magnitude enough to fail the stricter R² criterion. This is a
    different, milder failure mode than (1).
 
+`outputs/global70_prediction_examples.png` shows both failure modes
+directly (full 2000-2021 observed LAI history + the 2022 forecast overlay)
+alongside 3 strong performers (`g032_shrubs_bd`, `g065_shrubs_bd`,
+`g009_grass_nat`) and `g001_shrubs_nd` (R²≈0, only 202 valid MODIS
+observations across 22 years — visually a sparse, irregular series where
+near-zero R² reflects a near-featureless target more than a bad forecast).
+Individual per-pixel plots for all 68 pixels are in
+`outputs/global70_prediction_plots/<pixel_id>.png`.
+
 Top performers span genuinely diverse regions and contexts:
 `g032_shrubs_bd` (Mediterranean, R²=0.916), `g065_shrubs_bd` (Central/
 Southern Africa, R²=0.879), `g005_grass_nat` (Siberia, R²=0.871, despite
@@ -153,6 +162,8 @@ does work.
 - `scripts/prefetch_arco_global70.py` — climate prefetch for the new points.
 - `scripts/run_era5_chronos_batch_global.py` — zero-shot batch driver.
 - `scripts/build_global70_comparison.py` — summary tables/figures.
+- `scripts/plot_global_predictions.py` — per-pixel observed-vs-predicted
+  LAI plots (curated 6-pixel grid + all 68 individual plots).
 - `data/global_lai/{raw,processed}/`, `data/global_lai/coverage_report.csv`.
 - `results_global/<pixel>/{metrics_era5_cloud.txt,predictions_era5_cloud.csv}`.
 - `outputs/era5_global70{,_clean}.csv`,
