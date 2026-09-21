@@ -1,0 +1,759 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmi:MI_Metadata
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.isotc211.org/2005/gmi https://ngdc.noaa.gov/metadata/published/xsd/schema.xsd"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xmlns:gco="http://www.isotc211.org/2005/gco"
+  xmlns:gmd="http://www.isotc211.org/2005/gmd"
+  xmlns:gmx="http://www.isotc211.org/2005/gmx"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:gss="http://www.isotc211.org/2005/gss"
+  xmlns:gts="http://www.isotc211.org/2005/gts"
+  xmlns:gsr="http://www.isotc211.org/2005/gsr"
+  xmlns:gmi="http://www.isotc211.org/2005/gmi"
+  xmlns:srv="http://www.isotc211.org/2005/srv">
+
+
+  <!-- FILE IDENTIFIER -->
+  <gmd:fileIdentifier>
+    <gco:CharacterString>chronos2-global70-lai-v1-MOD15A2H-061-metadata.xml</gco:CharacterString>
+  </gmd:fileIdentifier>
+
+  <!-- METADATA AND RESOURCE LANGUAGE -->
+  <gmd:language>
+    <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">eng
+    </gmd:LanguageCode>
+  </gmd:language>
+
+  <!-- CHARACTER SET -->
+  <gmd:characterSet>
+    <gmd:MD_CharacterSetCode
+      codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode"
+      codeListValue="UTF8">UTF8
+    </gmd:MD_CharacterSetCode>
+  </gmd:characterSet>
+
+  <!-- HIERARCHY LEVEL -->
+  <gmd:hierarchyLevel>
+    <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode"
+                      codeListValue="series">series
+    </gmd:MD_ScopeCode>
+  </gmd:hierarchyLevel>
+
+  <!-- CONTACT INFORMATION -->
+  <gmd:contact>
+    <gmd:CI_ResponsibleParty>
+      <gmd:organisationName>
+        <gco:CharacterString>LP DAAC at The EROS Center</gco:CharacterString>
+      </gmd:organisationName>
+      <gmd:contactInfo>
+        <gmd:CI_Contact>
+          <gmd:phone>
+            <gmd:CI_Telephone>
+              <gmd:voice>
+                <gco:CharacterString>605-594-6116</gco:CharacterString>
+              </gmd:voice>
+              <gmd:voice>
+                <gco:CharacterString>866-573-3222 (866-LPE-DAAC)</gco:CharacterString>
+              </gmd:voice>
+              <gmd:facsimile>
+                <gco:CharacterString>605-594-6963</gco:CharacterString>
+              </gmd:facsimile>
+            </gmd:CI_Telephone>
+          </gmd:phone>
+          <gmd:address>
+            <gmd:CI_Address>
+              <gmd:deliveryPoint>
+                <gco:CharacterString>Mundt Federal Building</gco:CharacterString>
+              </gmd:deliveryPoint>
+              <gmd:city>
+                <gco:CharacterString>Sioux Falls</gco:CharacterString>
+              </gmd:city>
+              <gmd:administrativeArea>
+                <gco:CharacterString>SD</gco:CharacterString>
+              </gmd:administrativeArea>
+              <gmd:postalCode>
+                <gco:CharacterString>57198</gco:CharacterString>
+              </gmd:postalCode>
+              <gmd:country>
+                <gco:CharacterString>United States</gco:CharacterString>
+              </gmd:country>
+              <gmd:electronicMailAddress>
+                <gco:CharacterString>LPDAAC@usgs.gov</gco:CharacterString>
+              </gmd:electronicMailAddress>
+            </gmd:CI_Address>
+          </gmd:address>
+          <gmd:onlineResource>
+            <gmd:CI_OnlineResource>
+              <gmd:linkage>
+                <gmd:URL>https://lpdaac.usgs.gov/</gmd:URL>
+              </gmd:linkage>
+            </gmd:CI_OnlineResource>
+          </gmd:onlineResource>
+        </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode"
+                         codeListValue="pointOfContact" codeSpace="007">pointOfContact
+        </gmd:CI_RoleCode>
+      </gmd:role>
+    </gmd:CI_ResponsibleParty>
+  </gmd:contact>
+
+  <!-- METADATA DATE -->
+  <gmd:dateStamp>
+    <gco:Date>2026-09-16</gco:Date>
+  </gmd:dateStamp>
+
+  <!-- METADATA STANDARD NAME -->
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115-2 Geographic Information - Metadata Part 2 Extensions for imagery and gridded data
+    </gco:CharacterString>
+  </gmd:metadataStandardName>
+
+  <!-- METADATA VERSION -->
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>ISO 19115-2:2009</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+
+  <!-- SPATIAL REPRESENTATION -->
+  <gmd:spatialRepresentationInfo>
+    <gmd:MD_VectorSpatialRepresentation>
+      <gmd:topologyLevel>
+        <gmd:MD_TopologyLevelCode
+          codeList="http://www.ngdc.noaa.gov/metadata/published/xsd/schema/resources/Codelist/gmxCodelists.xml#MD_TopologyLevelCode"
+          codeListValue="geometryOnly">geometryOnly
+        </gmd:MD_TopologyLevelCode>
+      </gmd:topologyLevel>
+      <gmd:geometricObjects>
+        <gmd:MD_GeometricObjects>
+          <gmd:geometricObjectType>
+            <gmd:MD_GeometricObjectTypeCode
+              codeList="http://www.ngdc.noaa.gov/metadata/published/xsd/schema/resources/Codelist/gmxCodelists.xml#MD_GeometricObjectTypeCode"
+              codeListValue="point">point
+            </gmd:MD_GeometricObjectTypeCode>
+          </gmd:geometricObjectType>
+          <gmd:geometricObjectCount>
+            <gco:Integer>70</gco:Integer>
+          </gmd:geometricObjectCount>
+        </gmd:MD_GeometricObjects>
+      </gmd:geometricObjects>
+    </gmd:MD_VectorSpatialRepresentation>
+  </gmd:spatialRepresentationInfo>
+
+  <!-- DATA INFORMATION -->
+  <gmd:identificationInfo>
+    <gmd:MD_DataIdentification>
+      <gmd:citation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>MOD15A2H.061</gco:CharacterString>
+          </gmd:title>
+          <gmd:alternateTitle>
+            <gco:CharacterString>Leaf Area Index (LAI) and Fraction of Photosynthetically Active Radiation (FPAR)</gco:CharacterString>
+          </gmd:alternateTitle>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:Date>2026-09-17</gco:Date>
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode
+                  codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode"
+                  codeListValue="creation">creation
+                </gmd:CI_DateTypeCode>
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+          <gmd:identifier>
+            <gmd:MD_Identifier>
+              <gmd:code>
+                <gmx:Anchor
+                  xlink:href="https://doi.org/10.5067/MODIS/MOD15A2H.061"
+                  xlink:title="DOI"
+                  xlink:actuate="onRequest">
+                    10.5067/MODIS/MOD15A2H.061
+                </gmx:Anchor>
+              </gmd:code>
+             </gmd:MD_Identifier>
+          </gmd:identifier>
+        </gmd:CI_Citation>
+      </gmd:citation>
+      <gmd:abstract>
+        <gco:CharacterString>
+          The Application for Extracting and Exploring Analysis Ready Samples (AppEEARS) offers a simple and efficient
+          way to access and transform geospatial data from a variety of federal data archives. AppEEARS enables users
+          to subset geospatial datasets using spatial, temporal, and band/layer parameters. Two types of sample
+          requests are available: point samples for geographic coordinates and area samples for spatial areas via
+          vector polygons. Sample requests submitted to AppEEARS provide users not only with data values, but also
+          associated quality data values. Interactive visualizations with summary statistics are provided for each
+          sample within the application, which allow users to preview and interact with their samples before
+          downloading their data.
+        </gco:CharacterString>
+      </gmd:abstract>
+      <gmd:resourceConstraints>
+        <gmd:MD_LegalConstraints>
+          <gmd:useLimitation>
+            <gco:CharacterString>Disclaimer - While every effort has been made to ensure that these data are accurate
+              and reliable within the limits of the current state of the art, NASA cannot assume liability for any
+              damages caused by any errors or omissions in the data, nor as a result of the failure of the data to
+              function on a particular system. NASA makes no warranty, expressed or implied, nor does the fact of
+              distribution constitute such a warranty.
+            </gco:CharacterString>
+          </gmd:useLimitation>
+        </gmd:MD_LegalConstraints>
+      </gmd:resourceConstraints>
+      <gmd:spatialResolution>
+        <gmd:MD_Resolution>
+          <gmd:distance>
+            <gco:Distance uom="meters">500</gco:Distance>
+          </gmd:distance>
+        </gmd:MD_Resolution>
+      </gmd:spatialResolution>
+      <gmd:language>
+        <gmd:LanguageCode codeList="http://www.loc.gov/standards/iso639-2/php/code_list.php" codeListValue="eng">eng
+        </gmd:LanguageCode>
+      </gmd:language>
+      <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:temporalElement>
+            <gmd:EX_TemporalExtent>
+              <gmd:extent>
+                <gml:TimeNode gml:id="TemporalGranularity">
+                  <gml:description>8 day</gml:description>
+                </gml:TimeNode>
+              </gmd:extent>
+            </gmd:EX_TemporalExtent>
+          </gmd:temporalElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
+      <gmd:supplementalInformation>
+        <gco:CharacterString>Ye, Y., Huang, Z., Wang, Z., Zheng, H., Ma, L., Wang, M., Yang, L., Zhang, Q., Ju, W., Chen, T., & Wang, J. (2026). LAI dataset from multiple products (MOD15A2H/GIMMS LAI4g/GLOBMAP LAI V3/GLASS-AVHRR/GLASS-MODIS/HIQ/GEOV2) for the Tibetan Plateau – Data supporting "How Consistent Are Satellite LAI Products in Characterizing Vegetation Dynamics Over the Tibetan Plateau?" (under review). Zenodo. https://doi.org/10.5281/ZENODO.20091683
+
+Ye, Y., Huang, Z., Wang, Z., Zheng, H., Ma, L., Wang, M., Yang, L., Zhang, Q., Ju, W., Chen, T., & Wang, J. (2026). LAI dataset from multiple products (MOD15A2H/GIMMS LAI4g/GLOBMAP LAI V3/GLASS-AVHRR/GLASS-MODIS/HIQ/GEOV2) for the Tibetan Plateau – Data supporting "How Consistent Are Satellite LAI Products in Characterizing Vegetation Dynamics Over the Tibetan Plateau?" (under review). Zenodo. https://doi.org/10.5281/ZENODO.20091684
+
+Myneni, R., Knyazikhin, Y., & Park, T. (2021). MODIS/Terra Leaf Area Index/FPAR 8-Day L4 Global 500m SIN Grid V061. NASA Land Processes Distributed Active Archive Center. https://doi.org/10.5067/MODIS/MOD15A2H.061
+
+Kern, S. (2026). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2026_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.8584
+
+Kern, S. (2026). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2026_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.18378
+
+Kern, S. (2026). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2026_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.10866
+
+Kern, S. (2026). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2026_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.18381
+
+Kern, S. (2024). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2024_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.14185
+
+Kern, S. (2022). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2022_fv0.03). Universität Hamburg. https://doi.org/10.25592/UHHFDM.10863
+
+Kern, S. (2025). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2025_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.16752
+
+Kern, S. (2023). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2023_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.11776
+
+Kern, S. (2022). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2022_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.10867
+
+Kern, S. (2024). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2024_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.14184
+
+Kern, S. (2025). MODIS Collection 6.1 Sinusoidal Tiles 8-daily LAI and FAPAR (Version 2025_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.16751
+
+Kern, S. (2023). MODIS Collection 6.1 global 8-daily LAI and FAPAR (Version 2023_fv0.01). Universität Hamburg. https://doi.org/10.25592/UHHFDM.11777. Accessed September 16, 2026.</gco:CharacterString>
+      </gmd:supplementalInformation>
+      <gmd:supplementalInformation>
+        <gco:CharacterString>AppEEARS Team. (2026). Application for Extracting and Exploring Analysis Ready Samples (AppEEARS). Ver. 3.129. NASA EOSDIS Land Processes Distributed Active Archive Center (LP DAAC), USGS/Earth Resources Observation and Science (EROS) Center, Sioux Falls, South Dakota, USA. Accessed September 16, 2026. https://appeears.earthdatacloud.nasa.gov</gco:CharacterString>
+      </gmd:supplementalInformation>
+    </gmd:MD_DataIdentification>
+  </gmd:identificationInfo>
+
+  <!-- SOURCE AND PROCESSING INFORMATION -->
+  <gmd:dataQualityInfo>
+    <gmd:DQ_DataQuality>
+      <gmd:scope>
+        <gmd:DQ_Scope>
+          <gmd:level>
+            <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode"
+                              codeListValue="dataset">dataset
+            </gmd:MD_ScopeCode>
+          </gmd:level>
+          <gmd:extent>
+            <gmd:EX_Extent>
+              <gmd:description>
+                <gco:CharacterString>Extracted points</gco:CharacterString>
+              </gmd:description>
+              <gmd:geographicElement>
+                <gmd:EX_BoundingPolygon>
+                  <gmd:polygon>
+                    <gml:MultiPoint gml:id="ID">
+                      <gml:pointMembers>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g000_grass_nat
+                          </gml:identifier>
+                          <gml:pos>75.99861111111 -115.998611111106</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g001_shrubs_nd
+                          </gml:identifier>
+                          <gml:pos>75.99861111111 100.00138888891126</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g002_grass_nat
+                          </gml:identifier>
+                          <gml:pos>69.99861111110951 158.00138888891593</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g003_grass_man
+                          </gml:identifier>
+                          <gml:pos>68.99861111110945 18.001388888904728</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g004_grass_nat
+                          </gml:identifier>
+                          <gml:pos>67.99861111110937 54.0013888889076</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g005_grass_nat
+                          </gml:identifier>
+                          <gml:pos>67.99861111110937 122.00138888891304</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g006_trees_ne
+                          </gml:identifier>
+                          <gml:pos>65.9986111111092 86.00138888891018</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g007_shrubs_ne
+                          </gml:identifier>
+                          <gml:pos>63.99861111110906 -17.998611111098143</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g008_grass_nat
+                          </gml:identifier>
+                          <gml:pos>63.99861111110906 143.00138888891473</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g009_grass_nat
+                          </gml:identifier>
+                          <gml:pos>62.99861111110897 -119.99861111110631</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g010_shrubs_nd
+                          </gml:identifier>
+                          <gml:pos>62.99861111110897 171.00138888891695</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g011_shrubs_ne
+                          </gml:identifier>
+                          <gml:pos>61.998611111108886 -98.99861111110464</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g012_trees_ne
+                          </gml:identifier>
+                          <gml:pos>59.99861111110872 6.001388888903762</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g013_grass_nat
+                          </gml:identifier>
+                          <gml:pos>59.99861111110872 36.00138888890618</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g014_trees_ne
+                          </gml:identifier>
+                          <gml:pos>58.99861111110866 64.0013888889084</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g015_trees_nd
+                          </gml:identifier>
+                          <gml:pos>58.99861111110866 107.00138888891183</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g016_grass_nat
+                          </gml:identifier>
+                          <gml:pos>57.99861111110857 78.0013888889095</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g017_shrubs_nd
+                          </gml:identifier>
+                          <gml:pos>57.99861111110857 160.0013888889161</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g018_trees_bd
+                          </gml:identifier>
+                          <gml:pos>56.99861111110849 132.00138888891382</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g019_trees_bd
+                          </gml:identifier>
+                          <gml:pos>55.9986111111084 -113.99861111110584</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g020_trees_ne
+                          </gml:identifier>
+                          <gml:pos>53.99861111110823 -99.99861111110472</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g021_trees_bd
+                          </gml:identifier>
+                          <gml:pos>53.99861111110823 44.0013888889068</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g022_grass_man
+                          </gml:identifier>
+                          <gml:pos>53.99861111110823 91.00138888891058</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g023_grass_nat
+                          </gml:identifier>
+                          <gml:pos>51.99861111110809 -73.99861111110263</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g024_trees_ne
+                          </gml:identifier>
+                          <gml:pos>51.99861111110809 7.001388888903847</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g025_grass_nat
+                          </gml:identifier>
+                          <gml:pos>50.998611111108005 -122.99861111110656</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g026_grass_nat
+                          </gml:identifier>
+                          <gml:pos>50.998611111108005 107.00138888891183</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g027_grass_nat
+                          </gml:identifier>
+                          <gml:pos>49.99861111110792 143.00138888891473</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g028_shrubs_ne
+                          </gml:identifier>
+                          <gml:pos>47.99861111110778 -52.99861111110096</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g029_trees_bd
+                          </gml:identifier>
+                          <gml:pos>47.99861111110778 -3.998611111097034</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g030_grass_nat
+                          </gml:identifier>
+                          <gml:pos>43.99861111110744 12.001388888904245</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g031_grass_nat
+                          </gml:identifier>
+                          <gml:pos>43.99861111110744 127.00138888891344</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g032_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>40.99861111110721 26.001388888905357</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g033_grass_nat
+                          </gml:identifier>
+                          <gml:pos>40.99861111110721 112.00138888891225</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g034_grass_man
+                          </gml:identifier>
+                          <gml:pos>31.998611111106484 131.00138888891377</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g035_grass_man
+                          </gml:identifier>
+                          <gml:pos>30.998611111106413 120.00138888891286</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g036_trees_ne
+                          </gml:identifier>
+                          <gml:pos>25.998611111106 106.00138888891178</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g037_trees_be
+                          </gml:identifier>
+                          <gml:pos>22.99861111110576 -97.99861111110457</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g038_grass_nat
+                          </gml:identifier>
+                          <gml:pos>22.99861111110576 91.00138888891058</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g039_trees_be
+                          </gml:identifier>
+                          <gml:pos>20.998611111105603 100.00138888891126</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g040_trees_be
+                          </gml:identifier>
+                          <gml:pos>18.998611111105447 -88.99861111110383</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g041_grass_man
+                          </gml:identifier>
+                          <gml:pos>13.998611111105047 108.00138888891196</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g042_grass_nat
+                          </gml:identifier>
+                          <gml:pos>12.998611111104964 14.001388888904415</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g043_grass_man
+                          </gml:identifier>
+                          <gml:pos>11.998611111104893 -84.99861111110351</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g044_grass_man
+                          </gml:identifier>
+                          <gml:pos>10.998611111104807 5.001388888903676</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g045_grass_nat
+                          </gml:identifier>
+                          <gml:pos>10.998611111104807 22.00138888890504</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g046_grass_man
+                          </gml:identifier>
+                          <gml:pos>10.998611111104807 125.00138888891324</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g047_trees_bd
+                          </gml:identifier>
+                          <gml:pos>9.998611111104722 -9.998611111097516</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g048_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>9.998611111104722 32.00138888890584</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g049_trees_be
+                          </gml:identifier>
+                          <gml:pos>8.998611111104651 -67.99861111110215</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g050_grass_nat
+                          </gml:identifier>
+                          <gml:pos>7.998611111104566 80.00138888890967</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g051_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>5.99861111110441 40.00138888890649</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g052_grass_nat
+                          </gml:identifier>
+                          <gml:pos>4.998611111104324 -74.99861111110272</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g053_trees_be
+                          </gml:identifier>
+                          <gml:pos>4.998611111104324 -1.998611111096864</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g054_trees_be
+                          </gml:identifier>
+                          <gml:pos>4.998611111104324 103.00138888891156</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g055_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>3.998611111104253 47.00138888890703</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g056_trees_bd
+                          </gml:identifier>
+                          <gml:pos>0.9986111111040116 17.001388888904643</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g057_grass_man
+                          </gml:identifier>
+                          <gml:pos>0.9986111111040116 34.00138888890601</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g058_shrubs_be
+                          </gml:identifier>
+                          <gml:pos>-5.001388888896472 -40.99861111109999</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g059_grass_man
+                          </gml:identifier>
+                          <gml:pos>-9.001388888896798 31.00138888890575</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g060_shrubs_be
+                          </gml:identifier>
+                          <gml:pos>-13.001388888897113 -58.99861111110144</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g061_grass_nat
+                          </gml:identifier>
+                          <gml:pos>-14.001388888897196 -50.99861111110079</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g062_grass_nat
+                          </gml:identifier>
+                          <gml:pos>-18.00138888889751 -41.99861111110008</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g063_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>-20.001388888897665 31.00138888890575</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g064_shrubs_be
+                          </gml:identifier>
+                          <gml:pos>-23.001388888897907 -56.99861111110127</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g065_shrubs_bd
+                          </gml:identifier>
+                          <gml:pos>-23.001388888897907 17.001388888904643</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g066_grass_nat
+                          </gml:identifier>
+                          <gml:pos>-24.001388888897992 148.00138888891513</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g067_grass_nat
+                          </gml:identifier>
+                          <gml:pos>-30.001388888898475 119.0013888889128</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g068_grass_nat
+                          </gml:identifier>
+                          <gml:pos>-38.00138888889912 -72.99861111110255</gml:pos>
+                        </gml:Point>
+                        <gml:Point gml:id="point_1">
+                          <gml:identifier codeSpace="https://appeears.earthdatacloud.nasa.gov/">g069_trees_nd
+                          </gml:identifier>
+                          <gml:pos>-41.00138888889935 175.0013888889173</gml:pos>
+                        </gml:Point>
+                      </gml:pointMembers>
+                    </gml:MultiPoint>
+                  </gmd:polygon>
+                </gmd:EX_BoundingPolygon>
+              </gmd:geographicElement>
+              <gmd:temporalElement>
+                <gmd:EX_TemporalExtent>
+                  <gmd:extent>
+                    <gml:TimeInstant gml:id="StartDate">
+                      <gml:name>Start Date</gml:name>
+                      <gml:timePosition>2000-01-01</gml:timePosition>
+                    </gml:TimeInstant>
+                  </gmd:extent>
+                </gmd:EX_TemporalExtent>
+              </gmd:temporalElement>
+              <gmd:temporalElement>
+                <gmd:EX_TemporalExtent>
+                  <gmd:extent>
+                    <gml:TimeInstant gml:id="EndDate">
+                      <gml:timePosition>2022-12-31</gml:timePosition>
+                    </gml:TimeInstant>
+                  </gmd:extent>
+                </gmd:EX_TemporalExtent>
+              </gmd:temporalElement>
+            </gmd:EX_Extent>
+          </gmd:extent>
+        </gmd:DQ_Scope>
+      </gmd:scope>
+      <gmd:lineage>
+        <gmd:LI_Lineage>
+          <gmd:processStep>
+            <gmi:LE_ProcessStep>
+              <gmd:description>
+                <gco:CharacterString>Software Information</gco:CharacterString>
+              </gmd:description>
+              <gmi:processingInformation>
+                <gmi:LE_Processing>
+                  <gmi:identifier>
+                    <gmd:MD_Identifier>
+                      <gmd:code>
+                        <gmx:Anchor
+                          xlink:href="https://appeears.earthdatacloud.nasa.gov/"
+                          xlink:title="AppEEARS"
+                          xlink:actuate="onRequest">
+                            Application for Extracting and Exploring Analysis Ready Samples
+                        </gmx:Anchor>
+                      </gmd:code>
+                    </gmd:MD_Identifier>
+                  </gmi:identifier>
+                  <gmi:softwareReference>
+                    <gmd:CI_Citation>
+                      <gmd:title>
+                        <gco:CharacterString>Application for Extracting and Exploring Analysis Ready Samples</gco:CharacterString>
+                      </gmd:title>
+                      <gmd:alternateTitle>
+                        <gco:CharacterString>AppEEARS</gco:CharacterString>
+                      </gmd:alternateTitle>
+                      <gmd:date>
+                        <gmd:CI_Date>
+                          <gmd:date>
+                            <gco:Date>2026-09-17</gco:Date>
+                          </gmd:date>
+                          <gmd:dateType>
+                            <gmd:CI_DateTypeCode
+                              codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode"
+                              codeListValue="creation">creation
+                            </gmd:CI_DateTypeCode>
+                          </gmd:dateType>
+                        </gmd:CI_Date>
+                      </gmd:date>
+                      <gmd:edition>
+                        <gco:CharacterString>3.128</gco:CharacterString>
+                      </gmd:edition>
+                    </gmd:CI_Citation>
+                  </gmi:softwareReference>
+                </gmi:LE_Processing>
+              </gmi:processingInformation>
+            </gmi:LE_ProcessStep>
+          </gmd:processStep>
+          <gmd:source>
+            <gmi:LE_Source>
+              <gmd:sourceCitation>
+                <gmd:CI_Citation>
+                  <gmd:title>
+                    <gmx:FileName src="chronos2-global70-lai-v1-granule-list.txt">Text file with data pool URLs for all source granules used in the extraction</gmx:FileName>
+                  </gmd:title>
+                  <gmd:date>
+                    <gmd:CI_Date>
+                      <gmd:date>
+                        <gco:Date>2026-09-17</gco:Date>
+                      </gmd:date>
+                      <gmd:dateType>
+                        <gmd:CI_DateTypeCode
+                          codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode"
+                          codeListValue="creation">creation
+                        </gmd:CI_DateTypeCode>
+                      </gmd:dateType>
+                    </gmd:CI_Date>
+                  </gmd:date>
+                </gmd:CI_Citation>
+              </gmd:sourceCitation>
+            </gmi:LE_Source>
+          </gmd:source>
+        </gmd:LI_Lineage>
+      </gmd:lineage>
+    </gmd:DQ_DataQuality>
+  </gmd:dataQualityInfo>
+
+  <!-- RESOURCE AND METADATA CONSTRAINTS -->
+  <gmd:metadataConstraints>
+    <gmd:MD_LegalConstraints>
+      <gmd:useLimitation>
+        <gco:CharacterString>Disclaimer - While every effort has been made to ensure that these data are accurate
+          and reliable within the limits of the current state of the art, NASA cannot assume liability for any
+          damages caused by any errors or omissions in the data, nor as a result of the failure of the data to
+          function on a particular system. NASA makes no warranty, expressed or implied, nor does the fact of
+          distribution constitute such a warranty.
+        </gco:CharacterString>
+      </gmd:useLimitation>
+    </gmd:MD_LegalConstraints>
+  </gmd:metadataConstraints>
+
+</gmi:MI_Metadata>

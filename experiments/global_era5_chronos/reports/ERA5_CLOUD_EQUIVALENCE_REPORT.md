@@ -113,6 +113,20 @@ unit, or timestamp error (all three were directly ruled out). This is
 reported as an open, moderate discrepancy rather than resolved, per the
 instruction to diagnose rather than paper over discrepancies.
 
+### Visual comparison (not just correlation coefficients)
+
+`outputs/cds_vs_cloud_era5_timeseries.png` (`scripts/plot_cds_vs_cloud_diff.py`)
+plots the actual daily time series of both sources side by side for all 7
+variables, plus a running cloud-minus-CDS difference panel, rather than
+summarizing agreement as a single Pearson r. The two series are visually
+near-indistinguishable for tmmx, tmmn, srad, vpd, sph, and vs — the
+difference panels for those 6 variables oscillate in a narrow band around
+zero with no visible drift or seasonal bias. Precipitation is the visible
+exception: its difference panel shows the same convective-event spikes
+(up to ±10mm) already quantified above, confirming the discrepancy is
+concentrated in specific high-precipitation days rather than being a
+uniform, everywhere-present offset.
+
 ## Does this discrepancy survive to the Chronos-2 forecast?
 
 The 8-day-window mean-aggregation step (`aggregate_era5_to_lai_windows`,

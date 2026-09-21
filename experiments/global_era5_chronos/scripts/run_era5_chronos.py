@@ -68,23 +68,27 @@ def aggregate_era5_to_lai_windows(era5_daily, lai_dates, window_days=7):
     return out
 
 
-def build_merged_df(site_name, lat, lon, era5_years, source="cds"):
-    lai_df = pd.read_csv(AELSTM_SITES_DIR / f"{site_name}.csv", parse_dates=["date"])[["date", "LAI"]]
+def build_merged_df(site_name, lat, lon, era5_years, source="cds", lai_dir=None):
+    lai_dir = lai_dir or AELSTM_SITES_DIR
+    lai_df = pd.read_csv(Path(lai_dir) / f"{site_name}.csv", parse_dates=["date"])[["date", "LAI"]]
     era5_daily = SOURCES[source].build_gridmet_equivalent(lat, lon, era5_years)
     era5_aligned = aggregate_era5_to_lai_windows(era5_daily, lai_df["date"].to_numpy())
     merged = lai_df.merge(era5_aligned, on="date", how="inner")
     return merged
 
 
-def run_one_pixel(site, lat, lon, era5_years, test_year=cp.TEST_YEAR, source="cds", pipeline=None, verbose=True):
+def run_one_pixel(site, lat, lon, era5_years, test_year=cp.TEST_YEAR, source="cds", pipeline=None, verbose=True,
+                   lai_dir=None, results_root=None):
     """Runs the full merge + zero-shot Chronos-2 pipeline for one pixel and
     writes its results, exactly like main() below - factored out so a batch
     driver can call this in a loop while reusing one already-loaded Chronos-2
     `pipeline` (loading it fresh per pixel would be wasteful: it's the same
-    zero-shot model every time)."""
+    zero-shot model every time). `lai_dir`/`results_root` let a batch driver
+    point at a different LAI source / results tree (e.g. the global non-CONUS
+    pixel pool) without touching the CONUS defaults."""
     if verbose:
         print(f"Building merged LAI+ERA5 dataframe for {site} ({lat}, {lon}) [source={source}]...")
-    df = build_merged_df(site, lat, lon, era5_years, source=source)
+    df = build_merged_df(site, lat, lon, era5_years, source=source, lai_dir=lai_dir)
     df = df.dropna(subset=cp.FEATURE_COLS + [cp.TARGET_COL])
     if verbose:
         print(f"{len(df)} aligned rows, {df['date'].dt.year.min()}-{df['date'].dt.year.max()}")
@@ -104,7 +108,7 @@ def run_one_pixel(site, lat, lon, era5_years, test_year=cp.TEST_YEAR, source="cd
     # compatible, never silently overwritten by the new cloud path); "cloud"
     # writes to distinctly-suffixed files so it can never collide with them.
     suffix = "" if source == "cds" else f"_{source}"
-    out_dir = OUT_DIR / site
+    out_dir = (results_root or OUT_DIR) / site
     out_dir.mkdir(parents=True, exist_ok=True)
     pd.DataFrame({"date": future_dates, "ground_truth": ground_truth, "prediction": pred}).to_csv(
         out_dir / f"predictions_era5{suffix}.csv", index=False

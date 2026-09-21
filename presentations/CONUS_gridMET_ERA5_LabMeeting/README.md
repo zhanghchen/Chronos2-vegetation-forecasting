@@ -1,13 +1,23 @@
-# CONUS gridMET + ERA5 Lab Meeting Deck
+# Zero-Shot Chronos-2: CONUS gridMET + Global ERA5/MODIS Lab Meeting Deck
 
-*Generated: 2026-09-16*
+*Generated: 2026-09-16 · Updated: 2026-09-20 (Part 2 replaced: CONUS
+cloud-ERA5 → global non-CONUS ERA5+MODIS experiment)*
 
-12-slide summary of the two most recently completed large-scale Chronos-2
-zero-shot experiments: the 32-pixel purity-filtered gridMET expansion and
-the 70-pixel cloud-ERA5 experiment. No new Chronos-2 experiments were run
-to build this deck — every number is read directly from already-saved
-result files (see `build_deck.py`'s header comment and inline source
-comments for the exact CSV/txt file each number comes from).
+12-slide deck integrating two large-scale Chronos-2 zero-shot experiments:
+
+- **Part 1** (unchanged since the original version): the 32-pixel
+  purity-filtered gridMET CONUS expansion.
+- **Part 2** (new, replaces the original CONUS cloud-ERA5 Part 2): a
+  genuinely global, non-CONUS experiment — 70 pixels across 14 world
+  regions, cloud ERA5 climate + MODIS MOD15A2H LAI (via NASA AppEEARS)
+  instead of gridMET/HiQ-LAI (both CONUS-only).
+
+No new Chronos-2 experiments were run to build the *slides themselves* —
+every number is read directly from already-saved result files at build
+time. The underlying global experiment (pixel selection, LAI/climate
+fetch, zero-shot runs) *was* newly run for this update; see
+`experiments/global_era5_chronos/reports/ERA5_GLOBAL70_REPORT.md` for its
+own full writeup.
 
 ## Files
 
@@ -15,51 +25,60 @@ comments for the exact CSV/txt file each number comes from).
 - `build_deck.py` — editable slide source. Re-run with
   `/home/deh25003/miniconda3/bin/python3 build_deck.py` to regenerate the
   .pptx after editing.
-- `make_figures.py` — builds the 4 NEW figures below. Re-run with the same
-  interpreter to regenerate.
-- `figures/` — all figures embedded in the deck:
-  - **New, built by `make_figures.py`**: `map_32pixel_conus.png`,
-    `map_70pixel_conus.png` (CONUS pixel maps colored by dominant
-    vegetation class, each with a small world-context inset making clear
-    the pixels are CONUS-only), `era5_vs_gridmet_winloss.png` (sorted
-    per-pixel R² difference, ERA5 vs. gridMET), `era5_vs_gridmet_byclass.png`
-    (mean R² by vegetation class, ERA5 vs. gridMET).
-  - **Reused, copied unmodified from existing experiment outputs**:
-    `exp1_r2_by_pixel_and_class.png` (from
-    `outputs/purity32_pixel_study/r2_by_pixel_and_class.png`),
-    `exp2_r2_by_pixel_and_class.png` and `exp2_vs_gridmet_scatter.png`
-    (from `experiments/global_era5_chronos/outputs/`).
+- `make_figures.py` — Part 1's figures (unchanged).
+- `make_global_figures.py` — the new CONUS-vs-global comparison figure
+  (`conus_vs_global_r2_boxplot.png`).
+- `experiments/global_era5_chronos/scripts/build_global70_comparison.py` —
+  Part 2's summary tables/map/figures (lives with the experiment, not here).
+- `experiments/global_era5_chronos/scripts/plot_cds_vs_cloud_diff.py` — the
+  CDS-vs-cloud ERA5 time-series comparison figure (both the full 7-variable
+  version and the 3-variable slide version), built per explicit request to
+  visualize the actual data rather than only a correlation coefficient.
+- `figures/` — every figure embedded in the current deck:
+  - **Part 1** (unchanged): `map_32pixel_conus.png`, `exp1_r2_by_pixel_and_class.png`.
+  - **Part 2** (new): `global70_map.png` (world map, all 70 pixels, colored
+    by vegetation class, CONUS explicitly excluded), `global70_r2_by_pixel_and_class.png`,
+    `global70_context_vs_r2.png` (per-pixel context length vs. R², supplementary).
+  - **Shared**: `cds_vs_cloud_era5_timeseries_slide.png` (3-variable version,
+    embedded in the deck) and `cds_vs_cloud_era5_timeseries.png` (full
+    7-variable version, supplementary reference only).
+  - **Integration**: `conus_vs_global_r2_boxplot.png` (Part 1 vs. Part 2
+    R² distributions, side by side — the disjoint pixel sets mean this is a
+    distributional comparison, not a matched-pixel scatter).
 
 ## Data sources for every number on the deck
 
-- Experiment 1 (32-pixel gridMET): `outputs/purity32_pixel_study/
+- Part 1 (32-pixel gridMET): `outputs/purity32_pixel_study/
   {zero_shot_32pixels,summary_overall,summary_by_class}.csv`.
-- Experiment 2 (70-pixel cloud ERA5): `experiments/global_era5_chronos/
-  outputs/{era5_cloud_70pixels_clean,era5_cloud_summary_overall,
-  era5_cloud_summary_by_class,era5_cloud_vs_gridmet_matched}.csv`.
-- Pixel coordinates/vegetation class: `AELSTM/outputs/
-  pft_multipixel_selection/pft_diverse_pixels.csv`.
-- ERA5 equivalence-validation table (slide 8): the CDS row is read live
-  from `experiments/global_era5_chronos/results/evergreen/metrics_era5.txt`;
-  the raw-variable Pearson-r row and the cloud-ERA5 short-context row are
-  taken from the already-written, already-verified text of
-  `experiments/global_era5_chronos/reports/ERA5_CLOUD_EQUIVALENCE_REPORT.md`
-  rather than re-read from `results/evergreen/metrics_era5_cloud.txt` — see
-  the note below.
+- Part 2 (70-pixel global ERA5+MODIS): `experiments/global_era5_chronos/
+  outputs/era5_global70{_clean,_summary_overall,_summary_by_class,_summary_by_region}.csv`,
+  `experiments/global_era5_chronos/data_selection/global_candidate_pixels_70.csv`.
+- ERA5 equivalence figure (slide 8): built from the same evergreen-pixel
+  2021–2022 comparison data as the original validation
+  (`reports/ERA5_CLOUD_EQUIVALENCE_REPORT.md`), now shown as an actual
+  time-series plot rather than only a correlation table, per explicit
+  request.
 
-## Known data-hygiene note (disclosed, not hidden)
+## What changed from the original version of this deck (2026-09-16)
 
-`results/evergreen/metrics_era5_cloud.txt` was originally written by the
-short-context (2020–2021) equivalence-validation run (R²=0.8741) but was
-**later overwritten** by the large-scale batch run's evergreen row (same
-site, same filename, 22-year context, R²=0.8082) when
-`run_era5_chronos_batch.py` was run afterward. Both numbers are individually
-correct for their own (different-context) run; the file on disk now only
-reflects the large-scale one. The equivalence report's prose already
-recorded the short-context number correctly at the time, so slide 8 (which
-quotes the equivalence validation specifically) uses that report's text
-rather than re-reading the now-overwritten file, and slide 9 (large-scale
-results) uses the large-scale batch CSV, which is unaffected. No numbers
-here are wrong; this note exists so the discrepancy between the two
-evergreen R² values seen across slides 8 and 9 is understood, not mistaken
-for an error.
+The original Part 2 (70-pixel CONUS cloud-ERA5 vs. gridMET head-to-head)
+is **not deleted** — it remains fully documented in
+`experiments/global_era5_chronos/reports/ERA5_CLOUD_LARGESCALE_REPORT.md`
+and its own figures still exist under
+`experiments/global_era5_chronos/outputs/`. It was removed from *this deck*
+specifically because the user asked to replace Part 2 with the new global
+experiment, not because the CONUS-ERA5 result was wrong or superseded
+scientifically — the two are complementary findings (CONUS-ERA5 vs.
+CONUS-gridMET; CONUS-gridMET vs. global-ERA5) documented separately.
+
+## Known data-hygiene note (disclosed, not hidden, still applies)
+
+`experiments/global_era5_chronos/results/evergreen/metrics_era5_cloud.txt`
+was originally written by a short-context (2020–2021) equivalence-validation
+run, then later overwritten by the CONUS large-scale batch run's evergreen
+row (same filename, longer context). Both numbers were individually correct
+for their own run; this file no longer reflects the short-context one. Not
+relevant to any number shown in the current version of this deck (the
+equivalence slide now shows the visual time-series comparison rather than
+that specific R² figure), but noted here for continuity with the deck's
+git history.

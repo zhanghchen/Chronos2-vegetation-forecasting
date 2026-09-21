@@ -30,7 +30,7 @@ NONVEG_CLASSES = ["BARE", "BUILT", "SNOWICE", "WATER_INLAND", "WATER_OCEAN"]
 
 CANDIDATE_GRID_DEG = 1.0  # candidate lattice spacing - coarse enough to keep the point-lookup count manageable
 MIN_SEPARATION_KM = 800   # minimum great-circle separation between selected pixels
-N_TARGET = 45
+N_TARGET = 70
 SEED = 42
 
 # CONUS bounding box already covered by every prior experiment in this
@@ -188,13 +188,14 @@ def main():
     sel["pixel_id"] = [f"g{i:03d}_{d.lower().replace('-', '_')}" for i, d in enumerate(sel.dominant_pft)]
 
     out_cols = ["pixel_id", "lat", "lon", "region", "dominant_pft", "pft_purity", "pft_entropy"] + list(CLASSES)
-    sel[out_cols].to_csv(OUT_DIR / "global_candidate_pixels.csv", index=False)
+    out_name = f"global_candidate_pixels_{N_TARGET}.csv" if N_TARGET != 45 else "global_candidate_pixels.csv"
+    sel[out_cols].to_csv(OUT_DIR / out_name, index=False)
 
     print(f"\nSelected {len(sel)} non-U.S. global pixels.")
     print(sel["dominant_pft"].value_counts())
     print(f"\nPurity range: {sel['pft_purity'].min():.2f} - {sel['pft_purity'].max():.2f}")
     print(f"\nRegion counts:\n{sel['region'].value_counts()}")
-    print(f"\nSaved to {OUT_DIR / 'global_candidate_pixels.csv'}")
+    print(f"\nSaved to {OUT_DIR / out_name}")
 
 
 if __name__ == "__main__":
