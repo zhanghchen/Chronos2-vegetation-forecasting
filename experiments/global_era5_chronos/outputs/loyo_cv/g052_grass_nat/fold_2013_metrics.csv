@@ -1,0 +1,2 @@
+RMSE,MAE,MAPE,R2,Pearson_r,site,mode,test_year,window_start,window_years,n_context,n_test,elapsed_sec
+0.14146014403739332,0.08250453597620915,41.64932022942452,-0.23842166897866246,0.03225299969857624,g052_grass_nat,zero_shot,2013,2001,12,195,19,0.01

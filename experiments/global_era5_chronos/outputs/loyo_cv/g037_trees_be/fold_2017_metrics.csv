@@ -1,0 +1,2 @@
+RMSE,MAE,MAPE,R2,Pearson_r,site,mode,test_year,window_start,window_years,n_context,n_test,elapsed_sec
+0.051184852518226444,0.03903447201644832,35.39757661851681,0.4584960278336673,0.7334629106117135,g037_trees_be,zero_shot,2017,2005,12,529,44,0.02

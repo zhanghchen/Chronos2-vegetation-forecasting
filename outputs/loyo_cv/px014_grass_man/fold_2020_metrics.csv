@@ -1,0 +1,2 @@
+RMSE,MAE,MAPE,R2,Pearson_r,ACC,site,mode,test_year,window_start,window_years,n_context,n_test,elapsed_sec
+0.16377521804577766,0.13112475204726923,29.276153090034217,0.9766167839723063,0.9903906092955997,0.5156496274706142,px014_grass_man,zero_shot,2020,2008,12,551,46,0.0
