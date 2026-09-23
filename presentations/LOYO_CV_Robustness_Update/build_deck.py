@@ -347,10 +347,50 @@ add_picture_fit(s, FIG / "global70_top_performers_testyear.png", MARGIN, top, SL
 add_takeaway(s, "8 pixels spanning the Mediterranean, Africa, Siberia, Canada, Western Europe, East Asia, and South America — all R²=0.71–0.92 on the single 2022 test year.", tint=GLOBAL_TINT, dark=RGBColor(0x5A, 0x12, 0x28), bar=GLOBAL_ACCENT)
 
 
+# ============================================================ SLIDE 7b: FULL POOL VS. EXPLORATORY TOP-20 SUBSET
+top20_summary = pd.read_csv(LOYO_SUMMARY / "loyo_global_full_vs_top20_summary.csv")
+top20_subset = pd.read_csv(LOYO_SUMMARY / "loyo_global_top20_subset.csv")
+top20_threshold = top20_subset["mean"].min()
+
+s = add_slide(); set_bg(s)
+add_title(s, "Full Pool vs. an Exploratory Performance-Selected Subset", eyebrow="SECTION 2 — GLOBAL (NON-CONUS) EXPERIMENT")
+page_num(s, 8)
+top, h = content_box()
+add_text(s, MARGIN, top, Inches(11.8), Inches(0.55),
+         [("Question: how much does performance improve in a best-case subset? Answered transparently — this "
+           "is exploratory, not a second estimate of the overall result.", 13.5, MUTED, False, False)])
+tbl_top = top + Inches(0.65)
+header = ["Group", "n", "Mean R²", "Median R²", "Avg. variance", "Median variance"]
+rows = [
+    [f"Full global pool — PRIMARY RESULT", "68",
+     f"{top20_summary.iloc[0]['mean_R2']:.3f}", f"{top20_summary.iloc[0]['median_R2']:.3f}",
+     f"{top20_summary.iloc[0]['avg_variance']:.3f}", f"{top20_summary.iloc[0]['median_variance']:.3f}"],
+    [f"Top-20 by mean R² — EXPLORATORY", "20",
+     f"{top20_summary.iloc[1]['mean_R2']:.3f}", f"{top20_summary.iloc[1]['median_R2']:.3f}",
+     f"{top20_summary.iloc[1]['avg_variance']:.3f}", f"{top20_summary.iloc[1]['median_variance']:.3f}"],
+]
+styled_table(s, MARGIN, tbl_top, SLIDE_W - 2 * MARGIN, Inches(1.15), header, rows,
+             col_weights=[0.34, 0.08, 0.15, 0.15, 0.14, 0.14], header_size=12, body_size=12,
+             header_color=GLOBAL_ACCENT, highlight_rows=(1,))
+add_text(s, MARGIN, tbl_top + Inches(1.3), Inches(11.8), Inches(0.4),
+         [(f"Selection rule: top 20 of 68 pixels ranked BY mean LOYO-CV R² itself (2012–2022, 11 folds). "
+           f"Threshold: mean R² ≥ {top20_threshold:.3f}.", 12.5, INK, True, True)])
+add_picture_fit(s, FIG / "loyo_global_full_vs_top20_boxplot.png", MARGIN, tbl_top + Inches(1.8), Inches(6.0), h - Inches(3.2))
+add_bullets(s, MARGIN + Inches(6.3), tbl_top + Inches(1.9), Inches(5.5), Inches(2.7), [
+    "These 20 pixels are drawn from the same top-performer showcase on the previous slide — this is the "
+    "same success cases, now quantified as a group.",
+    "Selecting on the outcome metric itself means this subset's statistics cannot be read as \"what a "
+    "typical non-CONUS pixel achieves\" — that is what the full-pool row (and every other report/slide in "
+    "this project) reports.",
+], size=12.5, space_after=8, bullet_color=GLOBAL_ACCENT)
+add_takeaway(s, "Subset statistics are conditional on performance-based selection and are NOT representative of the full global pool. The full-pool result remains the primary, reported finding.",
+             tint=WARN_TINT, dark=RGBColor(0x7A, 0x3D, 0x0A), bar=WARN)
+
+
 # ============================================================ SLIDE 8: GLOBAL LOYO-CV RESULTS
 s = add_slide(); set_bg(s)
 add_title(s, "Global 68-Pixel Pool: LOYO-CV Results", eyebrow="SECTION 2 — GLOBAL ROBUSTNESS CHECK")
-page_num(s, 8)
+page_num(s, 9)
 top, h = content_box()
 stats = [
     (f"{global_h['mean_of_pixel_mean_R2']:.3f}", "mean R² (across pixels × folds)"),
@@ -369,7 +409,7 @@ add_takeaway(s, f"Single-year (2022) median was {global_single_year_median:.3f};
 # ============================================================ SLIDE 9: CONUS VS GLOBAL VARIANCE COMPARISON
 s = add_slide(); set_bg(s)
 add_title(s, "CONUS vs. Global: Variance Comparison", eyebrow="INTEGRATING BOTH POOLS")
-page_num(s, 9)
+page_num(s, 10)
 top, h = content_box()
 add_picture_fit(s, FIG / "loyo_variance_comparison.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
 add_takeaway(s, f"Typical variance is lower for CONUS ({conus_h['median_variance']:.3f} vs. Global's {global_h['median_variance']:.3f}) — but CONUS has a longer extreme-outlier tail (e.g. evergreen's 2012 drought fold).")
@@ -378,7 +418,7 @@ add_takeaway(s, f"Typical variance is lower for CONUS ({conus_h['median_variance
 # ============================================================ SLIDE 10: YEAR DIFFICULTY
 s = add_slide(); set_bg(s)
 add_title(s, "Is Any Single Year Uniformly Hard?", eyebrow="INTEGRATING BOTH POOLS")
-page_num(s, 10)
+page_num(s, 11)
 top, h = content_box()
 add_picture_fit(s, FIG / "loyo_r2_by_year.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
 add_takeaway(s, "No — median R² across pixels stays consistently high in every one of the 11 held-out years for both pools. Individual-pixel bad folds (e.g. droughts) don't show up as population-wide crashes.")
@@ -387,7 +427,7 @@ add_takeaway(s, "No — median R² across pixels stays consistently high in ever
 # ============================================================ SLIDE 11: FINDINGS
 s = add_slide(); set_bg(s)
 add_title(s, "Summary: What LOYO-CV Adds", eyebrow="SUMMARY")
-page_num(s, 11)
+page_num(s, 12)
 top, h = content_box()
 y = top
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("RESULT", 13, ACCENT_DARK, True, False)])

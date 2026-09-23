@@ -1,8 +1,9 @@
 # LOYO-CV Robustness Update Deck
 
-*Generated: 2026-09-23*
+*Generated: 2026-09-23 · Updated: 2026-09-23 (added a transparent
+performance-selected-subset comparison slide, slide 8)*
 
-11-slide follow-up deck for Prof. Wang, addressing the feedback that a
+12-slide follow-up deck for Prof. Wang, addressing the feedback that a
 single test year (2022) is not sufficient evidence of robustness. Two
 sections:
 
@@ -68,6 +69,21 @@ hide the story.
 |---|---|---|---|---|
 | CONUS (70 pixels) | 770 | 0.749 | 0.170 | 0.005 |
 | Global (68 pixels) | 748 | 0.348 | 0.106 | 0.030 |
+
+## Slide 8: exploratory performance-selected subset (explicitly not the result)
+
+Slide 8 answers a specific, narrower question — "how much does performance
+improve in a best-case subset?" — with a transparently-labeled, explicitly
+exploratory comparison: the full 68-pixel pool (the primary, reported
+result throughout this project) side by side with the top 20 of those 68
+pixels **ranked by their own mean LOYO-CV R²** (threshold: mean R² ≥
+0.594). Because the subset is selected by the outcome metric itself, its
+statistics (mean R²=0.690, median variance=0.016) are conditional on that
+selection and are explicitly labeled on the slide as NOT representative of
+the full pool's typical performance — the full-pool row (mean R²=0.348)
+remains the number reported everywhere else in this project
+(`ERA5_GLOBAL70_REPORT.md`, the rest of this deck, the GitHub-committed
+raw results). Built by `Code/build_global_top20_subgroup.py`.
 
 ## Known simplifications (disclosed)
 
