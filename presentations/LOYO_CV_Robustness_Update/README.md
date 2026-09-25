@@ -3,7 +3,28 @@
 *Generated: 2026-09-23 · Updated: 2026-09-23 (added a transparent
 performance-selected-subset comparison slide, slide 8) · Updated:
 2026-09-24 (added slides 12-13: Prof. Wang's follow-up on whether LOYO-CV
-R² actually captures inter-annual variability)*
+R² actually captures inter-annual variability) · Corrected: 2026-09-25
+(fixed a 10x LAI unit bug in the global pipeline - see below; all
+affected figures/results regenerated)*
+
+## Data correction (2026-09-25): global pool LAI was 10x too small
+
+Caught when a global forest pixel's plotted LAI never exceeded 1 (forest
+canopy LAI should reach 3-7). Root cause:
+`experiments/global_era5_chronos/scripts/load_global_lai.py` re-applied
+the MOD15A2H 0.1 scale factor on top of LAI values that AppEEARS'
+point-sample API had already scaled to physical units - silently dividing
+every global pixel's real LAI by 10 again (context, ground truth, and the
+Chronos-2 predictions built from that context were all affected; CONUS
+uses a separate data source and was never affected). Fixed, the raw LAI
+reprocessed, and everything downstream rerun: the single-year 2022 batch,
+LOYO-CV (748 folds), the composite-position analysis, and the top-10
+subset curves. **R², Pearson r, and MAPE are scale-invariant and came
+back numerically identical, verified directly** (e.g. global LOYO-CV mean
+R² was 0.3476 both before and after) - only RMSE/MAE and the raw LAI
+values plotted on slide 7 changed (both now correctly ~10x larger). See
+`experiments/global_era5_chronos/reports/ERA5_GLOBAL70_REPORT.md` for the
+corrected RMSE/MAE table.
 
 14-slide follow-up deck for Prof. Wang, addressing the feedback that a
 single test year (2022) is not sufficient evidence of robustness. Two

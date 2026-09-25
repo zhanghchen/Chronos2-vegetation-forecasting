@@ -1,6 +1,25 @@
 # Zero-Shot Chronos-2 Across 70 Non-CONUS Global Pixels
 
-*Generated: 2026-09-20*
+*Generated: 2026-09-20 · Corrected: 2026-09-25 (RMSE/MAE were reported
+10x too small - see "Data correction" note below; R²/Pearson r/MAPE were
+unaffected and unchanged)*
+
+## Data correction (2026-09-25)
+
+A unit bug was found and fixed in `scripts/load_global_lai.py`: it
+re-applied the MOD15A2H 0.1 scale factor on top of LAI values that
+NASA's AppEEARS point-sample API had already scaled to physical units
+(AppEEARS' own docs: "the middleware makes it possible to extract
+**scaled** data values" - `data/global_lai/raw/README.md:139`), silently
+dividing every real LAI value in this experiment by 10 (e.g. forest
+pixels capped under ~0.7 instead of their true ~3-7 range). Caught when a
+plotted forest pixel's LAI never exceeded 1. All 68 pixels' LAI (context,
+ground truth, and the Chronos-2 predictions built from it) were affected;
+CONUS was not (different data source, no equivalent bug). Fixed, the raw
+LAI reprocessed, and every downstream global result rerun.
+**R², Pearson r, and MAPE are scale-invariant and came back numerically
+identical** (verified directly, not assumed) - only RMSE and MAE, which
+are NOT scale-invariant, were wrong by ~10x and are corrected below.
 
 **Chronos-2 used strictly zero-shot: no training or fine-tuning.**
 
@@ -61,11 +80,13 @@ not the dominant driver of the results below (see Interpretation).
 
 | | RMSE | MAE | MAPE | R² | Pearson r |
 |---|---|---|---|---|---|
-| mean | 0.075 | 0.054 | 58.1 | 0.299 | 0.621 |
-| median | 0.059 | 0.042 | 42.7 | **0.353** | 0.668 |
-| std | 0.058 | 0.043 | 56.6 | 0.403 | 0.270 |
-| min | 0.008 | 0.006 | 8.0 | −0.934 | −0.495 |
-| max | 0.350 | 0.255 | 433.9 | 0.916 | 0.960 |
+| mean | 0.754 | 0.540 | 58.1 | 0.299 | 0.621 |
+| median | 0.591 | 0.422 | 42.7 | **0.353** | 0.668 |
+| std | 0.583 | 0.432 | 56.6 | 0.403 | 0.270 |
+| min | 0.079 | 0.063 | 8.0 | −0.934 | −0.495 |
+| max | 3.503 | 2.547 | 433.9 | 0.916 | 0.960 |
+
+(RMSE/MAE corrected 2026-09-25 - see data correction note above; MAPE/R²/Pearson r unchanged.)
 
 **Only 4/68 (5.9%) pixels reach R² ≥ 0.8** (vs. 66% for the CONUS cloud-ERA5
 study on the same protocol) — a large, real drop, not noise.

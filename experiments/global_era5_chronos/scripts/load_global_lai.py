@@ -5,12 +5,26 @@
 #
 # QC rule (standard, conservative MOD15A2H convention): keep only
 # observations where FparLai_QC's MODLAND bit == 0 ("Good quality, main
-# algorithm with or without saturation") AND the raw Lai_500m value is in
-# its valid range (<=100 raw, i.e. <=10.0 m^2/m^2 after the 0.1 scale
-# factor - values 249-255 are documented fill/error codes, not real LAI).
-# This drops ~32% of pixel-dates (mostly polar-night/persistent-cloud
-# high-latitude observations), which is disclosed as a per-pixel coverage
-# column in the output summary rather than silently interpolated over.
+# algorithm with or without saturation") AND the Lai_500m value is in its
+# valid physical range (<=10.0 m^2/m^2 - values 249-255 are documented
+# fill/error codes, not real LAI). This drops ~32% of pixel-dates (mostly
+# polar-night/persistent-cloud high-latitude observations), which is
+# disclosed as a per-pixel coverage column in the output summary rather
+# than silently interpolated over.
+#
+# IMPORTANT: AppEEARS' point-sample API already returns SCALED physical
+# values for MOD15A2H_061_Lai_500m, not the raw 0-100 DN (its own docs:
+# "the middleware makes it possible to extract scaled data values" -
+# data/global_lai/raw/README.md:139; only documented fill codes 249-255
+# are left unscaled so they stay identifiable). A previous version of this
+# script re-applied a 0.1 scale factor on top of already-scaled data,
+# silently dividing every real LAI value by 10 (e.g. forest pixels capped
+# under ~0.7 instead of their true ~3-7 range) - caught 2026-09-25 when a
+# global forest pixel's plotted LAI never exceeded 1. Verified directly:
+# raw MOD15A2H_061_Lai_500m for good-QC rows ranges 0.1-6.9 (already
+# physical units), never near the 0-100 DN range; bad-QC/fill rows show
+# 253/255 (the documented unscaled fill codes). Fixed by using lai_raw
+# as-is (no rescale) and checking the valid range on the physical scale.
 from pathlib import Path
 
 import pandas as pd
@@ -30,8 +44,8 @@ def main():
     df.columns = ["pixel_id", "date", "lai_raw", "modland_qc"]
     df["date"] = pd.to_datetime(df["date"])
 
-    good = df[(df["modland_qc"] == "0b0") & (df["lai_raw"] <= 100)].copy()
-    good["LAI"] = good["lai_raw"] * 0.1  # ScaleFactor from the MOD15A2H.061 product spec
+    good = df[(df["modland_qc"] == "0b0") & (df["lai_raw"] <= 10.0)].copy()
+    good["LAI"] = good["lai_raw"]  # already scaled to physical units by AppEEARS - see header note
 
     coverage_rows = []
     n_written = 0
