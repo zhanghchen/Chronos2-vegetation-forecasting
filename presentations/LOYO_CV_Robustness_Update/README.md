@@ -1,9 +1,11 @@
 # LOYO-CV Robustness Update Deck
 
 *Generated: 2026-09-23 · Updated: 2026-09-23 (added a transparent
-performance-selected-subset comparison slide, slide 8)*
+performance-selected-subset comparison slide, slide 8) · Updated:
+2026-09-24 (added slides 12-13: Prof. Wang's follow-up on whether LOYO-CV
+R² actually captures inter-annual variability)*
 
-12-slide follow-up deck for Prof. Wang, addressing the feedback that a
+14-slide follow-up deck for Prof. Wang, addressing the feedback that a
 single test year (2022) is not sufficient evidence of robustness. Two
 sections:
 
@@ -24,7 +26,7 @@ in a separate ERA5/MODIS pipeline.
 
 ## Files
 
-- `LOYO_CV_Robustness_Update.pptx` — the deck (11 slides).
+- `LOYO_CV_Robustness_Update.pptx` — the deck (14 slides).
 - `build_deck.py` — editable slide source. Re-run with
   `/home/deh25003/miniconda3/bin/python3 build_deck.py` to regenerate.
 - `figures/` — all embedded figures, copied from their source locations
@@ -84,6 +86,62 @@ the full pool's typical performance — the full-pool row (mean R²=0.348)
 remains the number reported everywhere else in this project
 (`ERA5_GLOBAL70_REPORT.md`, the rest of this deck, the GitHub-committed
 raw results). Built by `Code/build_global_top20_subgroup.py`.
+
+## Slides 12-13: does LOYO-CV actually capture inter-annual variability?
+
+Prof. Wang's follow-up: the per-fold R² reported above (and throughout the
+original LOYO-CV study) is computed **across time within one held-out
+year** — since both the actual and predicted LAI follow the same strong
+8-day seasonal cycle, that R² mostly reflects "did the model get the
+seasonal shape right," not "did it capture real year-to-year differences."
+Her requested fix: fix the **calendar position** (e.g. the 1st 8-day
+composite of the year) and compute R² **across the 11 held-out years** at
+that position — this removes the shared seasonal cycle and isolates
+genuine inter-annual variability.
+
+Implementation (per pixel, matching her description exactly — not pooled
+across pixels, which would conflate genuine temporal variance with
+between-pixel spatial differences like forest vs. grassland baseline LAI):
+for each of the ~46 composite positions in the year, and each pixel
+separately, compute R² using only that pixel's own held-out-year values at
+that position (pixels need ≥8 of the 11 years present), then average
+across pixels to get one typical value per position.
+
+**Result**: with only ≤11 points per pixel-position, R² itself is
+unstable — a well-known small-sample failure mode where a single biased
+point can drive R² arbitrarily negative — and its mean turns negative for
+both pools (CONUS mean of per-position mean R²=-0.344, Global=-0.431).
+Pearson r, bounded in [-1, 1] and far less sensitive to this failure mode,
+gives a coherent, physically sensible answer instead: a modest positive
+inter-annual correlation (CONUS r≈0.29, Global r≈0.18) that **declines
+over the forecast horizon** — highest (r≈0.4-0.5) at early composite
+positions (short lead time) and falling toward 0-0.2 by the far end of the
+45-step horizon, consistent with forecast skill degrading over lead time
+rather than a pool-specific issue. Slide 12 presents the R²-vs-Pearson-r
+comparison table; slide 13 shows the full Pearson-r-by-composite-position
+sequence plot for both pools.
+
+Built by three new scripts (all purely additive — read the existing
+LOYO-CV fold logic unmodified, write to new output directories, never
+touch the original `outputs/loyo_cv/` fold-metric CSVs):
+
+- `Code/loyo_cv_capture_predictions.py` — re-runs the same 770 CONUS LOYO
+  folds as `Code/loyo_cv_chronos2.py` (reusing its fold-construction
+  functions unmodified) but additionally saves per-timestep
+  `(date, ground_truth, prediction, composite_index)` arrays, which the
+  original script doesn't persist. Writes to
+  `outputs/loyo_cv_predictions/<site>/fold_<year>_predictions.csv`.
+- `experiments/global_era5_chronos/scripts/loyo_cv_capture_predictions_global.py`
+  — the same, for the 748 global folds, reusing
+  `run_loyo_cv_global.py`'s fold logic unmodified. Writes to
+  `experiments/global_era5_chronos/outputs/loyo_cv_predictions/`.
+- `Code/build_loyo_composite_position_r2.py` — computes both the primary
+  per-pixel-then-averaged R²/Pearson-r-by-composite-position analysis and
+  a secondary pooled-across-pixels reference (explicitly documented as
+  conflating spatial and temporal variance, kept only for comparison).
+  Outputs to `outputs/loyo_cv_pools_summary/` (`loyo_*_r2_by_position_per_pixel*.csv`,
+  `loyo_r2_by_position_per_pixel_summary.csv`, and the sequence-plot
+  figures used on slides 12-13).
 
 ## Known simplifications (disclosed)
 

@@ -54,6 +54,13 @@ n_conus_folds = len(pd.read_csv(LOYO_SUMMARY / "loyo_conus70_all_folds.csv"))
 n_global_folds_neg = (pd.read_csv(LOYO_SUMMARY / "loyo_global68_all_folds.csv")["R2"] < 0).sum()
 n_global_folds = len(pd.read_csv(LOYO_SUMMARY / "loyo_global68_all_folds.csv"))
 
+# Prof. Wang's follow-up: R2/Pearson r isolating genuine within-pixel
+# inter-annual variability at each fixed calendar position (see
+# Code/build_loyo_composite_position_r2.py)
+position_summary = pd.read_csv(LOYO_SUMMARY / "loyo_r2_by_position_per_pixel_summary.csv").set_index("pool")
+conus_pos = position_summary.loc["CONUS (70 pixels)"]
+global_pos = position_summary.loc["Global (68 pixels)"]
+
 # ============================================================ deck styling (matches
 # the project's other decks: Code/build_era5_progress_deck.py,
 # presentations/CONUS_gridMET_ERA5_LabMeeting/build_deck.py)
@@ -424,10 +431,47 @@ add_picture_fit(s, FIG / "loyo_r2_by_year.png", MARGIN, top, SLIDE_W - 2 * MARGI
 add_takeaway(s, "No — median R² across pixels stays consistently high in every one of the 11 held-out years for both pools. Individual-pixel bad folds (e.g. droughts) don't show up as population-wide crashes.")
 
 
+# ============================================================ SLIDE 11b: DOES LOYO-CV CAPTURE TRUE INTER-ANNUAL VARIABILITY?
+s = add_slide(); set_bg(s)
+add_title(s, "Follow-Up: Does This Actually Capture Inter-Annual Variability?", eyebrow="PROF. WANG'S FOLLOW-UP QUESTION")
+page_num(s, 12)
+top, h = content_box()
+add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.0), [
+    "Concern: the per-fold R² above is computed ACROSS TIME within one held-out year — both actual and "
+    "predicted LAI follow the same strong seasonal cycle, so this R² is largely \"did the model get the "
+    "seasonal shape right,\" not \"did it capture real year-to-year differences.\"",
+    "Fix: fix the CALENDAR POSITION (e.g. the 1st 8-day composite of the year) and compute R² ACROSS the 11 "
+    "held-out years at that position, per pixel — this removes the seasonal cycle entirely, isolating "
+    "genuine inter-annual variability.",
+], size=15, space_after=10)
+add_text(s, MARGIN, top + Inches(2.15), Inches(11.8), Inches(0.35),
+         [("RESULT: with only ≤11 points per pixel-position, R² itself is unstable (mean turns negative — a "
+           "known small-sample failure mode); Pearson r is far more robust at this sample size:",
+           13, WARN, True, False)])
+tbl_top = top + Inches(2.55)
+header = ["Metric (mean of per-position, per-pixel value)", "CONUS", "Global"]
+rows = [
+    ["R² (unstable at n≤11 — shown for completeness)", f"{conus_pos['mean_of_position_mean_R2']:.3f}", f"{global_pos['mean_of_position_mean_R2']:.3f}"],
+    ["Pearson r (robust — the informative number here)", f"{conus_pos['mean_of_position_mean_Pearson_r']:.3f}", f"{global_pos['mean_of_position_mean_Pearson_r']:.3f}"],
+]
+styled_table(s, MARGIN, tbl_top, SLIDE_W - 2 * MARGIN, Inches(1.0), header, rows,
+             col_weights=[0.6, 0.2, 0.2], header_size=12, body_size=12.5, highlight_rows=(1,))
+add_takeaway(s, f"Genuine inter-annual signal is real but modest (Pearson r≈{conus_pos['mean_of_position_mean_Pearson_r']:.2f} CONUS, ≈{global_pos['mean_of_position_mean_Pearson_r']:.2f} Global) — much weaker than the within-year R² suggested. Prof. Wang's concern was well-founded.")
+
+
+# ============================================================ SLIDE 11c: INTER-ANNUAL SIGNAL BY LEAD TIME
+s = add_slide(); set_bg(s)
+add_title(s, "Inter-Annual Signal Weakens Over the Forecast Horizon", eyebrow="PROF. WANG'S FOLLOW-UP QUESTION")
+page_num(s, 13)
+top, h = content_box()
+add_picture_fit(s, FIG / "loyo_pearsonr_by_composite_position_per_pixel.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Both pools show the same pattern: correlation with true inter-annual variation is highest early in the forecast (r≈0.4-0.5) and steadily declines toward the far end of the 45-step horizon (r≈0.0-0.2) — consistent with forecast skill degrading over lead time, not a pool-specific issue.")
+
+
 # ============================================================ SLIDE 11: FINDINGS
 s = add_slide(); set_bg(s)
 add_title(s, "Summary: What LOYO-CV Adds", eyebrow="SUMMARY")
-page_num(s, 12)
+page_num(s, 14)
 top, h = content_box()
 y = top
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("RESULT", 13, ACCENT_DARK, True, False)])
@@ -448,8 +492,11 @@ add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.55), [
     "confidence level than a one-year test can provide.",
     "Both pools show the SAME structure: most pixels are stable year to year; a small minority of outlier "
     "pixels (often already diagnosable, e.g. a drought year) account for most of the variance.",
+    f"Follow-up (Prof. Wang): within-year R² mostly reflects seasonal-shape matching, not true inter-annual "
+    f"tracking — isolating the latter gives a modest positive signal (Pearson r≈{conus_pos['mean_of_position_mean_Pearson_r']:.2f}/"
+    f"{global_pos['mean_of_position_mean_Pearson_r']:.2f}) that weakens over the forecast horizon.",
 ], size=13.5, space_after=7, bullet_color=WARN)
-y += Inches(1.65)
+y += Inches(2.05)
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("NEXT STEPS", 13, MUTED, True, False)])
 y += Inches(0.35)
 add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.0), [
