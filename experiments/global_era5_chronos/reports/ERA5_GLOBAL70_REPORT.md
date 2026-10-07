@@ -72,6 +72,31 @@ usable history. `context_steps` is reported per pixel; the R²-vs-context
 correlation across all 68 pixels is only **r=0.16**, so context length is
 not the dominant driver of the results below (see Interpretation).
 
+**Land-cover label caveat (found 2026-10-07): 7 of the pool's 20
+`trees_*`-labeled pixels disagree with MODIS's own internal biome
+classification.** Labels come from the ESA CCI PFT product (a single
+300m point sample per pixel, see Data sources above); MODIS's LAI
+retrieval algorithm independently tags each observation with the biome
+table it used (`FparExtra_QC_SCF_Biome_Mask`: "in interval <1,4>" =
+grass/cereal-crop/shrub/savanna, "outside <1,4>" = forest). Cross-checked
+all 20 `trees_*` pixels against this independent signal: it is bimodal
+(a pixel's retrievals are essentially always one or the other, never
+mixed), and for 7 of them - `g049_trees_be`, `g018_trees_bd`,
+`g047_trees_bd`, `g021_trees_bd`, `g024_trees_ne`, `g036_trees_ne`,
+`g037_trees_be` - **100% of MODIS retrievals say non-forest**, directly
+contradicting the ESA-CCI "trees" label; their LAI seasonal shape
+(collapsing near-zero in the dormant season) is grass/cropland-like, not
+evergreen/forest-like, corroborating the mismatch. Likely cause: 300m
+ESA-CCI point sample vs. 500m MODIS pixel footprint + ancillary land-cover
+layer disagreeing at these specific coordinates, not a pipeline bug. The
+other 13 `trees_*` pixels (including all those used as deck/report
+examples) are MODIS-biome-confirmed. **Caution is warranted before
+reading too much into the TREES-* class-level statistics below** (6-24
+pixels per class, so a few mislabeled members move the class mean) -
+the overall pool-level R²/variance statistics are unaffected (mislabeled
+pixels are still real LAI time series being forecast, just not reliably
+attributable to "forest" as a class).
+
 ## Results: 68 pixels
 
 `outputs/era5_global70_clean.csv` (full table),

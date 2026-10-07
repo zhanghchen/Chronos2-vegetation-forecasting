@@ -27,13 +27,23 @@ PRED_COLOR = "#8C1D40"  # matches the deck's global-experiment accent
 # were the two best; the other 6 are the next-best distinct-region/class
 # pixels (not just the raw top-6, to avoid e.g. 4 Siberia grasslands in a
 # row - see era5_global70_clean.csv for the full ranking).
+#
+# g024_trees_ne was swapped out 2026-10-07: its ESA-CCI "trees_ne" label
+# disagrees with MODIS's own internal biome classification at that exact
+# coordinate (MOD15A2H_061_FparExtra_QC_SCF_Biome_Mask says "non-forest"
+# for 100% of its 1047 retrievals) and its LAI seasonal shape is
+# grass/cropland-like (collapses near 0 in winter), not evergreen-forest-
+# like - caught by inspection, confirmed by cross-checking all 20
+# trees_*-labeled pixels in the pool against this independent QC signal
+# (7/20 disagree). Replaced with g019_trees_bd (Canada), the best-R2
+# pixel among the MODIS-biome-confirmed (100% forest) trees_* pixels.
 CURATED = [
     ("g032_shrubs_bd", "Mediterranean shrubland"),
     ("g065_shrubs_bd", "Central/Southern Africa shrubland"),
     ("g005_grass_nat", "Siberia / Boreal Eurasia grassland"),
     ("g009_grass_nat", "Canada grassland"),
     ("g014_trees_ne", "Siberia / Boreal Eurasia evergreen forest"),
-    ("g024_trees_ne", "Western Europe evergreen forest"),
+    ("g019_trees_bd", "Canada deciduous broadleaf forest"),
     ("g035_grass_man", "East Asia managed grassland"),
     ("g068_grass_nat", "Southern S. America grassland"),
 ]

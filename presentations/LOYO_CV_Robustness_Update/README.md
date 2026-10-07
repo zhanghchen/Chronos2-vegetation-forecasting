@@ -5,7 +5,30 @@ performance-selected-subset comparison slide, slide 8) · Updated:
 2026-09-24 (added slides 12-13: Prof. Wang's follow-up on whether LOYO-CV
 R² actually captures inter-annual variability) · Corrected: 2026-09-25
 (fixed a 10x LAI unit bug in the global pipeline - see below; all
-affected figures/results regenerated)*
+affected figures/results regenerated) · Corrected: 2026-10-07 (slide 7's
+`g024_trees_ne` example swapped out - its "forest" label disagreed with
+MODIS's own biome QC; see below)*
+
+## Label correction (2026-10-07): one slide-7 example pixel was mislabeled
+
+`g024_trees_ne` ("Western Europe evergreen forest") was one of the 8
+example pixels on slide 7. Cross-checking its MODIS LAI retrievals
+against an independent signal - MODIS's own internal biome classification
+QC bit (`FparExtra_QC_SCF_Biome_Mask`) - showed **100% of its 1047
+retrievals were tagged non-forest**, contradicting the ESA-CCI-derived
+"trees_ne" label; its LAI seasonal shape (collapsing near-zero each
+winter) is grass/cropland-like, not evergreen-forest-like. Checking all
+20 `trees_*`-labeled pixels in the 68-pixel pool the same way found 7
+with this same disagreement (likely a 300m ESA-CCI vs. 500m MODIS
+footprint/ancillary-layer mismatch at those specific coordinates, not a
+pipeline bug) - see
+`experiments/global_era5_chronos/reports/ERA5_GLOBAL70_REPORT.md`'s
+"Land-cover label caveat" section for the full list. Slide 7 now shows
+`g019_trees_bd` (Canada, deciduous broadleaf forest, R²=0.637,
+MODIS-biome-confirmed) instead - the best-R² pixel among the 13
+confirmed-forest `trees_*` pixels in the pool. Built by
+`experiments/global_era5_chronos/scripts/plot_global_predictions.py`
+(`CURATED` list).
 
 ## Data correction (2026-09-25): global pool LAI was 10x too small
 

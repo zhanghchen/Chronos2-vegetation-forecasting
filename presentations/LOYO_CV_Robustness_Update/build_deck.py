@@ -351,7 +351,7 @@ add_title(s, "Global Pool: Best Zero-Shot Results, Diverse Regions", eyebrow="SE
 page_num(s, 7)
 top, h = content_box()
 add_picture_fit(s, FIG / "global70_top_performers_testyear.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
-add_takeaway(s, "8 pixels spanning the Mediterranean, Africa, Siberia, Canada, Western Europe, East Asia, and South America — all R²=0.71–0.92 on the single 2022 test year.", tint=GLOBAL_TINT, dark=RGBColor(0x5A, 0x12, 0x28), bar=GLOBAL_ACCENT)
+add_takeaway(s, "8 pixels spanning the Mediterranean, Africa, Siberia, Canada, East Asia, and South America — R²=0.64–0.92 on the single 2022 test year.", tint=GLOBAL_TINT, dark=RGBColor(0x5A, 0x12, 0x28), bar=GLOBAL_ACCENT)
 
 
 # ============================================================ SLIDE 7b: FULL POOL VS. EXPLORATORY TOP-20 SUBSET
