@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+g052_grass_nat,2012,2000,12,190,16,-0.008150577545166016,-0.03932893531143381,-0.4915434219442376,0.03

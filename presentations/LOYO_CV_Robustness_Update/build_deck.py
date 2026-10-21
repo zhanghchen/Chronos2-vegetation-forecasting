@@ -61,6 +61,13 @@ position_summary = pd.read_csv(LOYO_SUMMARY / "loyo_r2_by_position_per_pixel_sum
 conus_pos = position_summary.loc["CONUS (70 pixels)"]
 global_pos = position_summary.loc["Global (68 pixels)"]
 
+# Prof. Wang's second follow-up: forecast the LAI ANOMALY directly (not raw
+# LAI, decomposed afterward) - see Code/loyo_cv_anomaly_chronos2.py /
+# experiments/global_era5_chronos/scripts/loyo_cv_anomaly_global.py
+anomaly_summary = pd.read_csv(LOYO_SUMMARY / "loyo_anomaly_summary.csv").set_index("pool")
+conus_anom = anomaly_summary.loc["CONUS (70 pixels)"]
+global_anom = anomaly_summary.loc["Global (68 pixels)"]
+
 # ============================================================ deck styling (matches
 # the project's other decks: Code/build_era5_progress_deck.py,
 # presentations/CONUS_gridMET_ERA5_LabMeeting/build_deck.py)
@@ -468,10 +475,29 @@ add_picture_fit(s, FIG / "loyo_pearsonr_by_composite_position_per_pixel.png", MA
 add_takeaway(s, "Both pools show the same pattern: correlation with true inter-annual variation is highest early in the forecast (r≈0.4-0.5) and steadily declines toward the far end of the 45-step horizon (r≈0.0-0.2) — consistent with forecast skill degrading over lead time, not a pool-specific issue.")
 
 
+# ============================================================ SLIDE 11d: FORECASTING THE ANOMALY DIRECTLY
+s = add_slide(); set_bg(s)
+add_title(s, "Second Follow-Up: Forecast the Anomaly Directly", eyebrow="PROF. WANG'S FOLLOW-UP QUESTION")
+page_num(s, 14)
+top, h = content_box()
+add_bullets(s, MARGIN, top, Inches(11.8), Inches(1.7), [
+    "Suggestion: rather than forecasting raw LAI and decomposing the seasonal cycle out AFTERWARD (slide 12), "
+    "give Chronos-2 the per-calendar-position LAI anomaly (value minus its context-years-only climatology) "
+    "as BOTH the context and the forecast target directly - weather covariates unchanged - and re-score R²/"
+    "Pearson r on the anomaly itself.",
+], size=15, space_after=10)
+add_picture_fit(s, FIG / "loyo_anomaly_boxplot.png", MARGIN, top + Inches(1.85), SLIDE_W - 2 * MARGIN, h - Inches(1.85))
+add_takeaway(s, f"Independent confirmation: Pearson r≈{conus_anom['mean_Pearson_r_anomaly']:.2f} CONUS / "
+                f"≈{global_anom['mean_Pearson_r_anomaly']:.2f} Global — within rounding of slide 13's "
+                f"composite-position result (≈{conus_pos['mean_of_position_mean_Pearson_r']:.2f}/"
+                f"{global_pos['mean_of_position_mean_Pearson_r']:.2f}) despite a completely different "
+                f"computation. R² is again unstable and mostly negative at this sample size - same caveat as before.")
+
+
 # ============================================================ SLIDE 11: FINDINGS
 s = add_slide(); set_bg(s)
 add_title(s, "Summary: What LOYO-CV Adds", eyebrow="SUMMARY")
-page_num(s, 14)
+page_num(s, 15)
 top, h = content_box()
 y = top
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("RESULT", 13, ACCENT_DARK, True, False)])
@@ -486,7 +512,7 @@ add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.3), [
 y += Inches(1.4)
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("INTERPRETATION", 13, WARN, True, False)])
 y += Inches(0.35)
-add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.55), [
+add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.95), [
     "The single-year (2022) results were not a fluke: 11-year cross-validation confirms the same overall "
     "pattern — CONUS robustly strong, global weaker but not collapsing — at a more conservative, defensible "
     "confidence level than a one-year test can provide.",
@@ -495,8 +521,12 @@ add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.55), [
     f"Follow-up (Prof. Wang): within-year R² mostly reflects seasonal-shape matching, not true inter-annual "
     f"tracking — isolating the latter gives a modest positive signal (Pearson r≈{conus_pos['mean_of_position_mean_Pearson_r']:.2f}/"
     f"{global_pos['mean_of_position_mean_Pearson_r']:.2f}) that weakens over the forecast horizon.",
-], size=13.5, space_after=7, bullet_color=WARN)
-y += Inches(2.05)
+    f"Second follow-up (Prof. Wang): forecasting the LAI anomaly directly gives the same answer "
+    f"(Pearson r≈{conus_anom['mean_Pearson_r_anomaly']:.2f}/{global_anom['mean_Pearson_r_anomaly']:.2f}) via a "
+    f"completely independent computation — the modest inter-annual signal is a robust finding, not an "
+    f"artifact of one particular analysis method.",
+], size=13.5, space_after=6, bullet_color=WARN)
+y += Inches(2.45)
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("NEXT STEPS", 13, MUTED, True, False)])
 y += Inches(0.35)
 add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.0), [

@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+px024_shrubs_bd,2019,2007,12,551,46,0.6005419492721558,0.9358681662674652,0.9115556276980512,5.0

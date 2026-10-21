@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+mixed_forest_grass,2014,2002,12,551,46,0.046987295150756836,0.6513276436925557,0.9170709785255428,3.6

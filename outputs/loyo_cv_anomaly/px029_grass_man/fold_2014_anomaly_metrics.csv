@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+px029_grass_man,2014,2002,12,551,46,-0.18590736389160156,-0.11438129474458618,0.959673782638051,3.4

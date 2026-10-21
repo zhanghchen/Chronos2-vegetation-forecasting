@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+evergreen,2021,2009,12,551,46,-0.049530029296875,0.1795801085124897,0.4663199221703024,4.5

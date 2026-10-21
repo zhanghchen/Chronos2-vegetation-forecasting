@@ -7,7 +7,33 @@ R² actually captures inter-annual variability) · Corrected: 2026-09-25
 (fixed a 10x LAI unit bug in the global pipeline - see below; all
 affected figures/results regenerated) · Corrected: 2026-10-07 (slide 7's
 `g024_trees_ne` example swapped out - its "forest" label disagreed with
-MODIS's own biome QC; see below)*
+MODIS's own biome QC; see below) · Updated: 2026-10-21 (added slide 14:
+Prof. Wang's second follow-up, forecasting the LAI anomaly directly -
+summary slide renumbered to 15)*
+
+## Slide 14 (2026-10-21): forecasting the LAI anomaly directly
+
+A second follow-up on top of slides 12-13: instead of forecasting raw LAI
+and decomposing the seasonal cycle out afterward (slide 12's composite-
+position analysis), feed Chronos-2 the LAI anomaly (value minus its
+per-calendar-position, context-years-only climatology) as both the
+context and the forecast target directly - weather covariates unchanged
+- then score R²/Pearson r on the anomaly itself. Built by
+`Code/loyo_cv_anomaly_chronos2.py` (CONUS, reuses
+`loyo_cv_chronos2.py`'s `circular_doy_climatology` - the same no-leakage,
+context-years-only climatology already used for the ACC metric) and
+`experiments/global_era5_chronos/scripts/loyo_cv_anomaly_global.py`
+(Global), summarized by `Code/build_loyo_anomaly_summary.py`. Result:
+mean Pearson r = 0.296 (CONUS) / 0.178 (Global) - within rounding of
+slide 13's composite-position result (0.288/0.176) despite a completely
+different computation, independently confirming the modest inter-annual
+signal is a robust finding rather than an artifact of one analysis
+method. R² is again unstable and mostly negative at this per-fold sample
+size, consistent with the same small-sample caveat documented for slide
+12. A secondary diagnostic (`R2_raw_reconstructed`: predicted anomaly +
+climatology, compared to the true raw LAI) stayed in the same ballpark as
+the original raw-LAI LOYO-CV R² for both pools, confirming the anomaly
+reformulation isn't silently discarding information.
 
 ## Label correction (2026-10-07): one slide-7 example pixel was mislabeled
 
@@ -49,7 +75,7 @@ values plotted on slide 7 changed (both now correctly ~10x larger). See
 `experiments/global_era5_chronos/reports/ERA5_GLOBAL70_REPORT.md` for the
 corrected RMSE/MAE table.
 
-14-slide follow-up deck for Prof. Wang, addressing the feedback that a
+15-slide follow-up deck for Prof. Wang, addressing the feedback that a
 single test year (2022) is not sufficient evidence of robustness. Two
 sections:
 
@@ -70,7 +96,7 @@ in a separate ERA5/MODIS pipeline.
 
 ## Files
 
-- `LOYO_CV_Robustness_Update.pptx` — the deck (14 slides).
+- `LOYO_CV_Robustness_Update.pptx` — the deck (15 slides).
 - `build_deck.py` — editable slide source. Re-run with
   `/home/deh25003/miniconda3/bin/python3 build_deck.py` to regenerate.
 - `figures/` — all embedded figures, copied from their source locations

@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+g019_trees_bd,2019,2007,12,341,31,-0.2546072006225586,-0.11990540714383029,0.047771524914681285,0.02
