@@ -208,10 +208,20 @@ add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.3), [
 add_takeaway(s, "The model's actual task is now \"predict the deviation from normal\" - exactly what "
                 "\"capturing inter-annual variability\" means.")
 
-# ============================================================ SLIDE 3: PART 1 RESULT
+# ============================================================ SLIDE 3: PART 1 - ACTUAL VARIATION CURVES
 s = add_slide(); set_bg(s)
-add_title(s, "Part 1 Result: Modest, Independently-Confirmed Signal", eyebrow="PART 1 — VARIATION-BASED FORECASTING")
+add_title(s, "Part 1 Result: Predicted vs. True Variation, 5 Example Pixels",
+          eyebrow="PART 1 — VARIATION-BASED FORECASTING")
 page_num(s, 3)
+top, h = content_box()
+add_picture_fit(s, FIG / "anomaly_example_curves.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Deliberately not cherry-picked: spans the full range from the pool's best fit (Pearson r=0.94) "
+                "down to its worst (r=−0.72) - most pixels track the true dip/recovery shape; some don't.")
+
+# ============================================================ SLIDE 3b: PART 1 AGGREGATE RESULT
+s = add_slide(); set_bg(s)
+add_title(s, "Part 1 Aggregate: Modest, Independently-Confirmed Signal", eyebrow="PART 1 — VARIATION-BASED FORECASTING")
+page_num(s, 4)
 top, h = content_box()
 add_picture_fit(s, FIG / "loyo_anomaly_boxplot.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h - Inches(1.1))
 header = ["Pool", "R² (anomaly)", "Pearson r (anomaly)"]
@@ -229,11 +239,11 @@ add_takeaway(s, f"R² is unstable at this sample size (same small-sample caveat 
                 f"≈{global_anom['mean_Pearson_r_anomaly']:.2f} Global) is the robust number, and it's modest - "
                 f"this is the result that motivated Part 2.")
 
-# ============================================================ SLIDE 4: PART 2 - THE EQUATION
+# ============================================================ SLIDE 5: PART 2 - THE EQUATION
 s = add_slide(); set_bg(s)
 add_title(s, "Part 2: Fine-Tuning with the Exact Growth-Mortality Equation",
           eyebrow="PART 2 — PHYSICS-GUIDED FINE-TUNING", eyebrow_color=BLUE, bar_color=BLUE)
-page_num(s, 4)
+page_num(s, 5)
 top, h = content_box()
 add_text(s, MARGIN, top, Inches(11.8), Inches(0.35),
          [("Prof. Wang's diagnosis: the earlier ad hoc physics term library undersold the physics - this is "
@@ -249,11 +259,27 @@ add_bullets(s, MARGIN, top + Inches(2.1), Inches(11.8), Inches(1.8), [
 add_takeaway(s, "Same 3 project sites as the earlier validation, now across all 11 LOYO years (33 folds) - "
                 "a broader test before drawing conclusions.", tint=BLUE_TINT, dark=RGBColor(0x14, 0x3A, 0x6B), bar=BLUE)
 
-# ============================================================ SLIDE 5: PART 2 KEY RESULT
+# ============================================================ SLIDE 6: PART 2 - ACTUAL PREDICTION CURVES
+s = add_slide(); set_bg(s)
+add_title(s, "Part 2 Result: Actual Predictions, 3 Example Folds",
+          eyebrow="PART 2 — PHYSICS-GUIDED FINE-TUNING", eyebrow_color=BLUE, bar_color=BLUE)
+page_num(s, 6)
+top, h = content_box()
+add_picture_fit(s, FIG / "example_prediction_curves.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h - Inches(0.75))
+add_text(s, MARGIN, top + h - Inches(0.65), SLIDE_W - 2 * MARGIN, Inches(0.6),
+         [("Note: fine-tuning has real run-to-run variance at this sample size (re-running low_amplitude/2014 "
+           "independently gave physics R²=0.06 here vs. 0.28 in the original 33-fold run - same direction of "
+           "effect is not guaranteed on every individual re-run). The 33-fold aggregate (next slide) is the "
+           "number to trust, not any single illustrative fold.", 12, MUTED, False, True)])
+add_takeaway(s, "Visibly closer to observed LAI on the two weaker-baseline examples; indistinguishable from "
+                "zero-shot where zero-shot was already excellent.",
+             tint=BLUE_TINT, dark=RGBColor(0x14, 0x3A, 0x6B), bar=BLUE)
+
+# ============================================================ SLIDE 7: PART 2 KEY RESULT
 s = add_slide(); set_bg(s)
 add_title(s, "Result: Physics-Guided Fine-Tuning Beats Raw Chronos-2",
           eyebrow="PART 2 — PHYSICS-GUIDED FINE-TUNING", eyebrow_color=BLUE, bar_color=BLUE)
-page_num(s, 5)
+page_num(s, 7)
 top, h = content_box()
 add_picture_fit(s, FIG / "comparison_boxplot.png", MARGIN, top, Inches(7.8), h)
 add_text(s, Inches(8.5), top, Inches(4.3), Inches(0.3), [("33 LOYO-CV FOLDS", 13, ACCENT_DARK, True, False)])
@@ -273,6 +299,40 @@ add_bullets(s, Inches(8.5), top + Inches(3.4), Inches(4.3), Inches(1.6), [
 add_takeaway(s, "A genuine, aggregate improvement over raw zero-shot Chronos-2 - not on every single fold, but "
                 "consistently in mean and median across 33 independent held-out years.",
              tint=GOOD_TINT, dark=RGBColor(0x0a, 0x5a, 0x0a), bar=GOOD)
+
+# ============================================================ SLIDE 8: SUMMARY
+s = add_slide(); set_bg(s)
+add_title(s, "Summary", eyebrow="SUMMARY")
+page_num(s, 8)
+top, h = content_box()
+y = top
+add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("PART 1", 13, ACCENT_DARK, True, False)])
+y += Inches(0.35)
+add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.3), [
+    f"Forecasting the LAI variation directly gives a modest, honest signal (Pearson r≈"
+    f"{conus_anom['mean_Pearson_r_anomaly']:.2f} CONUS / {global_anom['mean_Pearson_r_anomaly']:.2f} Global) - "
+    "confirmed visually across 5 pixels spanning the full range from best to worst fit.",
+], size=14, space_after=7, bullet_color=ACCENT)
+y += Inches(1.5)
+add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("PART 2", 13, BLUE, True, False)])
+y += Inches(0.35)
+add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.6), [
+    "Fine-tuning Chronos-2 with Prof. Wang's exact equation as a physics loss beats raw zero-shot Chronos-2 "
+    "on both mean and median R² across 33 held-out years - a real, aggregate improvement, visible both in "
+    "the numbers and in the actual predicted curves.",
+    "Plain fine-tuning alone (no physics) underperforms zero-shot - the physics term is doing real work, not "
+    "just \"fine-tuning helps regardless.\"",
+], size=14, space_after=7, bullet_color=BLUE)
+y += Inches(1.9)
+add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("CAVEATS", 13, WARN, True, False)])
+y += Inches(0.35)
+add_bullets(s, MARGIN, y, Inches(11.8), Inches(1.1), [
+    "Validation scope is still 3 sites (33 folds) - the natural next step is the full 70-pixel CONUS pool. "
+    "Fine-tuning shows real run-to-run variance at this sample size; the aggregate statistic, not any single "
+    "fold, is the evidence that should generalize.",
+], size=13.5, space_after=7, bullet_color=WARN)
+add_takeaway(s, "Both follow-ups answer Prof. Wang's questions directly: variation-forecasting confirms the "
+                "modest signal is real; the correct equation turns physics guidance into a genuine improvement.")
 
 out_path = HERE / "Variation_And_Equation_FineTuning.pptx"
 prs.save(str(out_path))
