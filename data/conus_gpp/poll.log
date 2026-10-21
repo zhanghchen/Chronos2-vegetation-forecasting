@@ -1,0 +1,30 @@
+Polling task fd94166e-8fd9-465e-b117-3ba4bd908984...
+  [0s] status=pending
+  [61s] status=processing
+  [121s] status=processing
+  [181s] status=processing
+  [241s] status=processing
+  [302s] status=processing
+  [362s] status=processing
+  [422s] status=processing
+  [483s] status=processing
+  [543s] status=processing
+  [603s] status=processing
+  [664s] status=processing
+  [724s] status=processing
+  [784s] status=processing
+  [844s] status=processing
+  [905s] status=processing
+  [965s] status=processing
+  [1025s] status=processing
+  [1086s] status=processing
+  [1146s] status=processing
+  [1206s] status=processing
+  [1267s] status=processing
+  [1327s] status=processing
+  [1387s] status=processing
+  [1448s] status=processing
+  [1508s] status=processing
+  [1568s] status=done
+Bundle has 5 files
+Downloaded 5 files to /home/deh25003/chronos-forecasting/Chronos2-vegetation-forecasting/data/conus_gpp/raw

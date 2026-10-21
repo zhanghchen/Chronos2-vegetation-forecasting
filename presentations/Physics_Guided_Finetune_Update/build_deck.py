@@ -324,10 +324,83 @@ add_takeaway(s, "The pipeline (Stage 1 + Stage 2 + 3-way comparison) is built, d
                 "the physics term's benefit, at this scale, is not yet consistent.",
              tint=BLUE_TINT, dark=RGBColor(0x14, 0x3A, 0x6B), bar=BLUE)
 
+# ============================================================ SLIDE 7b: PROF. WANG'S REVISED EQUATION
+s = add_slide(); set_bg(s)
+add_title(s, "Follow-Up: A More Targeted Growth-Mortality Equation", eyebrow="PHYSICS-GUIDED FINE-TUNING, ROUND 2",
+          eyebrow_color=BLUE, bar_color=BLUE)
+page_num(s, 8)
+top, h = content_box()
+add_bullets(s, MARGIN, top, Inches(11.8), Inches(1.3), [
+    "Diagnosis: the hand-built candidate-term library used in slides 4-7 wasn't the equation actually being "
+    "proposed - Prof. Wang's analysis after that meeting was that a generic linear library undersells the "
+    "physics, and suggested this specific logistic growth-mortality form instead, with V as GPP:",
+], size=14.5, space_after=8)
+add_picture_fit(s, FIG / "phenology_equation.png", MARGIN, top + Inches(1.4), SLIDE_W - 2 * MARGIN, Inches(1.4))
+add_bullets(s, MARGIN, top + Inches(2.95), Inches(11.8), Inches(1.4), [
+    "r/K/m are now each their OWN small network (light/temperature-limited growth; water-limited carrying "
+    "capacity; drought/freeze-driven mortality) - not a single linear coefficient library - a genuinely "
+    "different, nonlinear model, matching the equation's own structure.",
+    "GPP, PAR, soil moisture, and SPEI are not present anywhere in this project's existing data (verified by "
+    "direct search, not assumed) - see slide 7d for what was fetched/approximated and what's still missing.",
+], size=13.5, space_after=7, bullet_color=MUTED)
+add_takeaway(s, "Re-ran the physics-guided Stage 1 with THIS exact equation (not the earlier ad hoc one) - "
+                "the supplementary validation this follow-up asked for - see slide 7c for the result.",
+             tint=BLUE_TINT, dark=RGBColor(0x14, 0x3A, 0x6B), bar=BLUE)
+
+# ============================================================ SLIDE 7c: LAI VALIDATION RESULT
+s = add_slide(); set_bg(s)
+add_title(s, "Validation: Fitting the Exact Equation to LAI", eyebrow="PHYSICS-GUIDED FINE-TUNING, ROUND 2",
+          eyebrow_color=BLUE, bar_color=BLUE)
+page_num(s, 9)
+top, h = content_box()
+add_picture_fit(s, FIG / "phenology_lai_reconstruction.png", MARGIN, top, Inches(7.6), h)
+add_text(s, Inches(8.4), top, Inches(4.4), Inches(0.3), [("RESULT", 13, ACCENT_DARK, True, False)])
+add_bullets(s, Inches(8.4), top + Inches(0.4), Inches(4.4), Inches(1.6), [
+    "Per-site reconstruction: mean R²=0.19, median R²=0.60 (R² unstable at outlier sites, same caveat as "
+    "the project's other small-sample findings).",
+    "Pearson r: mean=0.78, median=0.84 - a clean fit across diverse vegetation types.",
+], size=13, space_after=8, bullet_color=ACCENT)
+add_text(s, Inches(8.4), top + Inches(2.3), Inches(4.4), Inches(0.3), [("DEBUGGING NOTE", 13, WARN, True, False)])
+add_bullets(s, Inches(8.4), top + Inches(2.7), Inches(4.4), Inches(2.0), [
+    "First run: training diverged after a strong start (loss 1.23→0.19, then spiraled) - the 1/K term in the "
+    "equation can blow up if K is driven near zero.",
+    "Gradient clipping alone made it WORSE (NaN) - the instability is in the forward ODE integration, not "
+    "just the backward pass. Fixed by clamping V to its only physically-required bound (≥0) plus a loose "
+    "safety ceiling.",
+], size=12, space_after=6, bullet_color=WARN)
+add_takeaway(s, "The exact equation fits LAI well once stabilized - a cleaner, more faithful result than the "
+                "earlier ad hoc version, and the validation this follow-up specifically asked for.",
+             tint=BLUE_TINT, dark=RGBColor(0x14, 0x3A, 0x6B), bar=BLUE)
+
+# ============================================================ SLIDE 7d: GPP DATA AVAILABILITY
+s = add_slide(); set_bg(s)
+add_title(s, "GPP Experiment: Data Fetched, Scope Limited", eyebrow="PHYSICS-GUIDED FINE-TUNING, ROUND 2",
+          eyebrow_color=BLUE, bar_color=BLUE)
+page_num(s, 10)
+top, h = content_box()
+add_bullets(s, MARGIN, top, Inches(11.8), Inches(3.4), [
+    "Checked for GPP (or a similar productivity/phenology indicator) anywhere in this project's existing "
+    "data: absent, for both CONUS and the global pool. Fetched MODIS MOD17A2H GPP for the 70 CONUS sites via "
+    "the same AppEEARS pipeline already used for LAI.",
+    "Requested the full 2000-2022 history (matching every other dataset in this project) - AppEEARS returned "
+    "usable data for 2021-2022 only (2 years), for all 70 sites alike. The request was correctly specified; "
+    "this is a genuine limit on MOD17A2H.061's retrievable history through AppEEARS, not a configuration "
+    "error.",
+    "PAR, soil moisture, and SPEI are also absent from this project's data. Approximated for the LAI "
+    "validation (slide 7c) as: PAR ≈ 0.45×shortwave radiation (standard ecology convention); SM and SPEI as "
+    "water-balance (precipitation − PET) proxies at two timescales, since true soil-moisture/SPEI products "
+    "(TerraClimate, monthly) don't align with this project's 8-day cadence - PET itself was newly extracted "
+    "from gridMET, already on the same 8-day composite grid as everything else.",
+    "With only 2 years, a GPP forecasting comparison (zero-shot vs. fine-tuned, LOYO-CV style) isn't "
+    "meaningful yet - paused rather than run on too little data to support a real conclusion.",
+], size=14, space_after=9, bullet_color=MUTED)
+add_takeaway(s, "GPP fetch pipeline is built and working - revisit if/when a longer GPP history becomes "
+                "available (e.g. a different product or date range).")
+
 # ============================================================ SLIDE 8: SUMMARY / NEXT STEPS
 s = add_slide(); set_bg(s)
 add_title(s, "Summary & Next Steps", eyebrow="SUMMARY")
-page_num(s, 8)
+page_num(s, 11)
 top, h = content_box()
 y = top
 add_text(s, MARGIN, y, Inches(11.8), Inches(0.3), [("WHAT WAS BUILT", 13, ACCENT_DARK, True, False)])
