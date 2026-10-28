@@ -19,7 +19,7 @@ from PIL import Image
 from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
-from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR, MSO_AUTO_SIZE
 from pptx.enum.shapes import MSO_SHAPE
 
 HERE = Path(__file__).resolve().parent
@@ -96,6 +96,7 @@ def add_rect(slide, left, top, width, height, color, line=False, line_color=None
 def add_text(slide, left, top, width, height, runs, align=PP_ALIGN.LEFT, anchor=MSO_ANCHOR.TOP, line_spacing=1.0, wrap=True):
     box = slide.shapes.add_textbox(left, top, width, height)
     tf = box.text_frame; tf.word_wrap = wrap; tf.vertical_anchor = anchor
+    tf.auto_size = MSO_AUTO_SIZE.NONE
     tf.margin_left = 0; tf.margin_right = 0; tf.margin_top = 0; tf.margin_bottom = 0
     for i, (text, size, color, bold, italic) in enumerate(runs):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
@@ -108,6 +109,7 @@ def add_text(slide, left, top, width, height, runs, align=PP_ALIGN.LEFT, anchor=
 def add_bullets(slide, left, top, width, height, items, size=16, color=INK, space_after=9, bullet_color=ACCENT, anchor=MSO_ANCHOR.TOP):
     box = slide.shapes.add_textbox(left, top, width, height)
     tf = box.text_frame; tf.word_wrap = True; tf.vertical_anchor = anchor
+    tf.auto_size = MSO_AUTO_SIZE.NONE
     tf.margin_left = 0; tf.margin_right = 0
     for i, item in enumerate(items):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
