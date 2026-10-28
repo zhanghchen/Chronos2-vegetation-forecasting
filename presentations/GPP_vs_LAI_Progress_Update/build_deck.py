@@ -205,53 +205,64 @@ s = add_slide(); set_bg(s)
 add_title(s, "Part 1: LAI Anomaly, Broken Down by Vegetation Class", eyebrow="PART 1 — VEGETATION-CLASS BREAKDOWN")
 page_num(s, 2)
 top, h = content_box()
-add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
+add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.9), [
     "Last week's result pooled every vegetation type into one CONUS boxplot (770 folds) and one Global "
     "boxplot (748 folds) - this hides which vegetation types Chronos-2 is actually good at.",
     "Reran the same already-computed fold-level results (no new model calls), grouped by each site's "
     "dominant vegetation class instead - using the project's existing ESA-CCI-derived PFT classification, "
     "not the informal site-name suffix.",
-    "Grouping is done at the fold level (not one point per site), so each class's distribution reflects its "
-    "full year-to-year spread, not just inter-site spread.",
-], size=15.5, space_after=10)
-add_takeaway(s, "Script: Code/loyo_cv_anomaly_by_pft.py. A few Global classes have only 2-3 sites - read "
-                "those as suggestive, not definitive (see next slide).")
+    "Pseudo-replication fix: grouping at the fold level pools 11 years per site into each class's "
+    "distribution, which overstates independence (11 years at one site aren't 11 independent draws). "
+    "The honest sample size per class is its site count, not its fold count.",
+], size=15, space_after=9)
+add_takeaway(s, "Fixed two ways, both shown next: collapse each site to its 11-year mean first (one point "
+                "per site), and check the ranking separately for each of the 11 years.")
 
-# ============================================================ SLIDE 3: PART 1 - BOXPLOTS
+# ============================================================ SLIDE 3: PART 1 - PER-SITE BOXPLOTS
 s = add_slide(); set_bg(s)
 add_title(s, "Shrubs and Grasses Forecast Better Than Trees, in Both Pools", eyebrow="PART 1 — VEGETATION-CLASS BREAKDOWN")
 page_num(s, 3)
 top, h = content_box()
-add_picture_fit(s, FIG / "loyo_anomaly_by_pft_boxplots.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
-add_takeaway(s, "The shrubs > grass > trees ordering holds independently in both CONUS and Global pools - "
-                "not an artifact of one site or one region.")
+add_picture_fit(s, FIG / "loyo_anomaly_by_pft_persite_boxplots.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Each site collapsed to its 11-year mean first, then boxplotted (dots = individual sites) - "
+                "a class with 6 sites shows 6 points here, not 66 pooled folds.")
 
-# ============================================================ SLIDE 4: PART 1 - SUMMARY TABLE
+# ============================================================ SLIDE 4: PART 1 - BY-YEAR ROBUSTNESS CHECK
 s = add_slide(); set_bg(s)
-add_title(s, "Part 1 Summary: Median Pearson r by Class Family", eyebrow="PART 1 — VEGETATION-CLASS BREAKDOWN")
+add_title(s, "Robustness Check: Is the Ranking Stable Year by Year?", eyebrow="PART 1 — VEGETATION-CLASS BREAKDOWN")
 page_num(s, 4)
+top, h = content_box()
+add_picture_fit(s, FIG / "loyo_anomaly_by_pft_byyear.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Shrub-family lines (orange/brown) sit above tree-family lines (green) in most individual "
+                "CONUS years, not just on average - this isn't one or two outlier years driving the effect.")
+
+# ============================================================ SLIDE 5: PART 1 - SUMMARY TABLE
+s = add_slide(); set_bg(s)
+add_title(s, "Part 1 Summary: Median Pearson r by Class Family (Per-Site)", eyebrow="PART 1 — VEGETATION-CLASS BREAKDOWN")
+page_num(s, 5)
 top, h = content_box()
 header = ["Class family", "CONUS median r", "Global median r"]
 rows = [
-    ["Shrubs", "0.38 – 0.55", "0.17 – 0.27"],
-    ["Grass", "0.24 – 0.32", "0.17 – 0.21"],
-    ["Trees", "0.17 – 0.23", "0.02 – 0.17"],
+    ["Shrubs", "0.26 – 0.50", "0.14 – 0.25"],
+    ["Grass", "0.19 – 0.23", "0.17 – 0.19"],
+    ["Trees", "0.16 – 0.22", "0.07 – 0.19"],
 ]
 styled_table(s, MARGIN, top, SLIDE_W - 2 * MARGIN, Inches(1.8), header, rows, [0.34, 0.33, 0.33])
-add_bullets(s, MARGIN, top + Inches(2.1), Inches(11.8), Inches(1.9), [
+add_bullets(s, MARGIN, top + Inches(2.1), Inches(11.8), Inches(2.2), [
+    "Ranges computed from per-site 11-year means (honest n), not pooled folds - shrubs > grass > trees "
+    "still holds; Global's grass/trees ranges now overlap slightly once the inflated fold count is "
+    "corrected for, so that distinction is less crisp in Global than in CONUS.",
     "Plausible mechanism (a hypothesis prompted by the pattern, not tested directly here): trees have "
     "slower, inertia-dominated canopy dynamics, so the year-to-year anomaly signal is small relative to "
     "noise; shrubs/grass respond faster to the same interannual weather drivers Chronos-2 sees in context.",
-    "R² is noisier than Pearson r across classes - the same R²-instability pattern already documented "
-    "in this project, so Pearson r is the metric to lead with.",
-], size=14.5, space_after=10)
+], size=14, space_after=9)
 add_takeaway(s, "CONUS classes all have 6+ sites; a few Global classes have only 2-3 (TREES_ND, "
                 "SHRUBS_ND/NE/BE) - treat those as suggestive, not definitive.")
 
-# ============================================================ SLIDE 5: PART 2 - ROOT CAUSE
+# ============================================================ SLIDE 6: PART 2 - ROOT CAUSE
 s = add_slide(); set_bg(s)
 add_title(s, "Part 2: Why GPP Was Reported as “Only 2021-2022”", eyebrow="PART 2 — GPP DATA FIX")
-page_num(s, 5)
+page_num(s, 6)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(1.3), [
     "Not a request error - the original script's date range was correctly specified (startDate 2000-01-01). "
@@ -268,10 +279,10 @@ styled_table(s, MARGIN, top + Inches(1.5), SLIDE_W - 2 * MARGIN, Inches(2.6), he
 add_takeaway(s, "Confirmed directly against AppEEARS' own product catalog (GET /api/product), not inferred "
                 "from behavior - MOD17A2H.061 is a genuinely newer collection LP DAAC only serves from 2021.")
 
-# ============================================================ SLIDE 6: PART 2 - SANITY CHECK
+# ============================================================ SLIDE 7: PART 2 - SANITY CHECK
 s = add_slide(); set_bg(s)
 add_title(s, "Before Trusting the New Data: a Scale Sanity Check", eyebrow="PART 2 — GPP DATA FIX")
-page_num(s, 6)
+page_num(s, 7)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
     "Good-QC Gpp_500m values for forest/grass sites come out in the 0-0.1 kg C/m²/8-day range - looked "
@@ -284,10 +295,10 @@ add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
 ], size=15.5, space_after=12)
 add_takeaway(s, "Verified empirically before using the data, rather than assuming either way.")
 
-# ============================================================ SLIDE 7: PART 3 - PROTOCOL + HEADLINE RESULT
+# ============================================================ SLIDE 8: PART 3 - PROTOCOL + HEADLINE RESULT
 s = add_slide(); set_bg(s)
 add_title(s, "Part 3: First Zero-Shot GPP vs. LAI Comparison", eyebrow="PART 3 — GPP vs. LAI, ZERO-SHOT")
-page_num(s, 7)
+page_num(s, 8)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(1.3), [
     "Identical LOYO-CV anomaly protocol already used for LAI (same 12-year rolling window, same "
@@ -306,10 +317,10 @@ styled_table(s, MARGIN, top + Inches(1.5), SLIDE_W - 2 * MARGIN, Inches(1.6), he
 add_takeaway(s, f"220 folds (20 sites × 11 LOYO years), all 8 CONUS vegetation classes represented. "
                 f"GPP beats LAI on every metric shown, zero-shot, before any physics guidance.")
 
-# ============================================================ SLIDE 8: PART 3 - BY CLASS
+# ============================================================ SLIDE 9: PART 3 - BY CLASS
 s = add_slide(); set_bg(s)
 add_title(s, "GPP Beats LAI in 7 of 8 Vegetation Classes", eyebrow="PART 3 — GPP vs. LAI, ZERO-SHOT")
-page_num(s, 8)
+page_num(s, 9)
 top, h = content_box()
 order = lai20_pft.groupby("dominant_pft")["Pearson_r_anomaly"].mean().sort_values(ascending=False).index.tolist()
 header = ["Vegetation class", "LAI mean r", "GPP mean r", "n folds"]
@@ -323,10 +334,10 @@ styled_table(s, MARGIN, top, SLIDE_W - 2 * MARGIN, Inches(4.6), header, rows, [0
 add_takeaway(s, "Grasses show the largest relative gain; needleleaf-evergreen trees is the one class "
                 "essentially tied (GPP 0.226 vs. LAI 0.229).")
 
-# ============================================================ SLIDE 9: INTERPRETATION + NEXT STEPS
+# ============================================================ SLIDE 10: INTERPRETATION + NEXT STEPS
 s = add_slide(); set_bg(s)
 add_title(s, "Interpretation and Next Steps", eyebrow="NEXT STEPS")
-page_num(s, 9)
+page_num(s, 10)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
     "Consistent with Prof. Wang's expectation that GPP is the more weather-coupled, more directly "

@@ -1,6 +1,7 @@
 # Progress Report: Vegetation-Class LAI Breakdown + GPP Data Fix + GPP vs. LAI Zero-Shot Comparison
 
-*Generated: 2026-10-28*
+*Generated: 2026-10-28 · Updated: 2026-10-28 (Section 1 fixed for
+pseudo-replication — see note below)*
 
 Three things, in the order Prof. Wang asked about them: (1) the fix to last
 week's pooled LAI-anomaly boxplot, (2) why the GPP data was reported as
@@ -19,19 +20,45 @@ Chronos-2 is actually good at.
 Reran the same already-computed fold-level results (no new model calls),
 grouped by each site's dominant vegetation class instead, using the
 project's existing ESA-CCI-derived PFT classification (not the informal
-site-name suffix). Script: `Code/loyo_cv_anomaly_by_pft.py`. Figure:
-`outputs/loyo_cv_anomaly_by_pft/loyo_anomaly_by_pft_boxplots.png`.
+site-name suffix). Script: `Code/loyo_cv_anomaly_by_pft.py`.
 
-**Finding, consistent independently in both CONUS and Global pools:**
+**Pseudo-replication fix**: the first version of this grouped at the fold
+level — 11 years per site pooled into each class's distribution — which
+overstates independence (a class's `n_folds` looked like 66, but the 11
+years at one site aren't independent draws; the real sample size per class
+is its *site count*, e.g. 6 for CONUS SHRUBS_ND, not 66). Fixed two ways,
+same underlying data:
 
-| Class family | CONUS median Pearson r | Global median Pearson r |
+- **Per-site view** (primary figure now):
+  `outputs/loyo_cv_anomaly_by_pft/loyo_anomaly_by_pft_persite_boxplots.png`
+  — each site's 11-year mean collapsed to one point first, *then*
+  boxplotted by class, individual site dots shown so the true n per box is
+  visible at a glance.
+  - `outputs/loyo_cv_anomaly_by_pft/loyo_anomaly_by_pft_byyear.png`
+  — one line per vegetation class, cross-site mean Pearson r for each of
+  the 11 LOYO years separately, checking whether the ranking is stable
+  year to year or driven by a couple of anomalous years.
+
+**Finding, consistent independently in both CONUS and Global pools, and
+robust to the pseudo-replication fix:**
+
+| Class family | CONUS median r (per-site) | Global median r (per-site) |
 |---|---|---|
-| Shrubs | 0.38 – 0.55 | 0.17 – 0.27 |
-| Grass | 0.24 – 0.32 | 0.17 – 0.21 |
-| Trees | 0.17 – 0.23 | 0.02 – 0.17 |
+| Shrubs | 0.26 – 0.50 | 0.14 – 0.25 |
+| Grass | 0.19 – 0.23 | 0.17 – 0.19 |
+| Trees | 0.16 – 0.22 | 0.07 – 0.19 |
 
 **Shrubs and grasses forecast noticeably better than trees** in both
-pools. Plausible mechanism (a hypothesis prompted by the pattern, not
+pools, now measured honestly at the site level (6-24 independent sites per
+class, not 22-264 correlated folds). The by-year plot confirms this isn't
+one or two outlier years driving it: shrub-family lines sit above
+tree-family lines in most individual years for CONUS, with the expected
+amount of year-to-year noise at this sample size. Global's trees and grass
+ranges now overlap slightly (0.07–0.19 vs. 0.17–0.19) — the shrub-highest,
+tree-lowest ordering is still clear, but grass vs. trees is less crisp in
+Global than in CONUS once the inflated fold count is corrected for.
+
+Plausible mechanism (a hypothesis prompted by the pattern, not
 independently tested here): trees have slower, inertia-dominated canopy
 dynamics, so the year-to-year *anomaly* signal is small relative to noise;
 shrubs/grass respond faster to the same interannual weather drivers
