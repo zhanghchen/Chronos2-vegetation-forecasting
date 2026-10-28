@@ -73,6 +73,49 @@ def boxplot_panel(ax, df, metric, title):
     ax.set_title(title, loc="left", fontsize=11, fontweight="bold")
 
 
+def per_site_means(df, metric):
+    """Collapse each site's 11 LOYO years to one mean first - the honest unit of
+    independence is the site (different location/climate/species), not the
+    fold (11 years at the same site are not 11 independent draws). Fixes the
+    pseudo-replication the fold-level boxplot above was flagged for: a class
+    with 6 sites gets 6 points here, not 66."""
+    return df.groupby(["dominant_pft", "site"], as_index=False)[metric].mean()
+
+
+def boxplot_panel_persite(ax, df, metric, title):
+    site_means = per_site_means(df, metric)
+    order = site_means.groupby("dominant_pft")[metric].median().sort_values(ascending=False).index.tolist()
+    data = [site_means[site_means["dominant_pft"] == c][metric].dropna().values for c in order]
+    labels = [f"{c.replace('_', ' ').title()}\n(n={len(d)} sites)" for c, d in zip(order, data)]
+    bp = ax.boxplot(data, tick_labels=labels, patch_artist=True, showmeans=True)
+    for patch, c in zip(bp["boxes"], order):
+        patch.set_facecolor(CLASS_COLORS.get(c, "#888888"))
+        patch.set_alpha(0.75)
+    for i, d in enumerate(data, start=1):
+        ax.scatter([i] * len(d), d, color="black", s=14, zorder=3, alpha=0.6)
+    ax.axhline(0, color="black", lw=0.8)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=8)
+    ax.set_ylabel(f"{metric.replace('_', ' ')} (site's 11-year mean)")
+    ax.set_title(title, loc="left", fontsize=11, fontweight="bold")
+
+
+def byyear_panel(ax, df, metric, title):
+    """One line per vegetation class, its cross-site mean for each LOYO test
+    year - shows whether the class ranking (e.g. shrubs > grass > trees) is
+    stable across years or driven by a handful of anomalous years."""
+    by_year = df.groupby(["dominant_pft", "test_year"])[metric].mean().unstack("dominant_pft")
+    order = df.groupby("dominant_pft")[metric].median().sort_values(ascending=False).index.tolist()
+    for c in order:
+        if c in by_year.columns:
+            ax.plot(by_year.index, by_year[c], marker="o", ms=3.5, lw=1.3,
+                     color=CLASS_COLORS.get(c, "#888888"), label=c.replace("_", " ").title())
+    ax.axhline(0, color="black", lw=0.8)
+    ax.set_xlabel("LOYO test year")
+    ax.set_ylabel(f"cross-site mean {metric.replace('_', ' ')}")
+    ax.set_title(title, loc="left", fontsize=11, fontweight="bold")
+    ax.legend(fontsize=7, ncol=2, frameon=False, loc="upper left", bbox_to_anchor=(1.01, 1.0))
+
+
 def summarize(df, metric):
     g = df.groupby("dominant_pft").agg(
         n_folds=("site", "size"),
@@ -101,7 +144,36 @@ def main():
     fig.savefig(OUT_DIR / "loyo_anomaly_by_pft_boxplots.png", dpi=DPI, bbox_inches="tight")
     fig.savefig(OUT_DIR / "loyo_anomaly_by_pft_boxplots.pdf", bbox_inches="tight")
     plt.close(fig)
-    print("saved loyo_anomaly_by_pft_boxplots.png/.pdf")
+    print("saved loyo_anomaly_by_pft_boxplots.png/.pdf (fold-level - pseudo-replicated, see per-site version)")
+
+    # --- per-site version: one point per site (11-year mean), not one per fold ---
+    fig2, axes2 = plt.subplots(2, 2, figsize=(16, 11), constrained_layout=True)
+    boxplot_panel_persite(axes2[0, 0], conus, "Pearson_r_anomaly", "(a) CONUS - Pearson r, per-site 11-yr mean")
+    boxplot_panel_persite(axes2[0, 1], glob, "Pearson_r_anomaly", "(b) Global - Pearson r, per-site 11-yr mean")
+    boxplot_panel_persite(axes2[1, 0], conus, "R2_anomaly", "(c) CONUS - R², per-site 11-yr mean")
+    boxplot_panel_persite(axes2[1, 1], glob, "R2_anomaly", "(d) Global - R², per-site 11-yr mean")
+    fig2.suptitle("Same data, collapsed to one point per site (11-year mean) instead of one per fold\n"
+                  "- the honest sample size per class is the site count, not the fold count",
+                  fontsize=12)
+    fig2.savefig(OUT_DIR / "loyo_anomaly_by_pft_persite_boxplots.png", dpi=DPI, bbox_inches="tight")
+    fig2.savefig(OUT_DIR / "loyo_anomaly_by_pft_persite_boxplots.pdf", bbox_inches="tight")
+    plt.close(fig2)
+    print("saved loyo_anomaly_by_pft_persite_boxplots.png/.pdf")
+
+    # --- by-year version: is the class ranking stable across the 11 LOYO years? ---
+    fig3, axes3 = plt.subplots(1, 2, figsize=(17, 6), constrained_layout=True)
+    byyear_panel(axes3[0], conus, "Pearson_r_anomaly", "(a) CONUS - Pearson r by class, per LOYO test year")
+    byyear_panel(axes3[1], glob, "Pearson_r_anomaly", "(b) Global - Pearson r by class, per LOYO test year")
+    fig3.suptitle("Cross-site mean Pearson r per vegetation class, year by year (not pooled across years)", fontsize=12)
+    fig3.savefig(OUT_DIR / "loyo_anomaly_by_pft_byyear.png", dpi=DPI, bbox_inches="tight")
+    fig3.savefig(OUT_DIR / "loyo_anomaly_by_pft_byyear.pdf", bbox_inches="tight")
+    plt.close(fig3)
+    print("saved loyo_anomaly_by_pft_byyear.png/.pdf")
+
+    conus_persite_r = per_site_means(conus, "Pearson_r_anomaly").rename(columns={"Pearson_r_anomaly": "site_mean_pearson_r"})
+    conus_persite_r.to_csv(OUT_DIR / "conus_persite_means_pearson_r.csv", index=False)
+    glob_persite_r = per_site_means(glob, "Pearson_r_anomaly").rename(columns={"Pearson_r_anomaly": "site_mean_pearson_r"})
+    glob_persite_r.to_csv(OUT_DIR / "global_persite_means_pearson_r.csv", index=False)
 
     conus_r = summarize(conus, "Pearson_r_anomaly")
     conus_r2 = summarize(conus, "R2_anomaly")
@@ -120,6 +192,11 @@ def main():
     print(glob_r)
     print("\n=== Global, R2 (anomaly), by class ===")
     print(glob_r2)
+
+    print("\n=== CONUS, per-site 11-yr mean Pearson r, by class (honest n=sites) ===")
+    print(conus_persite_r.groupby("dominant_pft")["site_mean_pearson_r"].agg(["count", "mean", "median"]).sort_values("median", ascending=False))
+    print("\n=== Global, per-site 11-yr mean Pearson r, by class (honest n=sites) ===")
+    print(glob_persite_r.groupby("dominant_pft")["site_mean_pearson_r"].agg(["count", "mean", "median"]).sort_values("median", ascending=False))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 # LAI-Anomaly LOYO-CV, Broken Down by Vegetation Class
 
-*Generated: 2026-10-27*
+*Generated: 2026-10-27 · Updated: 2026-10-28 (added per-site and by-year
+views — see "Pseudo-replication fix" below)*
 
 Prof. Wang's feedback on the pooled CONUS/Global boxplot (one box per pool,
 770/748 folds pooled across all vegetation types): pooling everything
@@ -60,3 +61,36 @@ The shrubs > grass > trees ordering is visible within CONUS alone (where
 the smallest class still has 6 sites), which is reassuring, but the Global
 numbers for the 2-3-site classes should be presented as suggestive, not
 definitive.
+
+## Pseudo-replication fix: per-site and by-year views
+
+The fold-level boxplot above pools 11 years per site into each class's
+distribution — so a class's `n_folds` (e.g. 66 for CONUS SHRUBS_ND)
+overstates how much independent information backs it up, since the 11
+years at one site aren't independent draws (same location, same local
+conditions). The real sample size per class is its **site count** (6 for
+CONUS SHRUBS_ND), not its fold count.
+
+Two additional views fix this, same script, no new Chronos-2 calls:
+
+- **`loyo_anomaly_by_pft_persite_boxplots.png`** — each site's 11-year mean
+  collapsed to one point first, *then* boxplotted by class (individual
+  site dots overlaid so you can see exactly how many points are backing
+  each box). A class with 6 sites gets 6 points, not 66.
+- **`loyo_anomaly_by_pft_byyear.png`** — one line per vegetation class,
+  its cross-site mean Pearson r for each of the 11 LOYO test years
+  separately (2012–2022), to check whether the class ranking is stable
+  year to year or driven by a handful of anomalous years.
+
+**Result: the shrubs > grass > trees ordering survives both checks.** The
+per-site boxplots show the same ordering as the fold-level ones (shrub
+classes sit visibly higher than tree classes even with only 6-7 points per
+box); the by-year plot shows shrub-family lines sitting above tree-family
+lines in most individual years for CONUS, not just on average — some
+year-to-year noise and crossover is visible (expected at n=6-19 sites per
+class per year), but it isn't one or two outlier years driving the whole
+effect. This makes the finding more trustworthy than the original
+fold-level view alone, since it isn't an artifact of inflated sample size.
+
+Per-site summary CSVs: `conus_persite_means_pearson_r.csv`,
+`global_persite_means_pearson_r.csv`.
