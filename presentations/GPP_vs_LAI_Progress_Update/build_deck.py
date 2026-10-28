@@ -297,10 +297,19 @@ add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
 ], size=15.5, space_after=12)
 add_takeaway(s, "Verified empirically before using the data, rather than assuming either way.")
 
-# ============================================================ SLIDE 8: PART 3 - PROTOCOL + HEADLINE RESULT
+# ============================================================ SLIDE 8: PART 2 - SEASONAL SANITY CHECK FIGURE
+s = add_slide(); set_bg(s)
+add_title(s, "The Annual-Sum Check, Visually: Clear Seasonality", eyebrow="PART 2 — GPP DATA FIX")
+page_num(s, 8)
+top, h = content_box()
+add_picture_fit(s, FIG / "gpp_seasonal_sanity_check.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Sharp summer peak / near-zero winter dormancy at all 3 sites - exactly the physical "
+                "pattern real GPP should show, not an artifact of the scale factor.")
+
+# ============================================================ SLIDE 9: PART 3 - PROTOCOL + HEADLINE RESULT
 s = add_slide(); set_bg(s)
 add_title(s, "Part 3: First Zero-Shot GPP vs. LAI Comparison", eyebrow="PART 3 — GPP vs. LAI, ZERO-SHOT")
-page_num(s, 8)
+page_num(s, 9)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(1.3), [
     "Identical LOYO-CV anomaly protocol already used for LAI (same 12-year rolling window, same "
@@ -319,10 +328,19 @@ styled_table(s, MARGIN, top + Inches(1.5), SLIDE_W - 2 * MARGIN, Inches(1.6), he
 add_takeaway(s, f"220 folds (20 sites × 11 LOYO years), all 8 CONUS vegetation classes represented. "
                 f"GPP beats LAI on every metric shown, zero-shot, before any physics guidance.")
 
-# ============================================================ SLIDE 9: PART 3 - BY CLASS
+# ============================================================ SLIDE 10: PART 3 - PREDICTION CURVES
+s = add_slide(); set_bg(s)
+add_title(s, "Not Just Metrics: Actual Predicted-vs-True GPP Anomaly", eyebrow="PART 3 — GPP vs. LAI, ZERO-SHOT")
+page_num(s, 10)
+top, h = content_box()
+add_picture_fit(s, FIG / "gpp_prediction_curves.png", MARGIN, top, SLIDE_W - 2 * MARGIN, h)
+add_takeaway(s, "Spans the full range of the 220-fold result (r = 0.87 down to −0.49), not cherry-picked - "
+                "the worst fold shows the model missing a spring green-up spike entirely.")
+
+# ============================================================ SLIDE 11: PART 3 - BY CLASS
 s = add_slide(); set_bg(s)
 add_title(s, "GPP Beats LAI in 7 of 8 Vegetation Classes", eyebrow="PART 3 — GPP vs. LAI, ZERO-SHOT")
-page_num(s, 9)
+page_num(s, 11)
 top, h = content_box()
 order = lai20_pft.groupby("dominant_pft")["Pearson_r_anomaly"].mean().sort_values(ascending=False).index.tolist()
 header = ["Vegetation class", "LAI mean r", "GPP mean r", "n folds"]
@@ -336,10 +354,10 @@ styled_table(s, MARGIN, top, SLIDE_W - 2 * MARGIN, Inches(4.6), header, rows, [0
 add_takeaway(s, "Grasses show the largest relative gain; needleleaf-evergreen trees is the one class "
                 "essentially tied (GPP 0.226 vs. LAI 0.229).")
 
-# ============================================================ SLIDE 10: INTERPRETATION + NEXT STEPS
+# ============================================================ SLIDE 12: INTERPRETATION + NEXT STEPS
 s = add_slide(); set_bg(s)
 add_title(s, "Interpretation and Next Steps", eyebrow="NEXT STEPS")
-page_num(s, 10)
+page_num(s, 12)
 top, h = content_box()
 add_bullets(s, MARGIN, top, Inches(11.8), Inches(2.6), [
     "Consistent with Prof. Wang's expectation that GPP is the more weather-coupled, more directly "
