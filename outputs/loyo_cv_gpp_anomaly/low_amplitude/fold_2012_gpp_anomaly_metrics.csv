@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+low_amplitude,2012,2000,12,533,46,0.026939213275909424,0.36411489917516654,0.7509018659242843,0.0

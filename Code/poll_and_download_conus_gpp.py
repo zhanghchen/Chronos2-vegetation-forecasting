@@ -1,7 +1,7 @@
 # Polls the AppEEARS point task submitted by fetch_conus_gpp_appeears.py
-# until it completes, then downloads the result bundle into data/conus_gpp/raw/.
-# Mirrors experiments/global_era5_chronos/scripts/poll_and_download_lai.py
-# exactly, pointed at the CONUS GPP output directory.
+# (MOD17A2HGF.061, v2 - see that file's header for why) until it completes,
+# then downloads the result bundle into data/conus_gpp_gf/raw/.
+# Mirrors experiments/global_era5_chronos/scripts/poll_and_download_lai.py.
 import netrc
 import time
 from pathlib import Path
@@ -10,7 +10,7 @@ import requests
 
 API = "https://appeears.earthdatacloud.nasa.gov/api"
 ROOT = Path(__file__).resolve().parent.parent
-OUT_DIR = ROOT / "data/conus_gpp"
+OUT_DIR = ROOT / "data/conus_gpp_gf"
 RAW_DIR = OUT_DIR / "raw"
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 

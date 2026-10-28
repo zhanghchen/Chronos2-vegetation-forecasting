@@ -3,14 +3,22 @@
 # NASA's AppEEARS point-sample API, mirroring
 # experiments/global_era5_chronos/scripts/fetch_global_lai_appeears.py
 # exactly (same auth/task/poll/download pattern - see that file for the
-# full API documentation in its comments), just pointed at MOD17A2H.061
-# (MODIS GPP, 8-day composite, 500m) and the 70 existing CONUS LOYO-CV
-# site coordinates instead of MOD15A2H.061 LAI and the 70 global pixels.
+# full API documentation in its comments), now pointed at MOD17A2HGF.061
+# (MODIS GPP, gap-filled, 8-day composite, 500m) and the 70 existing CONUS
+# LOYO-CV site coordinates instead of MOD15A2H.061 LAI and the 70 global
+# pixels.
 #
-# Product note: MOD17A2H.061 is Terra-only (like MOD15A2H.061, for the
-# same 2000-02-18 start-date-matching reason documented in the global
-# fetch script), layers Gpp_500m (scale factor 0.0001 -> kg C/m^2/8-day)
-# and Psn_QC_500m (QC flags).
+# v2 fix (2026-10-27): the first attempt (data/conus_gpp/, task v1) used
+# MOD17A2H.061, which only returned 2021-2022 despite a correctly specified
+# 2000-2022 request. Root cause, confirmed directly against AppEEARS'
+# own product catalog (GET /api/product), not guessed: MOD17A2H.061's
+# TemporalExtentStart is genuinely 2021-01-01 - it is NOT a full-record
+# product, regardless of what the request date range says. The full-record
+# equivalent (2000-01-01 - present, same Gpp_500m/Psn_QC_500m layers, same
+# 0.0001 scale factor) is MOD17A2HGF.061 ("GF" = gap-filled), which is what
+# this script now requests. Output goes to a new data/conus_gpp_gf/ dir -
+# the old (2021-2022-only) data/conus_gpp/ download is left in place rather
+# than overwritten, since it's still valid data for those two years.
 import json
 import netrc
 import time
@@ -22,9 +30,9 @@ import requests
 API = "https://appeears.earthdatacloud.nasa.gov/api"
 ROOT = Path(__file__).resolve().parent.parent
 PIXELS_CSV = ROOT / "data/conus_gpp/conus70_coords.csv"
-OUT_DIR = ROOT / "data/conus_gpp"
+OUT_DIR = ROOT / "data/conus_gpp_gf"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
-TASK_NAME = "chronos2_conus70_gpp_v1"
+TASK_NAME = "chronos2_conus70_gppgf_v2"
 
 
 def login(max_retries=8):
@@ -54,8 +62,8 @@ def submit_task(token):
         "params": {
             "dates": [{"startDate": "01-01-2000", "endDate": "12-31-2022"}],
             "layers": [
-                {"product": "MOD17A2H.061", "layer": "Gpp_500m"},
-                {"product": "MOD17A2H.061", "layer": "Psn_QC_500m"},
+                {"product": "MOD17A2HGF.061", "layer": "Gpp_500m"},
+                {"product": "MOD17A2HGF.061", "layer": "Psn_QC_500m"},
             ],
             "coordinates": coords,
         },
@@ -65,7 +73,7 @@ def submit_task(token):
         print("submit failed:", r.status_code, r.text)
         r.raise_for_status()
     task_id = r.json()["task_id"]
-    print(f"Submitted task {task_id} ({len(coords)} points, 2000-01-01 to 2022-12-31)")
+    print(f"Submitted task {task_id} ({len(coords)} points, 2000-01-01 to 2022-12-31, MOD17A2HGF.061)")
     (OUT_DIR / "task_id.txt").write_text(task_id)
     return task_id
 

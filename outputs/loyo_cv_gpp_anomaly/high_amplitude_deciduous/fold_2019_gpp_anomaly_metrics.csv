@@ -1,0 +1,2 @@
+site,test_year,window_start,window_years,n_context,n_test,R2_anomaly,Pearson_r_anomaly,R2_raw_reconstructed,elapsed_sec
+high_amplitude_deciduous,2019,2007,12,413,34,-0.17070186138153076,0.10898569759072926,0.7635733311147337,0.0
