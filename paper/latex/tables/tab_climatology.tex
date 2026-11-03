@@ -1,0 +1,46 @@
+% Table: zero-shot Chronos-2 vs. a training-period-only seasonal climatology
+% baseline, paired across all 33 LOYO-CV cases (3 pixels x 11 years).
+% Source: outputs/climatology_persistence_baseline/full_comparison_with_acc_skill.csv
+% (Code/build_climatology_persistence_baseline.py), reusing the existing
+% no-leakage climatology machinery (circular_doy_climatology) already used
+% for the ACC metric, scored directly as a standalone forecast.
+\begin{table*}[t]
+\centering
+\caption{Zero-shot Chronos-2 vs.\ a simple, training-period-only seasonal climatology baseline
+(day-of-year climatology fit on each fold's own 12-year training window, never the test year --
+identical no-leakage protocol already used for this paper's ACC metric), paired across all 33
+LOYO-CV cases. Skill score $= 1 - \mathrm{MSE}_{\text{Chronos-2}}/\mathrm{MSE}_{\text{climatology}}$;
+positive values indicate Chronos-2 beats climatology on MSE. ``Climatology wins'' counts cases
+where climatology's $R^2$ is at least as high as Chronos-2's. ACC is the anomaly correlation
+coefficient (Chronos-2's forecast anomaly vs.\ true anomaly, both relative to the same training-only
+climatology); negative values indicate the model's deviation from climatology is anti-correlated
+with the true deviation.}
+\label{tab:climatology}
+\small
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Pixel & Mean $R^2$ & Mean $R^2$ & Climatology & Mean skill & Mean ACC (median) \\
+      & (climatology) & (Chronos-2) & wins (of 11) & score & [negative cases] \\
+\midrule
+\texttt{low\_amplitude}            & 0.202  & 0.317  & 5/11 & $+0.051$ & $0.230$ (0.287) [1/11] \\
+\texttt{high\_amplitude\_deciduous} & \textbf{0.964} & 0.957 & 6/11 & $-0.264$ & $0.142$ (0.118) [5/11] \\
+\texttt{evergreen}                 & $-0.141$ & $-0.134$ & 4/11 & $+0.064$ & $0.225$ (0.303) [2/11] \\
+\midrule
+\textbf{Overall (33 cases)} & 0.342 & \textbf{0.380} & \textbf{15/33 (45\%)} & $-0.050$ & $0.199$ (0.252) [8/33] \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.5em}
+\begin{tabular}{@{}lrr@{}}
+\multicolumn{3}{l}{\textit{Paired comparison across all 33 cases (Chronos-2 $R^2$ $-$ climatology $R^2$)}} \\
+\toprule
+Statistic & Mean & Median \\
+\midrule
+Paired $R^2$ difference & $+0.038$ & $+0.006$ \\
+\bottomrule
+\end{tabular}
+\\[0.3em]
+\footnotesize Paired $t$-test $p = 0.378$; Wilcoxon signed-rank $p = 0.242$ ($n=33$) -- no
+statistically detectable advantage of Chronos-2 over the climatology baseline across the paired
+hindcast cases.
+\end{table*}

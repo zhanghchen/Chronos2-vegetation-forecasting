@@ -43,31 +43,40 @@ Its Robustness, and the Limits of Adaptation}
 \begin{abstract}
 Leaf Area Index (LAI) is a fundamental variable in land--atmosphere modeling, agricultural
 monitoring, and drought assessment, and forecasting it typically requires purpose-built
-statistical or deep-learning models trained on years of location-specific data. We ask whether a
-general-purpose, pretrained time-series foundation model (TSFM) -- Amazon's Chronos-2 -- can
-forecast LAI competitively \emph{without any task-specific training}, and what its zero-shot use
-reveals about robustness, generalization, and the value of subsequent adaptation. Using LAI and
-meteorological covariates for U.S.\ vegetation pixels spanning grassland, deciduous, and
-evergreen-forest regimes, we compare zero-shot Chronos-2 against eight supervised baselines
-(Random Forest, SVM, and five recurrent/convolutional deep-learning architectures, including the
-domain-specific AELSTM model), evaluate robustness across eleven held-out years (330 fold
-results), test spatial generalization across a 3{,}700\,km transfer, and systematically probe
-whether task-specific adaptation -- standard and advanced parameter-efficient fine-tuning (7
-methods total), and four architecturally distinct vegetation-composition-conditioning mechanisms
--- can improve on the pretrained baseline. Zero-shot Chronos-2 is the best or statistically
-tied-best model on the majority of pixels tested (mean rank 1.33 of 10 on a single held-out year;
-3.70 of 10, second only to Random Forest, across all LOYO-CV folds) and generalizes across a
-3{,}700\,km spatial transfer with no measurable loss. However, no adaptation method -- seven
-distinct parameter-efficient fine-tuning variants, or four vegetation-composition-conditioning
-architectures -- improves consistently on the pretrained model; a decisive randomized control shows
-that a conditioning head trained on genuine vegetation composition performs statistically
-indistinguishably from one trained on randomly shuffled, scientifically meaningless assignments
-(paired $t$-test $p=0.245$, $n=70$). We interpret this pattern of evidence -- strong, robust
-zero-shot transfer alongside adaptation that adds noise rather than signal -- as evidence that
-Chronos-2's pretrained representation is already close to this dataset's achievable ceiling, with
-direct implications for how general-purpose TSFMs should be deployed in data-limited Earth-system
-applications: as strong zero-shot forecasters first, with adaptation reserved for regimes where
-genuinely larger or more diverse target-domain data are available.
+statistical or deep-learning models trained on years of location-specific data. We ask a more
+specific question than whether a general-purpose, pretrained time-series foundation model (TSFM)
+-- Amazon's Chronos-2 -- can forecast LAI at all: how much skill does it add \emph{beyond a
+simple, interpretable seasonal climatology baseline}, and where does that skill hold up or break
+down? LAI is strongly seasonal, so raw accuracy at a high-amplitude site can be driven almost
+entirely by reconstructing a predictable annual cycle rather than by genuine, weather-driven
+interannual forecasting skill. Using LAI and meteorological covariates for U.S.\ vegetation
+pixels spanning grassland, deciduous, and evergreen-forest regimes, we benchmark zero-shot
+Chronos-2 against a training-period-only climatology baseline and eight supervised models (Random
+Forest, SVM, and five recurrent/convolutional deep-learning architectures, including the
+domain-specific AELSTM model) across eleven held-out years (330 fold results), test spatial
+generalization across a 3{,}700\,km transfer, and systematically probe whether task-specific
+adaptation -- standard and advanced parameter-efficient fine-tuning (7 methods total), and four
+architecturally distinct vegetation-composition-conditioning mechanisms -- can improve on the
+pretrained baseline. Paired against the climatology baseline across all 33 hindcast cases,
+zero-shot Chronos-2 shows no statistically detectable advantage (mean paired $R^2$ difference
+$+0.038$, median $+0.006$; Wilcoxon $p=0.242$): climatology wins outright in 15/33 cases and
+achieves a \emph{higher} mean $R^2$ than Chronos-2 at the site with the largest seasonal
+amplitude (0.964 vs.\ 0.957), the same site responsible for the paper's most eye-catching raw
+$R^2$ numbers. An anomaly-correlation analysis across all 33 cases (not only the single held-out
+year used in the main cross-model table) shows genuine, but inconsistent, year-to-year skill
+beyond the seasonal cycle (mean ACC $0.199$, 8/33 cases negative). Chronos-2 nonetheless remains
+competitive with, and at the lowest-amplitude site measurably ahead of, climatology and the
+supervised baselines, and generalizes across a 3{,}700\,km spatial transfer with no measurable
+loss. No adaptation method -- seven distinct parameter-efficient fine-tuning variants, or four
+vegetation-composition-conditioning architectures -- improves consistently on the pretrained
+model; a decisive randomized control shows that a conditioning head trained on genuine vegetation
+composition performs statistically indistinguishably from one trained on randomly shuffled,
+scientifically meaningless assignments (paired $t$-test $p=0.245$, $n=70$). We read this pattern
+of evidence -- modest, site-dependent skill over a simple climatology baseline, and adaptation
+that adds noise rather than signal on top of it -- as a caution against treating high raw $R^2$ on
+strongly seasonal targets as evidence of transferred forecasting skill, and as a call for
+climatology-referenced evaluation to become standard practice when applying general-purpose TSFMs
+to seasonal Earth-system variables.
 \end{abstract}
 
 % =============================================================================
@@ -105,42 +114,56 @@ scenario) future weather.
 TSFMs are extensively benchmarked on generic forecasting suites, but rarely evaluated on
 Earth-system or vegetation-specific tasks where (a) covariates carry a known, physically
 meaningful future trajectory, (b) target-domain training data is often limited to a handful of
-locations and years, and (c) the practical question is not ``can this model forecast at all'' but
-``does adapting it to this domain help, or does its pretrained representation already suffice.''
-This gap motivates using Chronos-2 as a concrete test case for vegetation LAI forecasting
-\cite{earth_system_fm_TODO}.
+locations and years, (c) the target itself is strongly seasonal, so that raw accuracy conflates
+``reconstructing a predictable annual cycle'' with ``forecasting the genuine, weather-driven
+deviation from it,'' and (d) the practical question is not ``can this model forecast at all'' but
+``does its skill exceed a simple, interpretable seasonal baseline, and does adapting it to this
+domain help beyond that.'' Point (c) is rarely addressed directly in TSFM evaluations on seasonal
+environmental variables, even though a climatology baseline is cheap to compute and, as this paper
+shows, far from trivial to beat. This gap motivates using Chronos-2 as a concrete test case for
+vegetation LAI forecasting \cite{earth_system_fm_TODO}.
 
 \subsection{Research questions}
 \label{sec:rq}
 
 \begin{description}
-  \item[RQ1.] How well does pretrained Chronos-2 perform in zero-shot LAI forecasting?
+  \item[RQ1.] How much does pretrained, zero-shot Chronos-2 improve on a simple, training-period-only
+    seasonal climatology baseline, and is that improvement consistent across sites and years?
   \item[RQ2.] How does its performance compare with conventional supervised ML and deep-learning
     baselines trained specifically for this task?
-  \item[RQ3.] How robust is Chronos-2 across different years, vegetation regimes, and locations?
+  \item[RQ3.] How robust is Chronos-2 across different years, vegetation regimes, and locations,
+    and does its robustness (or lack of it) track its climatology-referenced skill?
   \item[RQ4.] Under what conditions does it perform particularly well or poorly?
   \item[RQ5.] Does task-specific parameter adaptation improve Chronos-2 beyond its pretrained
-    zero-shot capability?
-  \item[RQ6.] What do these experiments imply for applying general-purpose TSFMs to vegetation
-    forecasting?
+    zero-shot capability -- and beyond the climatology baseline?
+  \item[RQ6.] What do these experiments imply for applying general-purpose TSFMs to seasonal
+    Earth-system forecasting, and for how such claims should be evaluated?
 \end{description}
 
 \subsection{Contributions}
 \label{sec:contributions}
 
 \begin{enumerate}
-  \item We provide a systematic evaluation of Chronos-2 for vegetation LAI forecasting under
-    zero-shot application, benchmarked fairly (raw-observation rescoring) against eight supervised
-    baselines across three vegetation regimes and 330 leave-one-year-out cross-validation folds.
-  \item We characterize Chronos-2's robustness and generalization behavior -- temporal (across 11
-    years), spatial (a 3{,}700\,km transfer test), and failure-mode-specific (a controlled leakage
-    diagnostic isolating distribution shift from representational limitation).
+  \item We introduce a climatology-referenced evaluation of zero-shot Chronos-2 for vegetation LAI
+    forecasting -- a training-period-only seasonal climatology baseline, computed with the same
+    no-leakage protocol across all 33 leave-one-year-out cross-validation folds -- and show that a
+    large share of the raw accuracy reported in single-year TSFM evaluations on seasonal targets is
+    attributable to seasonal-cycle reconstruction rather than genuine interannual skill: paired
+    across all 33 cases, Chronos-2's advantage over climatology is not statistically detectable,
+    and climatology outright wins at the site responsible for the highest raw $R^2$ in this study.
+  \item We benchmark zero-shot Chronos-2 against eight supervised baselines (raw-observation
+    rescoring) across three vegetation regimes and 330 leave-one-year-out cross-validation folds,
+    and characterize its robustness and generalization behavior -- temporal (across 11 years),
+    spatial (a 3{,}700\,km transfer test), and failure-mode-specific (a controlled leakage
+    diagnostic isolating distribution shift from representational limitation) -- interpreting all
+    of these results jointly with the climatology comparison rather than in isolation.
   \item We conduct the most extensive adaptation study of Chronos-2 for a domain task to date
     within this project -- seven parameter-efficient fine-tuning methods and four
     vegetation-composition conditioning architectures, including a randomized shuffled-assignment
     control -- and show that none consistently improves on the pretrained zero-shot
-    representation, identifying the mechanism (generic capacity-driven noise, not method-specific
-    failure) rather than merely reporting the negative result.
+    representation, which itself does not consistently exceed climatology; we identify the
+    mechanism (generic capacity-driven noise, not method-specific failure) rather than merely
+    reporting the negative result.
 \end{enumerate}
 
 % =============================================================================
@@ -282,6 +305,13 @@ before the $\varepsilon$ floor in \Cref{eq:in-scale} is applied, so $\tilde{x}_t
 for every timestep $t$, regardless of the constant value $c$ -- erasing the covariate's value to
 exactly zero regardless of its content.
 
+Chronos-2's native interface returns a set of forecast quantiles together with the predictive
+mean; every point forecast reported in this paper -- for every model and metric -- is this
+predictive \textbf{mean} (\texttt{pipeline.predict\_quantiles(...)}'s second return value, queried
+at quantile levels $\{0.1, 0.5, 0.9\}$ for the quantile outputs themselves, which are not otherwise
+used in this paper's point-forecast evaluation), not the $0.5$-quantile/median output, and negative
+predictions are not clipped to the physically valid $\mathrm{LAI} \geq 0$ range before scoring.
+
 \subsection{Zero-shot forecasting setup}
 \label{sec:methods-zeroshot}
 
@@ -293,11 +323,19 @@ reference condition.
 \label{sec:methods-baselines}
 
 Eight models from the sibling AELSTM project, each trained from scratch per pixel on
-\textbf{past climate only} (no future covariates): Random Forest, SVM, and five neural sequence
-architectures (RNN, LSTM, BiLSTM, GRU, CNN), plus AELSTM itself, an attention-augmented LSTM
-architecture purpose-built for this task. All are rescored against the same raw, unsmoothed LAI
-observations Chronos-2 is evaluated against, correcting for the fact that the AELSTM project's own
-pipeline reports metrics against a Savitzky--Golay-smoothed target.
+\textbf{past climate only}: Random Forest, SVM, and five neural sequence architectures (RNN,
+LSTM, BiLSTM, GRU, CNN), plus AELSTM itself, an attention-augmented LSTM architecture purpose-built
+for this task. We confirmed directly against the baseline pipeline's own sequence-construction code
+that this excludes \emph{both} future climate \emph{and} the target's own lagged history: the input
+window passed to every baseline is the 7 climate covariates only (column-sliced to exclude the LAI
+column before windowing), so these models never see past LAI, let alone future climate, as an
+input feature -- a starker information asymmetry with Chronos-2 (\Cref{sec:results-comparison})
+than ``past vs.\ future climate'' alone would suggest. The baseline pipeline also applies a
+Savitzky--Golay smoothing filter to both the climate inputs and the LAI target before training; all
+eight models are rescored here against the same raw, unsmoothed LAI observations Chronos-2 is
+evaluated against, correcting the target-side mismatch, but the climate-input smoothing itself is
+not undone and remains a further, smaller difference in what information each model family
+receives (\Cref{sec:limitations}).
 
 \subsection{Parameter adaptation methods}
 \label{sec:methods-adaptation}
@@ -405,13 +443,67 @@ control, not merely an additional ablation arm.
 \label{sec:results}
 % =============================================================================
 
+\subsection{Benchmarking against seasonal climatology}
+\label{sec:results-climatology}
+
+Before comparing Chronos-2 with other forecasting models, we ask the more basic question this
+paper is organized around: how much of its accuracy is attributable to reconstructing a
+predictable seasonal cycle, versus genuine interannual forecasting skill? We compute a
+training-period-only day-of-year climatology for each of the 33 LOYO-CV cases, using exactly the
+same 12-year rolling window and the same no-leakage protocol already used elsewhere in this paper
+for the ACC metric (\Cref{sec:methods-metrics}), and score it directly as a standalone forecast --
+no model, no fitting, just the mean LAI at each calendar position across the fold's own training
+years.
+
+\Cref{tab:climatology} reports the result, paired across all 33 cases. \textbf{Chronos-2 shows no
+statistically detectable advantage over this simple baseline}: the mean paired $R^2$ difference is
+$+0.038$ but the median is $+0.006$, and the mean and median point in different directions only
+because a small number of cases carry most of the mean's weight (paired $t$-test $p=0.378$,
+Wilcoxon signed-rank $p=0.242$, $n=33$). Climatology wins outright -- equal or higher $R^2$ -- in
+15 of 33 cases (45\%). Most strikingly, at \texttt{high\_amplitude\_deciduous}, the site
+responsible for this paper's highest raw $R^2$ numbers (\Cref{sec:results-zeroshot}), climatology
+has the \emph{higher} mean $R^2$ of the two (0.964 vs.\ 0.957) and a negative mean MSE skill score
+for Chronos-2 ($-0.264$): most of that site's apparent forecasting accuracy is attributable to its
+strong, repeatable seasonal cycle, which a three-line climatology computation reconstructs as well
+as or better than Chronos-2 does.
+
+The picture is not uniformly negative, and should not be overstated in the other direction either.
+At \texttt{low\_amplitude}, where the seasonal cycle is weaker and less informative on its own,
+Chronos-2 shows a real, positive mean skill score ($+0.051$) and a higher mean $R^2$ than
+climatology (0.317 vs.\ 0.202) -- evidence that weather-conditioned forecasting does add value
+specifically where the seasonal signal alone is insufficient. The anomaly correlation coefficient
+(ACC), computed here across all 33 cases rather than only the single 2022 holdout emphasized in
+\Cref{sec:results-zeroshot}, shows the same mixed pattern directly: Chronos-2's forecast deviation
+from climatology is positively correlated with the true deviation in 25 of 33 cases (mean ACC
+$0.199$, median $0.252$), but anti-correlated in the remaining 8 -- genuine, but inconsistent,
+year-to-year skill beyond the seasonal cycle, not its absence.
+
+\textbf{We draw three distinct conclusions from this comparison, which we keep separate throughout
+the remainder of this paper.} First, high raw $R^2$ at a strongly seasonal site is not, by itself,
+evidence of transferred forecasting skill -- it can be, and here largely is, evidence of
+seasonal-cycle reconstruction that a trivial baseline matches. Second, genuine interannual anomaly
+skill (ACC) is real but inconsistent, positive in roughly three-quarters of cases and negative in
+the rest, and this skill is a different quantity from raw $R^2$ and should be reported alongside
+it rather than inferred from it. Third, a non-significant paired comparison against climatology
+does not establish that Chronos-2 ``merely reproduces the seasonal cycle'' or has learned nothing
+about the climate--vegetation relationship -- the $\texttt{low\_amplitude}$ result, and the
+positive-ACC majority, both argue against that stronger claim. The remainder of the Results section
+revisits each subsequent comparison (supervised baselines, temporal/spatial robustness, adaptation)
+with this three-way distinction in mind.
+
+\input{tables/tab_climatology}
+
 \subsection{Zero-shot LAI forecasting performance}
 \label{sec:results-zeroshot}
 
-Zero-shot Chronos-2 achieves $R^2 = 0.542$ (\texttt{low\_amplitude}), $R^2 = 0.965$
-(\texttt{high\_amplitude\_deciduous}), and $R^2 = 0.832$ (\texttt{evergreen}) on the 2022
-held-out year -- the best or statistically tied-best of all 10 methods compared at every one of
-the 3 pixels (\Cref{tab:main_comparison}).
+On the single 2022 held-out year used for the main cross-model comparison
+(\Cref{tab:main_comparison}), zero-shot Chronos-2 achieves $R^2 = 0.542$ (\texttt{low\_amplitude}),
+$R^2 = 0.965$ (\texttt{high\_amplitude\_deciduous}), and $R^2 = 0.832$ (\texttt{evergreen}) -- the
+best or statistically tied-best of all 10 methods compared at every one of the 3 pixels. As
+\Cref{sec:results-climatology} establishes, these numbers should be read together with the
+climatology comparison: the \texttt{high\_amplitude\_deciduous} figure in particular reflects
+seasonal-cycle reconstruction more than it reflects an advantage over the simplest possible
+seasonal baseline.
 
 \begin{figure}[t]
   \centering
@@ -423,12 +515,18 @@ the 3 pixels (\Cref{tab:main_comparison}).
 \end{figure}
 
 \Result{Zero-shot Chronos-2 ranks 1st on 2 of 3 pixels and is separated from the best method by
-$0.00003$ $R^2$ on the third.}
-\Interpretation{A pretrained, general-purpose time-series representation transfers to LAI
-forecasting without any task-specific training.}
+$0.00003$ $R^2$ on the third -- but, per \Cref{sec:results-climatology}, shows no statistically
+detectable advantage over a training-period climatology baseline paired across all 33 hindcast
+cases.}
+\Interpretation{A pretrained, general-purpose time-series representation is competitive with, and
+at one site clearly exceeds, both specialized supervised models and a trivial seasonal baseline --
+but ``competitive with eight trained baselines'' and ``exceeds a three-line climatology
+computation'' are different claims, and only the first is well supported by the single-year
+comparison in this subsection taken alone.}
 \Hypothesis{Broad pretraining on diverse time series may encode generic seasonal/periodic
-structure that is also present, and exploitable, in vegetation phenology -- this has not been
-demonstrated directly here and remains a hypothesis, not a result.}
+structure that is also present, and exploitable, in vegetation phenology -- consistent with, but
+not established beyond, the site-dependent pattern in \Cref{sec:results-climatology} (added skill
+where the seasonal signal is weak, no detectable skill where it is strong).}
 
 \subsection{Comparison with supervised baselines}
 \label{sec:results-comparison}
@@ -447,14 +545,25 @@ zero-shot Chronos-2 has the lowest (best) and most consistent mean rank of any m
   \label{fig:baseline_comparison}
 \end{figure}
 
-\textbf{This advantage is not evidence of purely architectural superiority.} Chronos-2 is given
-the actual future climate as a known covariate; none of the eight baselines have a mechanism to
-use this information at all, by design -- they forecast from past climate only. The single
-largest identifiable contributor to Chronos-2's advantage is this task asymmetry, not an implicit
-claim that Chronos-2 ``predicts LAI better from the same information,'' because it does not
-receive the same information. What remains genuinely notable, and defensible independent of the
-covariate asymmetry, is that a \textbf{zero-shot, untrained} model is competitive at all against
-eight specialized models each trained from scratch on the target pixel.
+\textbf{This advantage is not evidence of purely architectural superiority, and the information
+gap is larger than ``future vs.\ past climate.''} Chronos-2 is given the actual future climate as
+a known covariate; the eight baselines not only lack future climate but, as confirmed directly
+against their sequence-construction code (\Cref{sec:methods-baselines}), never see \emph{any}
+historical LAI as an input feature either -- they are pure climate-to-LAI regressors, with no
+mechanism to use either their own target's recent history or future climate. A matched-information
+baseline (e.g.\ a supervised model given both historical LAI and the same future climate Chronos-2
+receives) and a Chronos-2 ablation without future covariates would each be needed to decompose how
+much of the present gap is attributable to future-covariate access, to historical-LAI access, and
+to the pretrained representation itself; this study provides none of those three controls, and the
+present comparison should not be read as isolating any one of them. What remains defensible from
+this comparison alone is narrower: a \textbf{zero-shot, untrained} model, given more information
+than the baselines but zero target-domain optimization, is competitive with eight models that
+received target-domain optimization but less information. Read together with
+\Cref{sec:results-climatology}, this advantage is also not large relative to a model with no
+learned representation at all: a training-period climatology baseline, using neither future
+climate nor historical LAI beyond the training window, is statistically indistinguishable from
+Chronos-2 across the full 33-case hindcast, even though it is listed in neither
+\Cref{tab:main_comparison} nor this single-year comparison.
 
 \Result{Zero-shot Chronos-2 is the best or tied-best model on 3/3 tested pixels, with future
 climate as an input the baselines lack.}
@@ -511,7 +620,14 @@ Spatially, a single LoRA adapter fit on \texttt{evergreen} and deployed \textbf{
 retraining} at \texttt{evergreen\_west} ($\sim$3{,}700\,km away, same vegetation type) achieves
 $R^2 = 0.823$, fractionally exceeding a separately-fit target-local adapter ($R^2 = 0.819$) -- the
 best spatial generalization of any of 9 methods compared, against AELSTM's own collapse to
-negative $R^2$ under the identical test.
+negative $R^2$ under the identical test. Both of those numbers, however, are \emph{below} the
+zero-shot (no adaptation at all) reference at \texttt{evergreen\_west} itself, $R^2 = 0.888$: at
+this site, neither the transferred nor the locally-fit LoRA adapter recovers zero-shot performance,
+let alone improves on it. This is consistent with, not an exception to,
+\Cref{sec:results-adaptation}'s broader finding that adaptation does not reliably improve on
+zero-shot Chronos-2 -- the spatial-transfer result establishes that the transferred adapter does
+not degrade \emph{further} than a locally-fit one does, not that adaptation added value at this
+site relative to not adapting at all.
 
 \begin{figure}[t]
   \centering
@@ -549,7 +665,11 @@ forecasting model is used.
 \subsection{Can parameter adaptation improve Chronos-2?}
 \label{sec:results-adaptation}
 
-\textbf{No adaptation method tested in this project consistently beats zero-shot Chronos-2.}
+\textbf{In the configurations tested here, no adaptation method beats zero-shot Chronos-2 on the 3
+core pixels' 2022 holdout.} This evidence base is narrower than ``adaptation fails'' might suggest
+and we scope it accordingly: a single test year, 3 pixels, and no repeated-seed runs
+(\Cref{sec:limitations}), so we report ``no observed gain under the tested configurations'' rather
+than claiming a reproducible non-improvement has been established in the statistical sense.
 \Cref{tab:adaptation} summarizes. Original (unvalidated) LoRA fine-tuning is uniformly worse
 ($\Delta R^2 = -0.163, -0.014, -0.120$ across the 3 pixels). Adding validation-based checkpoint
 selection recovers most, but not all, of this gap on the two pixels where it was worst
@@ -562,7 +682,15 @@ mean $R^2$ across all fine-tuning variants is uniformly below zero-shot's 0.780,
 method/pixel combination (DoRA on \texttt{evergreen}, $+0.0026$) beats zero-shot at all, by a
 margin plausibly attributable to noise. Trainable-parameter count is, at best, a weak and
 inconsistent predictor of outcome (pooled $r = +0.10$ with test $R^2$; the sign of the correlation
-even flips between pixels).
+even flips between pixels). We note, following \Cref{sec:results-climatology}, that the zero-shot
+reference these methods are measured against does not itself consistently exceed a training-period
+climatology baseline; none of the nine adaptation variants here was separately benchmarked against
+climatology, so we cannot report whether any of them exceeds that lower bar even where they fall
+short of zero-shot. Given the scale of effort an additional adaptation sweep would require, and
+that the climatology comparison raises a logically prior question -- does the covariate
+information these methods are being asked to exploit carry skill beyond seasonality in the first
+place (\Cref{sec:results-climatology})? -- we treat that question, not a further expansion of the
+adaptation search, as the more urgent next step (\Cref{sec:discussion}).
 
 The vegetation-composition-conditioning experiments extend this finding with a mechanistic
 explanation rather than merely replicating it. A single-pixel, constant PFT covariate is
@@ -573,9 +701,14 @@ explanation rather than merely replicating it. A single-pixel, constant PFT cova
 and a deliberately-overfit checkpoint that shows large, physically plausible sensitivity, up to
 0.63 LAI units) still fails to produce a validated improvement: across four architecturally
 distinct conditioning designs -- spanning an 8$\times$ range in trainable parameters, with and
-without dropout and weight decay -- three of four overfit within the first training step even
-given 8 rolling training windows (4$\times$ more temporal supervision than the initial 2-window
-design). The fourth (\texttt{low\_rank}, a rank-8-bottleneck design) is the only architecture that
+without dropout and weight decay -- three of four show validation loss increasing from the first
+evaluated checkpoint onward even given 8 rolling training windows (4$\times$ more temporal
+supervision than the initial 2-window design). We describe this as \emph{immediate validation
+deterioration} rather than diagnosing it as overfitting specifically: we did not inspect training
+loss curves or isolate learning rate, initialization, or optimization-target effects as alternative
+explanations, so the result establishes that these three designs fail to validate under the tested
+protocol, not the specific mechanism by which they fail. The fourth (\texttt{low\_rank}, a
+rank-8-bottleneck design) is the only architecture that
 trains past step 0 -- and the paper's decisive result is that an identical \texttt{low\_rank} head
 trained on \textbf{randomly shuffled} PFT-to-pixel assignments improves 2022 $R^2$ by $+0.0024$,
 marginally \emph{more} than the real-PFT condition's $+0.0022$, with no statistically detectable
@@ -625,15 +758,21 @@ shuffle-control result and the PEFT sweep's parameter-count-independence finding
 \label{sec:results-failure}
 
 The \texttt{evergreen}/2012 LOYO-CV failure (zero-shot $R^2 = -7.64$; original LoRA
-$R^2 = -8.29$, the single worst score of all 9 methods compared this way) is mechanistically
-resolved by the leakage diagnostic: allowing 2012 to participate in LoRA fitting (a deliberate
-leakage condition, \textbf{not} a valid evaluation) recovers RMSE by 59.9\% and $R^2$ to $-0.50$
--- the second-largest recovery of 9 methods tested this way (behind only Random Forest, $+8.01$),
-landing squarely in the middle of the baseline pack rather than uniquely bad. Both the recovering
-and the original failure are large and consistent across essentially every architecture tested
-(tree ensemble, six neural sequence models, and a large pretrained transformer), which is the
-signature of a shared external cause -- the 2012 drought being genuinely unlike anything in
-2000--2011 training data -- rather than an architecture-specific representational limitation.
+$R^2 = -8.29$, the single worst score of all 9 methods compared this way) is clarified, though not
+conclusively diagnosed, by a leakage experiment: allowing 2012 to participate in LoRA fitting (a
+deliberate leakage condition, \textbf{not} a valid evaluation) recovers RMSE by 59.9\% and $R^2$ to
+$-0.50$ -- the second-largest recovery of 9 methods tested this way (behind only Random Forest,
+$+8.01$), landing squarely in the middle of the baseline pack rather than uniquely bad. We read
+this recovery, consistent across essentially every architecture tested (tree ensemble, six neural
+sequence models, and a large pretrained transformer), as evidence \emph{consistent with} a shared
+external cause -- the 2012 drought being genuinely unlike anything in 2000--2011 training data --
+rather than an architecture-specific representational limitation. We stop short of calling this
+resolved: exposing 2012 to model fitting simultaneously changes the available climate information
+\emph{and} the available LAI information for that year, so the recovery is also consistent with
+partial memorization of the test-year target itself, and this diagnostic cannot separate the two
+explanations. A cleaner test -- exposing 2012's climate only, with 2012's LAI still held out --
+would be needed to attribute the recovery specifically to distribution shift in the covariates
+rather than to direct target leakage.
 
 \begin{figure}[t]
   \centering
@@ -649,24 +788,43 @@ signature of a shared external cause -- the 2012 drought being genuinely unlike 
 \label{sec:discussion}
 % =============================================================================
 
-\textbf{Why might Chronos-2 transfer successfully to LAI?} Vegetation phenology is strongly
-seasonal and climate-driven, structurally similar to many series in a broad pretraining corpus;
-Chronos-2's native handling of known future covariates directly matches this paper's forecasting
-formulation. The strong zero-shot baseline (\Cref{sec:results-zeroshot,sec:results-comparison})
-suggests pretrained time-series representations can transfer effectively to this domain without
-modification -- a result consistent with, and extending to a new domain, prior evidence that
-Chronos-2 zero-shot performance is strong relative to fine-tuning on small datasets
-\citep{arxiv2607.23146}.
+\textbf{Three different things are easy to conflate in this evaluation, and we keep them separate
+here.} (1) \emph{Seasonal-cycle reconstruction}: how well a model reproduces the predictable
+annual LAI trajectory at a given site. This is what a training-period climatology baseline does by
+construction, and it is responsible for most of the raw $R^2$ at high-amplitude sites
+(\Cref{sec:results-climatology}). (2) \emph{Genuine interannual anomaly skill}: forecasting the
+deviation from that predictable cycle in a specific year -- the quantity the ACC metric targets,
+and the one most directly relevant to the practical use case of anticipating an unusual season.
+This is real but inconsistent for zero-shot Chronos-2 (positive in roughly three-quarters of the
+33 hindcast cases, negative in the rest). (3) \emph{The value of known future meteorology
+specifically}: Chronos-2's native covariate support lets it condition on actual future climate,
+which none of the eight supervised baselines can use at all (\Cref{sec:results-comparison}); this
+is a genuine capability advantage, but it is a statement about covariate access, not about the
+pretrained representation's forecasting skill per se, and this study does not isolate how much of
+Chronos-2's edge over the baselines is attributable to (3) versus to (1) or (2). Treating a result
+from one of these three as evidence for another -- for example, reading high raw $R^2$ (driven
+largely by (1)) as evidence of strong transferred forecasting skill (which is really about (2)) --
+is, we argue, the single most important source of overclaiming risk in applying TSFMs to seasonal
+Earth-system variables, and is the reason \Cref{sec:results-climatology} is placed first in the
+Results section rather than reported as a supplementary check.
 
-\textbf{What does strong zero-shot performance imply, and what doesn't it imply?} It implies that,
-for practitioners with access to reliable future meteorological forcing, a general-purpose TSFM
-is a credible default without investing in a purpose-built architecture or a target-domain
-training pipeline. It does not imply Chronos-2's architecture is intrinsically superior at
-sequence modeling in general -- this project's comparison is not same-task
-(\Cref{sec:results-comparison}), and the baselines' collapse under spatial transfer (in sharp
-contrast to Chronos-2's success, \Cref{sec:results-robustness}) suggests at least some of them
-were fitting genuinely useful, if non-transferable, location-specific structure that a
-covariate-blind pure zero-shot comparison cannot credit them for.
+\textbf{What does the climatology-referenced evidence imply, and what doesn't it imply?} It implies
+that, for practitioners with access to reliable future meteorological forcing, a general-purpose
+TSFM is a credible default that is at least competitive with, and at low-seasonal-signal sites
+measurably ahead of, both specialized supervised models and a trivial seasonal baseline -- without
+investing in a purpose-built architecture or a target-domain training pipeline. It does not imply
+that Chronos-2 has learned a generically superior representation of vegetation--climate dynamics,
+nor that its zero-shot skill reliably exceeds climatology: at the site with the strongest seasonal
+cycle, it does not. This is a narrower, more qualified claim than ``strong zero-shot transfer''
+taken at face value would suggest, and it extends less straightforwardly than it might first
+appear to prior evidence that Chronos-2 zero-shot performance is strong relative to fine-tuning on
+small datasets \citep{arxiv2607.23146} -- that comparison is zero-shot-vs-fine-tuned on the
+\emph{same} model family, not zero-shot-vs-climatology, and the two questions can have different
+answers. Separately, this project's comparison with the eight supervised baselines is not
+same-task (\Cref{sec:results-comparison}), and the baselines' collapse under spatial transfer (in
+sharp contrast to Chronos-2's success, \Cref{sec:results-robustness}) suggests at least some of
+them were fitting genuinely useful, if non-transferable, location-specific structure that a
+covariate-blind, climatology-blind comparison cannot credit them for.
 
 \textbf{When do supervised models retain advantages?} Random Forest is the single most consistent
 performer across the entire LOYO-CV study (lowest rank volatility, comparable mean rank to
@@ -712,8 +870,22 @@ entirely.
     with more locations. Three additional pre-selected pixels exist but have not been run through
     Chronos-2.
   \item \textbf{Task asymmetry.} Chronos-2's headline comparison against the baselines is not
-    same-information; the baselines never receive future climate. This is repeatedly flagged
-    in-text (\Cref{sec:results-comparison}) and should not be read as a pure architecture verdict.
+    same-information; the baselines never receive future climate, or (\Cref{sec:methods-baselines})
+    their own target's historical values. This is repeatedly flagged in-text
+    (\Cref{sec:results-comparison}) and should not be read as a pure architecture verdict; a
+    matched-information baseline and a Chronos-2 ablation without future covariates, neither of
+    which this study runs, would be needed to decompose the gap into its future-covariate,
+    historical-target, and pretraining-specific components.
+  \item \textbf{The climatology baseline is simple by design, and 3 sites is a small sample for
+    it too.} \Cref{sec:results-climatology}'s day-of-year climatology has no trend term, no
+    explicit drought/anomaly adjustment, and is recomputed independently per fold; a more
+    sophisticated classical baseline (e.g.\ harmonic regression with a trend term, or a seasonal
+    ARIMA) might close or widen the gap with Chronos-2 differently than a bare climatology does.
+    The climatology comparison is computed on the same 3 core sites as the rest of this paper, so
+    the small-sample caveat above applies to it equally -- a wider climatology-referenced
+    evaluation, ideally on the 70-site pooled set, is the most direct way to test whether the
+    site-dependent pattern reported here (added skill at low amplitude, none detected at high
+    amplitude) generalizes.
   \item \textbf{Geographic scope.} All experiments are CONUS-only (HiQ-LAI/gridMET coverage); a
     global ERA5-based generalization study is underway but has produced no results as of this
     writing.
@@ -722,9 +894,21 @@ entirely.
     training-window sampling is not seeded across runs, introducing run-to-run noise on the order
     of the leakage diagnostic's $\sim$0.6 $\Delta R^2$ reproduction gap between two nominally
     identical fine-tuning conditions.
-  \item \textbf{PFT screening is not exhaustive.} Four conditioning architectures and two
-    learning rates each were tested; conditioning additional (covariate) rows beyond the target
-    row, and cross-attention/mixture-of-experts-style gating, were reasoned about but not run.
+  \item \textbf{PFT screening is not exhaustive, and several protocol details are not fully
+    specified in this draft.} Four conditioning architectures and two learning rates each were
+    tested; conditioning additional (covariate) rows beyond the target row, and
+    cross-attention/mixture-of-experts-style gating, were reasoned about but not run. The
+    current draft does not state, and should before submission: whether the 70-pixel PFT
+    experiment's train and test sets share pixels or are spatially disjoint; the number of random
+    seeds and the number of distinct shuffled-assignment draws underlying the shuffle-control
+    result (\Cref{sec:results-adaptation}); and the PFT product, reference year, and resampling
+    method behind the composition vectors themselves. We note this explicitly rather than guessing
+    at values not independently confirmed in the materials available while preparing this draft.
+  \item \textbf{MAPE's sample varies by method.} \Cref{eq:mape} excludes any time step where either
+    the true or predicted value is non-positive, so the set of steps contributing to a model's MAPE
+    is not identical across methods with different numbers of non-positive predictions; RMSE, MAE,
+    and $R^2$, which do not exclude any steps, are the metrics on which cross-model comparisons in
+    this paper should be primarily read.
 \end{itemize}
 
 % =============================================================================
@@ -732,22 +916,38 @@ entirely.
 \label{sec:conclusion}
 % =============================================================================
 
-Across a systematic evaluation spanning a single-year comparison, 330 leave-one-year-out
-cross-validation folds, a long-distance spatial transfer test, and the most extensive adaptation
-study conducted in this project -- seven parameter-efficient fine-tuning methods and four
-vegetation-composition-conditioning architectures, including a randomized control -- zero-shot
-Chronos-2 emerges as a strong, robust, and (with one important, honestly-reported exception:
-sustained climate anomalies genuinely absent from its context) dependable LAI forecaster, on par
-with the best supervised alternatives tested, without any task-specific training. Its zero-shot
-representation appears to already be close to what limited-data adaptation on this dataset can
-reach: not one of eleven distinct adaptation mechanisms tested consistently improves on it, and
-the project's decisive randomized control shows that even a genuinely working conditioning
-architecture derives no detectable benefit from real information over scientifically meaningless
-input. For vegetation LAI forecasting specifically, and plausibly for other data-limited
-Earth-system tasks with structurally similar covariates, these results support deploying
-general-purpose, pretrained time-series foundation models zero-shot as a strong default,
-reserving further adaptation effort for settings with substantially larger or more diverse
-target-domain data than were available here.
+This paper set out to answer a more specific question than whether a general-purpose time-series
+foundation model can forecast LAI: how much skill does it add beyond a simple, interpretable
+seasonal climatology baseline, and where does that skill hold up or break down? Across a
+systematic evaluation spanning the climatology-referenced hindcast (33 paired cases), a single-year
+cross-model comparison, 330 leave-one-year-out cross-validation folds, a long-distance spatial
+transfer test, and the most extensive adaptation study conducted in this project -- seven
+parameter-efficient fine-tuning methods and four vegetation-composition-conditioning architectures,
+including a randomized control -- the answer is site-dependent and more qualified than a
+headline raw-accuracy comparison alone would suggest. Paired against climatology across all 33
+hindcast cases, zero-shot Chronos-2 shows no statistically detectable advantage, and at the site
+responsible for this study's highest raw $R^2$ values, climatology's mean $R^2$ is \emph{higher}.
+At the lowest-amplitude site, where the seasonal signal is weakest, Chronos-2's advantage over
+climatology is real and positive, and its anomaly-correlation skill is positive, though
+inconsistent, across roughly three-quarters of all 33 hindcast cases. Zero-shot Chronos-2 also
+remains competitive with eight specialized supervised baselines under an information regime that
+favors it (actual future climate, which the baselines cannot use at all), transfers across a
+3{,}700\,km spatial test with no measurable loss, and -- with one important, honestly-reported
+exception (sustained climate anomalies genuinely absent from its context) -- degrades gracefully
+across most of the years tested. None of eleven distinct adaptation mechanisms tested improves on
+this zero-shot reference, and the project's decisive randomized control shows that even a
+genuinely working PFT-conditioning architecture derives no detectable benefit from real vegetation
+information over scientifically meaningless shuffled input -- though, as this paper also argues,
+that zero-shot reference is itself not consistently better than a model with no learned
+representation of climate--vegetation dynamics at all, which qualifies how much the adaptation
+results should be read as evidence about the pretrained representation's ceiling specifically,
+versus about the limited headroom available over climatology on this dataset more broadly. For
+vegetation LAI forecasting, and plausibly for other seasonal, data-limited Earth-system tasks with
+structurally similar covariates, the actionable conclusion is narrower than ``deploy general-purpose
+TSFMs zero-shot as a strong default'': deploy them where a climatology-referenced evaluation shows
+them earning their complexity, report that comparison alongside raw accuracy, and treat
+high raw $R^2$ on a strongly seasonal target as a question about seasonal-cycle reconstruction
+until a baseline this cheap to compute has been ruled out as the explanation.
 
 % =============================================================================
 \bibliographystyle{plainnat}
