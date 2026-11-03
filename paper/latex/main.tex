@@ -172,45 +172,70 @@ vegetation LAI forecasting \cite{earth_system_fm_TODO}.
 
 \subsection{Vegetation and LAI forecasting}
 \label{sec:related-lai}
-\cite{lai_forecasting_TODO} -- statistical/remote-sensing-based LAI estimation and forecasting
-literature; AELSTM \cite{aelstm_TODO} as the direct architectural precedent for this project's
-baselines; \cite{lai_lstm_2024} as a directly comparable LAI--climate deep-learning precedent
-(continental-scale, attention-enhanced LSTM), used in this project's own PFT-conditioning
-literature review to sanity-check task framing.
+LAI forecasting has a long history in statistical and remote-sensing-based estimation, which we do
+not survey comprehensively here (placeholder citation \cite{lai_forecasting_TODO} marks where that
+literature belongs; see the note on incomplete citations at the end of this section). Our
+supervised baselines descend directly from AELSTM \cite{aelstm_TODO}, an attention-augmented LSTM
+architecture purpose-built for LAI forecasting at the same pixels and with the same covariates used
+in this paper; we treat it as the direct architectural precedent for the baseline suite rather than
+re-deriving it. \citet{lai_lstm_2024} report a continental-scale, attention-enhanced LSTM for
+LAI--climate forecasting and serve here as a directly comparable deep-learning precedent that we
+used, earlier in this project, to sanity-check our own task formulation against an established
+one in the same application area.
 
 \subsection{Time-series forecasting}
 \label{sec:related-ts}
-\cite{ts_forecasting_survey_TODO} -- classical statistical methods, tree ensembles, and deep
-sequence architectures (LSTM/BiLSTM/GRU/CNN/attention) as used for the baseline suite here.
+The baseline suite in this paper (Random Forest, SVM, and the RNN/LSTM/BiLSTM/GRU/CNN family) spans
+the two broad families classical time-series forecasting has relied on: tree-based ensembles and
+recurrent/convolutional deep sequence models. We do not survey this literature independently; a
+placeholder citation (\cite{ts_forecasting_survey_TODO}) marks where a general forecasting survey
+belongs for readers wanting fuller context on each architecture.
 
 \subsection{Time-series foundation models}
 \label{sec:related-tsfm}
-Chronos \citep{ansari2024chronos} and Chronos-2 \citep{ansari2025chronos2} (Ansari et al., Amazon)
-are pretrained, general-purpose forecasters; Chronos-2 adds native known-future-covariate support,
-the specific capability exercised throughout this paper's task formulation. \cite{tsfm_review_TODO}
-for TimesFM, Moirai, and other contemporary TSFMs, for completeness of the related-work landscape
--- not otherwise used in this project's experiments.
+Chronos \citep{ansari2024chronos} and its successor Chronos-2 \citep{ansari2025chronos2} (Ansari
+et al., Amazon) are pretrained, general-purpose time-series forecasters applied zero-shot to series
+outside their training corpus. Chronos-2 is the model this paper evaluates, and the capability we
+rely on throughout is its native support for known future covariates -- conditioning a forecast on
+covariate values that are already known for the forecast horizon, which is exactly the structure of
+a vegetation forecast made with observed or scenario future weather (\Cref{sec:intro-tsfm}). Other
+contemporary TSFMs, such as TimesFM and Moirai, are not evaluated in this paper; a placeholder
+citation (\cite{tsfm_review_TODO}) marks where that broader landscape belongs for completeness, and
+we do not claim our findings about Chronos-2 specifically generalize to them.
 
-\subsection{Foundation models for environmental / Earth-system applications}
+\subsection{Foundation models for environmental and Earth-system applications}
 \label{sec:related-earth}
-\cite{earth_system_fm_TODO} -- this project did not conduct a literature review specific to
-Earth-system foundation models; the research gap in \Cref{sec:intro-gap} is stated on the basis of
-this project's own search, not a systematic survey, and should be qualified as such in the final
-manuscript.
+We motivate this paper's research gap (\Cref{sec:intro-gap}) from our own reading of the TSFM and
+vegetation-forecasting literatures, not from a systematic survey of Earth-system foundation models
+specifically; a placeholder citation (\cite{earth_system_fm_TODO}) marks where such a survey
+belongs, and the research-gap claim in \Cref{sec:intro-gap} should be read as qualified by that
+limitation rather than as an exhaustively verified absence of prior work.
 
 \subsection{Parameter-efficient adaptation}
 \label{sec:related-peft}
-LoRA \citep{hu2022lora} is the standard parameter-efficient fine-tuning (PEFT) baseline used
-throughout. This project's own literature review additionally evaluated DoRA
-\citep{liu2024dora}, VeRA \citep{kopiczko2024vera}, IA3 \citep{liu2022ia3}, LN-Tuning (as applied
-to Chronos in a small-data healthcare task, \citealp{arxiv2409.11302}), and BitFit
-\citep{zaken2022bitfit}, cross-checked directly against the installed Chronos-2 and
-\texttt{peft==0.17.1} source for architectural compatibility rather than assumed from the papers
-alone. Independent, directly relevant prior evidence -- \citet{arxiv2607.23146}, evaluating
-Chronos-2 itself, found zero-shot beats fine-tuning on small datasets, and full fine-tuning
-``unreliable\ldots{} consistently degrading performance''; \citet{arxiv2409.11302} found lighter
-PEFT methods can match or beat LoRA on Chronos under scarce-data conditions -- both point in the
-same direction this paper's own results independently confirm (\Cref{sec:results-adaptation}).
+LoRA \citep{hu2022lora} is the standard parameter-efficient fine-tuning (PEFT) method and the
+baseline adaptation approach used throughout this paper. We additionally evaluate six further PEFT
+methods: DoRA \citep{liu2024dora}, VeRA \citep{kopiczko2024vera}, IA3 \citep{liu2022ia3},
+LN-Tuning (as previously applied to Chronos in a small-data healthcare task,
+\citealp{arxiv2409.11302}), BitFit \citep{zaken2022bitfit}, and partial last-block fine-tuning. We
+cross-checked each method's implementation directly against the installed Chronos-2 and
+\texttt{peft==0.17.1} source for architectural compatibility, rather than assuming compatibility
+from the originating papers alone. Two pieces of independent prior evidence point in the same
+direction as this paper's own adaptation results (\Cref{sec:results-adaptation}):
+\citet{arxiv2607.23146}, evaluating Chronos-2 itself on small datasets, report that zero-shot
+forecasting beats fine-tuning and that full fine-tuning is ``unreliable\ldots{} consistently
+degrading performance''; \citet{arxiv2409.11302} find that lighter PEFT methods can match or beat
+LoRA on Chronos under scarce-data conditions. Neither of these prior results is itself a
+climatology-referenced evaluation, so neither directly speaks to this paper's central question
+(\Cref{sec:results-climatology}); we cite them only for the narrower claim that adaptation
+underperforming zero-shot Chronos-2 on small datasets is a pattern independently observed before
+this paper, not unique to our experiments.
+
+\emph{A note on citations in this section}: several claims above are marked with placeholder
+citation keys (\texttt{\_TODO}) rather than specific papers, because the corresponding literature
+search was not conducted as part of this project (see \texttt{references.bib} for the explicit
+per-entry notes on what remains to be verified or searched). These should be resolved with a
+proper literature search before submission; we have not fabricated citations to fill these gaps.
 
 % =============================================================================
 \section{Data and Study Design}
@@ -501,9 +526,16 @@ $0.252$), negative in the remaining 8. We read this as evidence of \emph{some} d
 anomaly correlation more often than not, not as an established, validated ``genuine interannual
 skill'' -- ACC does not test whether the predicted anomaly's \emph{magnitude} is accurate, does not
 rule out residual within-year seasonal-phase error contributing to the correlation, and the
-case-level sign pattern has not itself been tested for statistical significance. A direct anomaly
-error-skill score (deseasonalized RMSE relative to climatology, case by case) would be a stronger
-complement to ACC than we compute here and is a natural next step (\Cref{sec:limitations}).
+case-level sign pattern has not itself been tested for statistical significance. The MSE skill
+score already reported above (\Cref{tab:climatology}) is exactly this magnitude-sensitive
+complement: because $\mathrm{MSE}(y - \hat{y}) = \mathrm{MSE}((y-\mathrm{clim}) -
+(\hat{y}-\mathrm{clim}))$, the skill score $1 - \mathrm{MSE}_{\text{Chronos-2}}/
+\mathrm{MSE}_{\text{climatology}}$ is algebraically identical to an anomaly error-skill score
+(deseasonalized RMSE relative to the trivial zero-anomaly climatology forecast), so ACC (direction)
+and skill score (magnitude) together already give the fuller picture a reader would want: positive
+ACC with a negative skill score (as at \texttt{high\_amplitude\_deciduous}) means the forecast
+anomaly points the right way more often than not but is not well \emph{sized}, which the
+correlation coefficient alone would not reveal.
 
 We draw two conclusions from this comparison and keep them separate throughout the remainder of
 this paper. First, high raw $R^2$ at a strongly seasonal site is not, by itself, evidence of skill
@@ -920,16 +952,29 @@ entirely.
     training-window sampling is not seeded across runs, introducing run-to-run noise on the order
     of the leakage diagnostic's $\sim$0.6 $\Delta R^2$ reproduction gap between two nominally
     identical fine-tuning conditions.
-  \item \textbf{PFT screening is not exhaustive, and several protocol details are not fully
-    specified in this draft.} Four conditioning architectures and two learning rates each were
-    tested; conditioning additional (covariate) rows beyond the target row, and
-    cross-attention/mixture-of-experts-style gating, were reasoned about but not run. The
-    current draft does not state, and should before submission: whether the 70-pixel PFT
-    experiment's train and test sets share pixels or are spatially disjoint; the number of random
-    seeds and the number of distinct shuffled-assignment draws underlying the shuffle-control
-    result (\Cref{sec:results-adaptation}); and the PFT product, reference year, and resampling
-    method behind the composition vectors themselves. We note this explicitly rather than guessing
-    at values not independently confirmed in the materials available while preparing this draft.
+  \item \textbf{PFT screening is not exhaustive, and the 70-pixel PFT experiment has no spatial
+    holdout.} Four conditioning architectures and two learning rates each were tested;
+    conditioning additional (covariate) rows beyond the target row, and
+    cross-attention/mixture-of-experts-style gating, were reasoned about but not run. We confirmed
+    directly against the dataset-construction code that the train (2010$\rightarrow$2018, 8
+    rolling windows), validation (2018$\rightarrow$2021, 3 windows), and test
+    (2021$\rightarrow$2022) splits are purely \textbf{temporal}, applied identically across all 70
+    pixels -- every pixel contributes training examples from earlier years and is also in the
+    final 2022 test set. The shuffle-control result (\Cref{sec:results-adaptation}) therefore
+    establishes that real vegetation composition carries no detectable advantage over a shuffled
+    assignment \emph{at pixels the model has already seen at other years}; it does not test
+    generalization to spatially unseen pixels, and a spatially disjoint train/test pixel split is
+    a natural, currently missing robustness check. We also confirmed that the real-vs-shuffled
+    comparison rests on a \textbf{single} fixed random seed (42) and a \textbf{single} shuffled
+    permutation of the 70 pixel$\leftrightarrow$composition assignments, not an average over
+    multiple independent shuffles -- the reported non-significance could in principle be sensitive
+    to this one draw, and repeating the shuffle under several seeds would make the control more
+    robust. The PFT composition vectors themselves are annual ESA CCI land-cover fractional-cover
+    data (1992--2020), pre-regridded onto the exact HiQ-LAI/gridMET grid (no resampling needed,
+    verified byte-identical coordinates); each row uses its own year's PFT vector, and the 2
+    years without an ESA CCI file (2021--2022) carry the last available year (2020) forward, based
+    on an empirical check that PFT composition is static or changes at most once per pixel across
+    1992--2020.
   \item \textbf{MAPE's sample varies by method.} \Cref{eq:mape} excludes any time step where either
     the true or predicted value is non-positive, so the set of steps contributing to a model's MAPE
     is not identical across methods with different numbers of non-positive predictions; RMSE, MAE,
