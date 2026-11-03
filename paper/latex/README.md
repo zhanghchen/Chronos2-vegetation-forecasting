@@ -1,16 +1,18 @@
 # LaTeX manuscript package
 
-Deliverable for "13. LATEX VERSION" of the paper request. This is a complete, internally
-consistent LaTeX conversion of `paper/02_manuscript.md`, ready to open in Overleaf.
+`main.tex` is the actively maintained, authoritative source for this paper (the early pre-LaTeX
+planning drafts that used to live in `paper/` — experiment audit, outline, markdown manuscript,
+a standalone tables file — have been removed as superseded; see git history if needed).
 
 ## A. `main.tex`
 
-The full manuscript: title, abstract, all 9 sections with subsections, equations (InstanceNorm
+The full manuscript: title, abstract, all sections with subsections, equations (InstanceNorm
 mechanism, FiLM modulation, the linear-mixture PFT architecture, and all 5 evaluation metrics),
-4 tables (via `\input`), 10 figures (via `\includegraphics` — all now generated, see part D
-below), captions, labels, and cross-references throughout (`\Cref`/`\ref` for
-sections/tables/figures/equations, `\cite`/`\citep`/`\citet` for the bibliography). Verified
-before delivery (see "Verification" below).
+5 tables (via `\input`, including `tables/tab_climatology.tex`), 10 figures (via
+`\includegraphics`), captions, labels, and cross-references throughout (`\Cref`/`\ref` for
+sections/tables/figures/equations, `\cite`/`\citep`/`\citet` for the bibliography). As of the
+latest revision, the paper is reframed around a climatology-referenced evaluation
+(`sec:results-climatology`) — see the paper's own Results section for what's new and why.
 
 ## B. Suggested project folder structure
 
